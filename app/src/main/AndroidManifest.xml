@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="mimosale.com">
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.    READ_GSERVICES" />
+
+    <application
+        android:name=".helperClass.AppController"
+        android:allowBackup="true"
+        android:icon="@mipmap/logo_icon"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/logo_icon"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme.NoActionBarTransperent"
+        android:windowSoftInputMode="adjustPan"
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:replace="android:icon,android:theme">
+        <activity android:name=".settings.ChangeLanguageActivity" />
+        <activity android:name=".search.SearchResultActivity" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyC6in7wfj-jFmh4rINHmZ8Pu13IfqNvUYw" /> <!-- AIzaSyC6in7wfj-jFmh4rINHmZ8Pu13IfqNvUYw -->
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
+        <activity
+            android:name=".spalsh.SplashActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBarTransperent">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".login.LoginActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBarTransperent" />
+        <activity
+            android:name=".noInternet.NoInternetActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".home.HomeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBarTransperent" />
+        <activity
+            android:name=".signup.RegistrationActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBarTransperent" />
+        <activity
+            android:name=".shop.ShopPostingActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBarTransperent" />
+        <activity
+            android:name=".shop.ShopPreviewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBarTransperent" />
+        <activity
+            android:name=".profile.ProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBarTransperent" />
+        <activity
+            android:name=".preferences.AddPreferencesActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBarTransperent" />
+        <activity
+            android:name=".products.AllProductsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBarTransperent" />
+        <activity
+            android:name=".post.SalePostingActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBarTransperent" />
+        <activity
+            android:name=".products.AddProductsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBarTransperent" />
+        <activity
+            android:name=".products.ProductDetailsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBarTransperent" />
+        <activity
+            android:name=".home.shop_sale.SelectPostingActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBarTransperent" />
+        <activity
+            android:name=".post.SalePostingPreviewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBarTransperent" />
+        <activity
+            android:name=".my_posting.MyPostingActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBarTransperent" />
+        <activity
+            android:name=".post.MyPostingDetailsAcrivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBarTransperent" />
+        <activity android:name=".home.preferences.MyPreferences" />
+        <activity android:name=".preferences.MyPreferencesActivity" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
+        <activity
+            android:name=".shop.ShopDetailActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+        <activity android:name=".feedback.FeedBackActivity" />
+        <activity android:name=".following.FollowingShopActivity" />
+        <activity android:name=".account.TermsAndConditionActivity" />
+        <activity
+            android:name=".google_map.ShopsOnMapActivity"
+            android:label="@string/title_activity_shops_on_map" />
+        <activity android:name=".profile.ProfilePictureActivity" />
+        <activity android:name=".account.HelpSupportActivity" />
+        <activity android:name=".shop.ShopDetailsActivityNew" />
+        <activity
+            android:name=".map.MapsActivity"
+            android:label="@string/title_activity_maps" />
+        <activity android:name=".products.ProductDetailsActivityNew" />
+        <activity android:name=".shop.ShopPostingPreviewNew" />
+        <activity android:name=".shop.EditShopActivity" />
+        <activity android:name=".home.AllShopSaleListActivity" />
+        <activity android:name=".post.SaleDetailsActivity"></activity>
+    </application>
+
+</manifest>
