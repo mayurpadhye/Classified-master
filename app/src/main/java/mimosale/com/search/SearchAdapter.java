@@ -22,6 +22,7 @@ import mimosale.com.home.fragments.ShopSaleAdapter;
 import mimosale.com.home.shop_sale.ShopSaleModel;
 import mimosale.com.network.WebServiceURLs;
 import mimosale.com.products.ProductDetailsActivity;
+import mimosale.com.products.ProductDetailsActivityNew;
 import mimosale.com.shop.ShopDetailActivity;
 import mimosale.com.shop.ShopDetailsActivityNew;
 
@@ -95,7 +96,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MyViewHold
                     mctx.startActivity(new Intent(mctx,ShopDetailsActivityNew.class).putExtra("shop_id",items.getId()).putExtra("shop_name",items.getName()));
 
                 else
-                    mctx.startActivity(new Intent(mctx, ProductDetailsActivity.class).putExtra("product_id", items.getId()));
+                    mctx.startActivity(new Intent(mctx, ProductDetailsActivityNew.class).putExtra("product_id", items.getId()));
             }
         });
 

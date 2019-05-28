@@ -19,6 +19,7 @@ import java.io.OutputStream;
 
 public class CustomFileUtils {
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static String getPath(final Context context, final Uri uri) {
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 

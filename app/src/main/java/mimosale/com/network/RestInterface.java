@@ -224,5 +224,9 @@ public interface RestInterface {
                            @Field("web_url") String web_url,
                            @Field("user_id") String user_id,@Header("Authorization") String header,  Callback<JsonElement> callback);
 
+    @FormUrlEncoded
+    @POST(WebServiceURLs.DELETE_SALE)
+    void like_product(@Field("type") String type,@Field("user_id") String user_id,@Field("status") String status,@Field("mimo_id") String mimo_id,@Header("Authorization") String header,  Callback<JsonElement> callback);
+
 
 }

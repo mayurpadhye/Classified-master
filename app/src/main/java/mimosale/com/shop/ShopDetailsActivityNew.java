@@ -309,9 +309,11 @@ public class ShopDetailsActivityNew extends AppCompatActivity implements View.On
                                 String pincode = j1.getString("pincode");
                                 String lat = j1.getString("lat");
                                 String lon = j1.getString("lon");
-                                lati = Double.parseDouble(lat);
-                                longi = Double.parseDouble(lon);
-
+                               if (!lat.equals("null") && !lon.equals("null"))
+                               {
+                                   lati = Double.parseDouble(lat);
+                                   longi = Double.parseDouble(lon);
+                               }
 
                                 String low_price = j1.getString("low_price");
                                 String high_price = j1.getString("high_price");

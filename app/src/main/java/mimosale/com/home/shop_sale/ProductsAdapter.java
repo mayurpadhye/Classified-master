@@ -22,6 +22,8 @@ import mimosale.com.R;
 import mimosale.com.home.fragments.AllProductPojo;
 import mimosale.com.network.WebServiceURLs;
 import mimosale.com.products.ProductDetailsActivity;
+import mimosale.com.products.ProductDetailsActivityNew;
+
 import com.github.siyamed.shapeimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 import com.varunest.sparkbutton.SparkButton;
@@ -61,7 +63,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
         holder.cv_shop_main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mctx.startActivity(new Intent(mctx, ProductDetailsActivity.class).putExtra("product_id", items.getId()));
+                mctx.startActivity(new Intent(mctx, ProductDetailsActivityNew.class).putExtra("product_id", items.getId()));
             }
         });
 

@@ -42,6 +42,7 @@ import mimosale.com.network.RetrofitClient;
 import mimosale.com.network.WebServiceURLs;
 import mimosale.com.products.AddProductsActivity;
 import mimosale.com.products.ProductDetailsActivity;
+import mimosale.com.products.ProductDetailsActivityNew;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -79,7 +80,7 @@ public class MyProductPostingAdapter  extends RecyclerView.Adapter<MyProductPost
         holder.cv_shop_main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mctx.startActivity(new Intent(mctx, ProductDetailsActivity.class).putExtra("product_id", items.getId()));
+                mctx.startActivity(new Intent(mctx, ProductDetailsActivityNew.class).putExtra("product_id", items.getId()));
             }
         });
 

@@ -49,9 +49,7 @@ import mimosale.com.network.WebServiceURLs;
 import mimosale.com.preferences.MyPreferencesActivity;
 import mimosale.com.spalsh.SplashActivity;
 import com.facebook.shimmer.ShimmerFrameLayout;
-import com.google.cloud.translate.Translate;
-import com.google.cloud.translate.TranslateOptions;
-import com.google.cloud.translate.Translation;
+
 import com.google.gson.JsonElement;
 import com.squareup.picasso.Picasso;
 
@@ -505,18 +503,6 @@ device_id=Settings.Secure.getString(getActivity().getContentResolver(), Settings
         }
     }
 
-    private void translate(String textToTranslate, String targetLanguage, TranslateCallback callback) {
-        try {
-            TranslateOptions options = TranslateOptions.newBuilder()
-                    .setApiKey("AIzaSyBM4MOjpKKLmwzE5i94wdQJABy0knj49No")
-						.build();
-            Translate trService = options.getService();
-            Translation translation = trService.translate(textToTranslate,Translate.TranslateOption.targetLanguage(targetLanguage));
-            callback.onSuccess(translation.getTranslatedText());
-        }
-        catch(Exception e) {
-            callback.onFailure(e);
-        }
-    }
+
 
 }

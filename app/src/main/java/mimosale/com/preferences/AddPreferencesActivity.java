@@ -1,5 +1,6 @@
 package mimosale.com.preferences;
 
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,13 +11,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import mimosale.com.R;
-import com.joaquimley.faboptions.FabOptions;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AddPreferencesActivity extends AppCompatActivity implements View.OnClickListener {
-    FabOptions fabOptions;
+    FloatingActionButton fabOptions;
     TextView toolbar_title;
     ImageView iv_back;
     List<MyPreferencePojo> myPreferencePojoList;
@@ -33,7 +34,7 @@ public class AddPreferencesActivity extends AppCompatActivity implements View.On
     public void initView()
     {
         myPreferencePojoList=new ArrayList<MyPreferencePojo>();
-         fabOptions = (FabOptions) findViewById(R.id.fab_options);
+         fabOptions = (FloatingActionButton) findViewById(R.id.fab_options);
          toolbar_title=findViewById(R.id.toolbar_title);
         rv_my_preferences=findViewById(R.id.rv_my_preferences);
         iv_back=findViewById(R.id.iv_back);

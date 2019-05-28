@@ -10,6 +10,8 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.location.Address;
+import android.location.Geocoder;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -31,22 +33,32 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import mimosale.com.R;
 import mimosale.com.helperClass.CustomFileUtils;
 import mimosale.com.helperClass.CustomPermissions;
 import mimosale.com.helperClass.CustomUtils;
 import mimosale.com.helperClass.PrefManager;
+import mimosale.com.home.HomeFragment;
+import mimosale.com.home.preferences.PreferenceListModel;
+import mimosale.com.home.preferences.PreferencesListAdapter;
 import mimosale.com.my_posting.product_posting.PostingImagesAdapter;
 import mimosale.com.network.RestInterface;
 import mimosale.com.network.RetrofitClient;
 import mimosale.com.network.WebServiceURLs;
+import mimosale.com.post.SalePostingActivity;
+import mimosale.com.shop.EventImagesAdapter;
 import mimosale.com.shop.ImageVideoData;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.gson.JsonElement;
 import com.iceteck.silicompressorr.SiliCompressor;
 
@@ -61,6 +73,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import mimosale.com.shop.ShopPostingActivity;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -71,37 +84,76 @@ import retrofit.mime.TypedString;
 import static mimosale.com.helperClass.CustomUtils.IMAGE_LIMIT;
 
 public class AddProductsActivity extends AppCompatActivity implements View.OnClickListener {
+
+    @BindView(R.id.toolbar_title)
     TextView toolbar_title;
+    @BindView(R.id.iv_back)
     ImageView iv_back;
+    @BindView(R.id.btn_upload)
+    Button btn_upload;
+    @BindView(R.id.sp_select_shop)
+    Spinner sp_select_shop;
+    @BindView(R.id.rv_images)
+    RecyclerView rv_images;
+    @BindView(R.id.p_bar)
+    ProgressBar p_bar;
+    @BindView(R.id.btn_submit)
+    Button btn_submit;
+    @BindView(R.id.tl_hash_tag)
+    TextInputLayout tl_hash_tag;
+    @BindView(R.id.tl_product_name)
+    TextInputLayout tl_product_name;
+    @BindView(R.id.tl_desc)
+    TextInputLayout tl_desc;
+    @BindView(R.id.tl_price)
+    TextInputLayout tl_price;
+    @BindView(R.id.tl_discount)
+    TextInputLayout tl_discount;
+    @BindView(R.id.ll_cat)
+    LinearLayout ll_cat;
+    @BindView(R.id.sp_cat)
+    Spinner sp_cat;
+    @BindView(R.id.ll_sub_cat)
+    LinearLayout ll_sub_cat;
+    @BindView(R.id.sp_sub_cat)
+    Spinner sp_sub_cat;
+    @BindView(R.id.et_brand)
+    EditText et_brand;
+    @BindView(R.id.et_model_no)
+    EditText et_model_no;
+    @BindView(R.id.et_color)
+    EditText et_color;
+    @BindView(R.id.et_size)
+    EditText et_size;
+    @BindView(R.id.et_specification)
+    EditText et_specification;
+    @BindView(R.id.et_qty)
+    EditText et_qty;
+    PrefManager pref;
     List<String> shopnameList = new ArrayList<>();
     List<String> shopId = new ArrayList<>();
-    Spinner sp_select_shop;
     ArrayList<ImageVideoData> image_thumbnails;
-    Button btn_upload;
     ProgressDialog progressDialog;
     PostingImagesAdapter adapter;
     public ArrayList<File> imageFiles;
-    RecyclerView rv_images;
     LinearLayoutManager llm_images;
-    ProgressBar p_bar;
     String shop_id = "";
-
-    Button btn_submit;
     Intent i;
-    String isUpdate="";
-    TextInputLayout tl_hash_tag, tl_product_name, tl_desc, tl_price, tl_discount;
+    String isUpdate = "";
     EditText et_product_name, et_desc, et_price, et_discount, et_hash_tag;
-    String product_id="";
+    String product_id = "";
+    List<String>allPrefList=new ArrayList<>();
+    List<String>allPrefListId=new ArrayList<>();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_products);
-        i=getIntent();
+        ButterKnife.bind(this);
+        i = getIntent();
         initView();
-
-
         getUserShop();
-
         btn_upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,7 +163,6 @@ public class AddProductsActivity extends AppCompatActivity implements View.OnCli
                 } else {
                     selectImage();
                 }
-
             }
         });
 
@@ -142,57 +193,39 @@ public class AddProductsActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void initView() {
-        btn_submit = findViewById(R.id.btn_submit);
-        tl_hash_tag = findViewById(R.id.tl_hash_tag);
-        tl_product_name = findViewById(R.id.tl_product_name);
-        tl_desc = findViewById(R.id.tl_desc);
-        tl_price = findViewById(R.id.tl_price);
-        tl_discount = findViewById(R.id.tl_discount);
-        p_bar = findViewById(R.id.p_bar);
+        pref = PrefManager.getInstance(AddProductsActivity.this);
         et_product_name = findViewById(R.id.et_product_name);
         et_desc = findViewById(R.id.et_desc);
         et_discount = findViewById(R.id.et_discount);
         et_price = findViewById(R.id.et_price);
         et_hash_tag = findViewById(R.id.et_hash_tag);
-
         imageFiles = new ArrayList<>();
-        rv_images = findViewById(R.id.rv_images);
         llm_images = new LinearLayoutManager(getApplicationContext());
         llm_images.setOrientation(LinearLayoutManager.HORIZONTAL);
         image_thumbnails = new ArrayList<ImageVideoData>();
         adapter = new PostingImagesAdapter(AddProductsActivity.this, AddProductsActivity.this, image_thumbnails, "create");
-        toolbar_title = findViewById(R.id.toolbar_title);
         toolbar_title.setText(getResources().getString(R.string.add_products));
-        iv_back = findViewById(R.id.iv_back);
         iv_back.setOnClickListener(this);
         sp_select_shop = findViewById(R.id.sp_select_shop);
         btn_upload = findViewById(R.id.btn_upload);
-        toolbar_title.setText(""+getResources().getString(R.string.product_posting));
+        toolbar_title.setText("" + getResources().getString(R.string.product_posting));
         toolbar_title.setTextColor(getResources().getColor(R.color.black));
-
-         isUpdate=i.getStringExtra("isUpdate");
-
-        if (isUpdate.equals("true"))
-        {
-            String shop_id=i.getStringExtra("shop_name");
-            String product_name=i.getStringExtra("product_name");
-            String desc=i.getStringExtra("desc");
-            String price=i.getStringExtra("price");
-            String discount=i.getStringExtra("discount");
-            String hash_tag=i.getStringExtra("hash_tag");
-             product_id=i.getStringExtra("product_id");
-             et_product_name.setText(product_name);
+        isUpdate = i.getStringExtra("isUpdate");
+        if (isUpdate.equals("true")) {
+            String shop_id = i.getStringExtra("shop_name");
+            String product_name = i.getStringExtra("product_name");
+            String desc = i.getStringExtra("desc");
+            String price = i.getStringExtra("price");
+            String discount = i.getStringExtra("discount");
+            String hash_tag = i.getStringExtra("hash_tag");
+            product_id = i.getStringExtra("product_id");
+            et_product_name.setText(product_name);
             et_desc.setText(desc);
             et_price.setText(price);
             et_discount.setText(discount);
             et_hash_tag.setText(hash_tag);
         }
-
-
-
-
-
-
+        getUserPreferences();
     }
 
     private void selectImage() {
@@ -431,6 +464,8 @@ public class AddProductsActivity extends AppCompatActivity implements View.OnCli
                     break;
 
 
+
+
             }
         }
 
@@ -579,7 +614,7 @@ public class AddProductsActivity extends AppCompatActivity implements View.OnCli
             tl_product_name.setError(null);
         }
 
-        if (et_desc.getText().toString().trim().length() ==0) {
+        if (et_desc.getText().toString().trim().length() == 0) {
 
             et_desc.requestFocus();
             tl_desc.setError(getResources().getString(R.string.product_desc));
@@ -614,19 +649,18 @@ public class AddProductsActivity extends AppCompatActivity implements View.OnCli
         }
         if (imageFiles.size() <= 1) {
 
-            Toast.makeText(AddProductsActivity.this, ""+getResources().getString(R.string.please_select_atleast_two_images), Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddProductsActivity.this, "" + getResources().getString(R.string.please_select_atleast_two_images), Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if ( !isUpdate.equals("true"))
-        SaveProductDetails();
+        if (!isUpdate.equals("true"))
+            SaveProductDetails();
         else
             UpdateProductDetails();
 
     }
 
-    public void UpdateProductDetails()
-    {
+    public void UpdateProductDetails() {
         try {
             String user_id = PrefManager.getInstance(AddProductsActivity.this).getUserId();
             p_bar.setVisibility(View.VISIBLE);
@@ -667,7 +701,7 @@ public class AddProductsActivity extends AppCompatActivity implements View.OnCli
 
                                     new SweetAlertDialog(AddProductsActivity.this, SweetAlertDialog.SUCCESS_TYPE)
                                             .setTitleText(getResources().getString(R.string.success))
-                                            .setContentText(""+getResources().getString(R.string.product_updated))
+                                            .setContentText("" + getResources().getString(R.string.product_updated))
                                             .setConfirmText(getResources().getString(R.string.ok))
                                             .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                                 @Override
@@ -702,22 +736,87 @@ public class AddProductsActivity extends AppCompatActivity implements View.OnCli
 
         }
     }
+    public void getUserPreferences() {
 
+        try {
+
+            RetrofitClient retrofitClient = new RetrofitClient();
+            RestInterface service = retrofitClient.getAPIClient(WebServiceURLs.DOMAIN_NAME);
+            service.getUserPreferences(pref.getUserId(), "Bearer " + pref.getApiToken(), new Callback<JsonElement>() {
+                @Override
+                public void success(JsonElement jsonElement, Response response) {
+                    //this method call if webservice success
+                    try {
+                        JSONObject jsonObject = new JSONObject(jsonElement.toString());
+                        String status = jsonObject.getString("status");
+
+                        if (status.equals("1")) {
+                            allPrefList.clear();
+                            allPrefListId.clear();
+                            JSONArray data = jsonObject.getJSONArray("data");
+                            for (int i = 0; i < data.length(); i++) {
+                                JSONObject j1 = data.getJSONObject(i);
+                                String id = j1.getString("id");
+                                String name = j1.getString("name");
+                                String description = j1.getString("description");
+                                String image = j1.getString("image");
+                                String status1 = j1.getString("status");
+                                String created_at = j1.getString("created_at");
+                                String updated_at = j1.getString("updated_at");
+                                allPrefList.add(name);
+                                allPrefListId.add(id);
+                            }
+                            allPrefList.add(0,getResources().getString(R.string.select_category));
+                            allPrefListId.add(0,getResources().getString(R.string.select_category));
+
+                            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
+                                    (AddProductsActivity.this, android.R.layout.simple_spinner_item,
+                                            allPrefList); //selected item will look like a spinner set from XML
+                            spinnerArrayAdapter.setDropDownViewResource(android.R.layout
+                                    .simple_spinner_dropdown_item);
+                            sp_cat.setAdapter(spinnerArrayAdapter);
+
+
+                        }
+
+
+                    } catch (JSONException | NullPointerException e) {
+                        e.printStackTrace();
+
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Toast.makeText(AddProductsActivity.this, getResources().getString(R.string.check_internet), Toast.LENGTH_LONG).show();
+                    Log.i("fdfdfdfdfdf", "" + error.getMessage());
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+
+    }
     public void SaveProductDetails() {
         try {
             String user_id = PrefManager.getInstance(AddProductsActivity.this).getUserId();
             p_bar.setVisibility(View.VISIBLE);
-
             MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
             multipartTypedOutput.addPart("name", new TypedString(et_product_name.getText().toString().trim()));
             multipartTypedOutput.addPart("shop_id", new TypedString(shop_id));
             multipartTypedOutput.addPart("description", new TypedString(et_desc.getText().toString().trim()));
             multipartTypedOutput.addPart("price", new TypedString(et_price.getText().toString().trim()));
-
             multipartTypedOutput.addPart("user_id", new TypedString(user_id));
             multipartTypedOutput.addPart("discount", new TypedString(et_discount.getText().toString()));
-
-
+            multipartTypedOutput.addPart("brand", new TypedString(et_brand.getText().toString()));
+            multipartTypedOutput.addPart("model_number", new TypedString(et_model_no.getText().toString()));
+            multipartTypedOutput.addPart("quantity", new TypedString(et_qty.getText().toString()));
+            multipartTypedOutput.addPart("specification", new TypedString(et_specification.getText().toString()));
+            multipartTypedOutput.addPart("color", new TypedString(et_color.getText().toString()));
+            multipartTypedOutput.addPart("size", new TypedString(et_size.getText().toString()));
             if (imageFiles.size() > 0) {
                 for (int i = 0; i < imageFiles.size(); i++) {
                     multipartTypedOutput.addPart("product_photos[]", new TypedFile("application/octet-stream", new File(imageFiles.get(i).getAbsolutePath())));
@@ -725,26 +824,20 @@ public class AddProductsActivity extends AppCompatActivity implements View.OnCli
             } else {
                 multipartTypedOutput.addPart("product_photos", new TypedString(""));
             }
-
-
             RetrofitClient retrofitClient = new RetrofitClient();
             RestInterface service = retrofitClient.getAPIClient(WebServiceURLs.DOMAIN_NAME);
             service.addProduct("Bearer " + PrefManager.getInstance(AddProductsActivity.this).getApiToken(),
                     multipartTypedOutput, new Callback<JsonElement>() {
                         @Override
                         public void success(JsonElement jsonElement, Response response) {
-                            //this method call if webservice success
                             try {
                                 JSONObject jsonObject = new JSONObject(jsonElement.toString());
                                 String status = jsonObject.getString("status");
-
                                 if (status.equals("1")) {
-
                                     Toast.makeText(AddProductsActivity.this, "" + jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
-
                                     new SweetAlertDialog(AddProductsActivity.this, SweetAlertDialog.SUCCESS_TYPE)
                                             .setTitleText(getResources().getString(R.string.success))
-                                            .setContentText(""+jsonObject.getString("message"))
+                                            .setContentText("" + jsonObject.getString("message"))
                                             .setConfirmText(getResources().getString(R.string.ok))
                                             .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                                 @Override
@@ -753,10 +846,8 @@ public class AddProductsActivity extends AppCompatActivity implements View.OnCli
                                                 }
                                             })
                                             .show();
-
                                 } else {
                                     Toast.makeText(AddProductsActivity.this, "" + jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
-
                                 }
 
                                 p_bar.setVisibility(View.GONE);

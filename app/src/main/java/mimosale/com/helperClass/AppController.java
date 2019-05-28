@@ -1,6 +1,7 @@
 package mimosale.com.helperClass;
 
 import android.app.Application;
+import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
@@ -24,7 +25,9 @@ public class AppController extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        MultiDex.install(this);
         mInstance = this;
+
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("@font/segoe_ui.ttf")
                 .setFontAttrId(R.attr.fontPath)
