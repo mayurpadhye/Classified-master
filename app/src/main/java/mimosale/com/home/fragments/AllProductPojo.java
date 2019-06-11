@@ -3,8 +3,8 @@ package mimosale.com.home.fragments;
 public class AllProductPojo {
 
 String id,name,shop_id,user_id,description,price,hash_tag,status,product_images,image2,discount;
-
-    public AllProductPojo(String id, String name, String shop_id, String user_id, String description, String price, String hash_tag, String status, String product_images,String image2) {
+    String like_count, like_status, fav_status;
+    public AllProductPojo(String id, String name, String shop_id, String user_id, String description, String price, String hash_tag, String status, String product_images,String image2,String like_count,String like_status,String fav_status) {
         this.id = id;
         this.name = name;
         this.shop_id = shop_id;
@@ -15,6 +15,55 @@ String id,name,shop_id,user_id,description,price,hash_tag,status,product_images,
         this.status = status;
         this.image2=image2;
         this.product_images = product_images;
+        this.like_count=like_count;
+        this.like_status=like_status;
+        this.fav_status=fav_status;
+    }
+
+    public AllProductPojo(String id, String name, String shop_id, String user_id, String description, String price, String hash_tag, String status, String product_images,String image2)
+    {
+        this.id = id;
+        this.name = name;
+        this.shop_id = shop_id;
+        this.user_id = user_id;
+        this.description = description;
+        this.price = price;
+        this.hash_tag = hash_tag;
+        this.status = status;
+        this.image2=image2;
+        this.product_images = product_images;
+    }
+
+    public String getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(String discount) {
+        this.discount = discount;
+    }
+
+    public String getLike_count() {
+        return like_count;
+    }
+
+    public void setLike_count(String like_count) {
+        this.like_count = like_count;
+    }
+
+    public String getLike_status() {
+        return like_status;
+    }
+
+    public void setLike_status(String like_status) {
+        this.like_status = like_status;
+    }
+
+    public String getFav_status() {
+        return fav_status;
+    }
+
+    public void setFav_status(String fav_status) {
+        this.fav_status = fav_status;
     }
 
     public String getImage2() {

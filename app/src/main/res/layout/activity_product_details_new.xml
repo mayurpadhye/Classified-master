@@ -271,10 +271,10 @@
                 </LinearLayout>
     <View
         android:layout_width="match_parent"
-        android:layout_height="0.1dp"
-        android:background="@color/gray"
+        android:layout_height="1dp"
         android:layout_marginTop="@dimen/padding_10"
-        ></View>
+        android:layout_marginBottom="@dimen/padding_10"
+        android:background="@color/darker_gray"></View>
 </LinearLayout>
                 <TextView
                     android:id="@+id/tv_desc"
@@ -392,8 +392,11 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_margin="@dimen/padding_10"
-                    android:background="@color/gray"></View>
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginBottom="@dimen/padding_10"
+                    android:layout_marginRight="30dp"
+                    android:background="@color/darker_gray"></View>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -418,10 +421,12 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="0.1dp"
-                        android:layout_margin="5dp"
-                        android:background="@color/gray"></View>
-
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/padding_10"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginBottom="@dimen/padding_10"
+                        android:layout_marginRight="30dp"
+                        android:background="@color/darker_gray"></View>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -440,9 +445,12 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="0.1dp"
-                        android:layout_margin="5dp"
-                        android:background="@color/gray"></View>
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/padding_10"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginBottom="@dimen/padding_10"
+                        android:layout_marginRight="30dp"
+                        android:background="@color/darker_gray"></View>
                 </LinearLayout>
 
                 <RelativeLayout

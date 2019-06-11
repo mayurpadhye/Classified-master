@@ -93,6 +93,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="@string/shop_name"
+                                android:singleLine="true"
+                                android:nextFocusDown="@+id/et_shop_desc"
                                 android:importantForAutofill="noExcludeDescendants"
                                 android:textSize="14dp" />
 
@@ -147,7 +149,11 @@
                                 android:id="@+id/et_shop_desc"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:nextFocusDown="@+id/et_min_price"
                                 android:hint="@string/short_description"
+                                android:maxLength="122"
+                                android:inputType="textPersonName"
+                                android:imeOptions="actionNext"
                                 android:importantForAutofill="noExcludeDescendants"
                                 android:textSize="14dp" />
 
@@ -164,14 +170,12 @@
                                 android:id="@+id/sp_category"
                                 android:layout_width="match_parent"
                                 android:layout_height="35dp"
-
                                 android:layout_margin="3dp"></Spinner>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
-
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
@@ -215,7 +219,50 @@
                             android:textColor="@color/purple"
                             android:textSize="16dp" />
                     </RelativeLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/tl_min_price"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5">
+
+                            <EditText
+                                android:id="@+id/et_min_price"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/min_price"
+                                android:singleLine="true"
+                                android:importantForAutofill="noExcludeDescendants"
+                                android:inputType="number"
+                                android:nextFocusDown="@+id/et_max_price"
+                                android:textSize="14dp" />
+
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/tl_max_price"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5">
+
+                            <EditText
+                                android:id="@+id/et_max_price"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/max_price"
+                                android:singleLine="true"
+                                android:inputType="number"
+                                android:nextFocusDown="@+id/et_pincode"
+                                android:importantForAutofill="noExcludeDescendants"
+                                android:textSize="14dp" />
+
+                        </android.support.design.widget.TextInputLayout>
+
+                    </LinearLayout>
                     <LinearLayout
                         android:id="@+id/ll_pricing"
                         android:layout_width="match_parent"
@@ -255,7 +302,6 @@
                                 android:layout_margin="4dp"
                                 android:background="@drawable/edit_back"
                                 android:minHeight="35dp">
-
                                 <Spinner
                                     android:id="@+id/sp_discount"
                                     android:layout_width="match_parent"
@@ -302,7 +348,59 @@
 
                                 </android.support.design.widget.TextInputLayout>
                             </LinearLayout>
+                            <android.support.design.widget.TextInputLayout
+                                android:id="@+id/tl_coupon_title"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5">
 
+                                <EditText
+                                    android:id="@+id/et_coupon_title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/coupon_title"
+                                    android:inputType="textPersonName"
+
+                                    android:importantForAutofill="noExcludeDescendants"
+                                    android:textSize="14dp" />
+
+                            </android.support.design.widget.TextInputLayout>
+
+                            <android.support.design.widget.TextInputLayout
+                                android:id="@+id/tl_coupon_desc"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5">
+
+                                <EditText
+                                    android:id="@+id/et_coupon_desc"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/coupon_desc"
+                                    android:inputType="textPersonName"
+
+                                    android:importantForAutofill="noExcludeDescendants"
+                                    android:textSize="14dp" />
+
+                            </android.support.design.widget.TextInputLayout>
+
+                            <android.support.design.widget.TextInputLayout
+                                android:id="@+id/tl_no_claims"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5">
+
+                                <EditText
+                                    android:id="@+id/et_no_claims"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/no_of_claims"
+                                    android:inputType="number"
+                                    android:singleLine="true"
+                                    android:importantForAutofill="noExcludeDescendants"
+                                    android:textSize="14dp" />
+
+                            </android.support.design.widget.TextInputLayout>
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -353,46 +451,7 @@
                             </LinearLayout>
                         </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
 
-                            <android.support.design.widget.TextInputLayout
-                                android:id="@+id/tl_min_price"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.5">
-
-                                <EditText
-                                    android:id="@+id/et_min_price"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:hint="@string/min_price"
-                                    android:importantForAutofill="noExcludeDescendants"
-                                    android:inputType="number"
-                                    android:textSize="14dp" />
-
-                            </android.support.design.widget.TextInputLayout>
-
-                            <android.support.design.widget.TextInputLayout
-                                android:id="@+id/tl_max_price"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.5">
-
-                                <EditText
-                                    android:id="@+id/et_max_price"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:hint="@string/max_price"
-                                    android:inputType="number"
-                                    android:importantForAutofill="noExcludeDescendants"
-                                    android:textSize="14dp" />
-
-                            </android.support.design.widget.TextInputLayout>
-
-                        </LinearLayout>
                     </LinearLayout>
 
                 </LinearLayout>
@@ -455,14 +514,15 @@
                         android:layout_margin="@dimen/padding_10"
                         android:drawablePadding="@dimen/padding_10"
                         android:ems="10"
-                        android:background="@drawable/rounded_shape_button"
+                        android:textColor="@color/white"
+                        android:background="@drawable/btn_rounnded_red"
                         />
                     <Button
                         android:id="@+id/btn_add_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:minHeight="35dp"
-                        android:text="@string/add_addess"
+                        android:text="@string/search_address"
                         android:textAllCaps="false"
                         android:layout_margin="@dimen/padding_10"
                         android:drawablePadding="@dimen/padding_10"
@@ -475,7 +535,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:visibility="gone">
+                        android:visibility="visible">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -554,6 +614,7 @@
                                     android:focusable="false"
                                     android:focusableInTouchMode="true"
                                     android:clickable="true"
+                                    android:singleLine="true"
                                     android:importantForAutofill="noExcludeDescendants"
                                     android:inputType="number"
                                     android:textSize="14dp" />
@@ -571,6 +632,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:hint="@string/city"
+                                    android:singleLine="true"
                                     android:importantForAutofill="noExcludeDescendants"
                                     android:textSize="14dp" />
 
@@ -588,6 +650,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="@string/state"
+                                android:singleLine="true"
                                 android:importantForAutofill="noExcludeDescendants"
                                 android:textSize="14dp" />
 
@@ -603,6 +666,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="@string/country"
+                                android:singleLine="true"
                                 android:importantForAutofill="noExcludeDescendants"
                                 android:textSize="14dp" />
 
@@ -620,6 +684,7 @@
                                 android:layout_height="wrap_content"
                                 android:importantForAutofill="noExcludeDescendants"
                                 android:hint="@string/address_line1"
+                                android:inputType="textPersonName"
                                 android:textSize="14dp" />
 
                         </android.support.design.widget.TextInputLayout>
@@ -634,6 +699,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="@string/address_line2"
+                                android:inputType="textPersonName"
                                 android:importantForAutofill="noExcludeDescendants"
                                 android:textSize="14dp" />
                         </android.support.design.widget.TextInputLayout>
@@ -653,6 +719,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:hint="@string/postal_code"
+                                    android:singleLine="true"
                                     android:importantForAutofill="noExcludeDescendants"
                                     android:textSize="14dp" />
 
@@ -669,6 +736,7 @@
                                     android:layout_height="wrap_content"
                                     android:hint="@string/phone_number"
                                     android:inputType="phone"
+                                    android:singleLine="true"
                                     android:importantForAutofill="noExcludeDescendants"
                                     android:textSize="14dp" />
 
@@ -738,6 +806,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="@string/hash_tag"
+                                android:singleLine="true"
                                 android:importantForAutofill="noExcludeDescendants"
                                 android:textSize="14dp" />
 
@@ -771,6 +840,7 @@
                                     android:id="@+id/et_url"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:singleLine="true"
                                     android:importantForAutofill="noExcludeDescendants"
                                     android:hint="@string/addurl"
                                     android:textSize="14dp" />
@@ -812,7 +882,7 @@
                     android:layout_marginBottom="20dp"
                     android:layout_weight="0.5"
                     android:background="@drawable/button_shape_black"
-                    android:text="@string/save"
+                    android:text="@string/submit"
                     android:textColor="@color/white" />
             </LinearLayout>
         </LinearLayout>

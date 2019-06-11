@@ -21,8 +21,6 @@ public class  WebServiceURLs {
     public static final String ADD_USER_PREF="/addUserPreferences";
     public static final String ADD_SHOP_POSTING="/addUserShop";
     public static final String ADD_DEVICEID_PREF="/addDevicePreferences";
-
-
     public static final String ALL_SHOP_AND_SALE="/shops";
     public static final String GET_ALL_PRODUCTS="/products";
     public static final String GET_SHOP_DETAILS="/viewShop";
@@ -33,10 +31,8 @@ public class  WebServiceURLs {
     public static final String GET_MY_PRODUCT_POSTING="/productListing";
     public static final String ADD_SALE_POSTING="/addSale";
     public static final String GET_ALL_PREFRENCES="/preferences";
-
     public static final String MY_SALE_POSTING="/saleListing";
     public static final String SEARCH_RESULT="/getglobalSearchRecord";
-
     public static final String GET_DEVICE_WISE_PREF="/devicePreferences";
     public static final String UPDATE_USER="/updateProfile";
     public static final String SUBMIT_FEEDBACK="/submitFeedback";
@@ -49,6 +45,12 @@ public class  WebServiceURLs {
     public static final String UPDATE_PRODUCTS="/updateUserProduct";
     public static final String DELETE_SALE="/deleteSale";
     public static final String UPDATE_SALE="/deleteSale";
+    public static final String ADD_TO_FAV="/addToFavouritelist";
+    public static final String REMOVE_FROM_FAV="/removeFromFavouritelist";
+    public static final String GET_ALL_FAVORITE="/favouriteList";
+    public static final String LIKE_SHOP_PRODUCT="/likeMimo";
+    public static final String CLAIM_COUPON="/claimNow";
+    public static final String WRITE_REVIEW="/addRating";
 
 
 

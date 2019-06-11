@@ -22,6 +22,7 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -52,6 +53,7 @@ import mimosale.com.login.LoginActivity;
 import mimosale.com.network.RestInterface;
 import mimosale.com.network.RetrofitClient;
 import mimosale.com.network.WebServiceURLs;
+
 import com.google.gson.JsonElement;
 
 import org.json.JSONObject;
@@ -87,18 +89,19 @@ public class RegistrationActivity extends AppCompatActivity {
     TextView toolbar_title;
     ImageView iv_back;
     ProgressBar p_bar;
-    EditText et_first_name,et_last_name,et_mobile,et_password,et_cpassword,et_email;
+    EditText et_first_name, et_last_name, et_mobile , et_email;
+    TextInputEditText et_password,et_cpassword;
     CircleImageView cv_profile;
     Button btn_register;
     ImageView iv_pick_image;
     public static final int RequestPermissionCode = 1;
-    TextInputLayout tl_f_name,tl_c_pass,tl_pass,tl_email,tl_mobile_no,tl_last_name;
+    TextInputLayout tl_f_name, tl_c_pass, tl_pass, tl_email, tl_mobile_no, tl_last_name;
     String convertedImage;
     Bitmap myBitmap;
-    String imageFilePath="";
+    String imageFilePath = "";
     Uri picUri;
     File f;
-    String intent_from="";
+    String intent_from = "";
     private ArrayList<String> permissionsToRequest;
     private ArrayList<String> permissionsRejected = new ArrayList<>();
     private ArrayList<String> permissions = new ArrayList<>();
@@ -109,14 +112,13 @@ public class RegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
-        toolbar=findViewById(R.id.toolbar);
-        iv_pick_image=findViewById(R.id.iv_pick_image);
-        toolbar_title=findViewById(R.id.toolbar_title);
-        iv_back=findViewById(R.id.iv_back);
-        p_bar=findViewById(R.id.p_bar);
+        toolbar = findViewById(R.id.toolbar);
+        iv_pick_image = findViewById(R.id.iv_pick_image);
+        toolbar_title = findViewById(R.id.toolbar_title);
+        iv_back = findViewById(R.id.iv_back);
+        p_bar = findViewById(R.id.p_bar);
         toolbar_title.setText(getResources().getString(R.string.register));
         toolbar_title.setAllCaps(true);
-
         initView();
         iv_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,132 +135,111 @@ public class RegistrationActivity extends AppCompatActivity {
         iv_pick_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(checkPermission()){
-                    final CharSequence[] options = { getResources().getString(R.string.take_photo), getResources().getString(R.string.choose_from_gallery),getResources().getString(R.string.cancel) };
+                if (checkPermission()) {
+                    final CharSequence[] options = {getResources().getString(R.string.take_photo), getResources().getString(R.string.choose_from_gallery), getResources().getString(R.string.cancel)};
                     AlertDialog.Builder builder = new AlertDialog.Builder(RegistrationActivity.this);
                     builder.setTitle(getResources().getString(R.string.add_profile_pic_title));
                     builder.setItems(options, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int item) {
-                            if (options[item].equals(getResources().getString(R.string.take_photo)))
-                            {
+                            if (options[item].equals(getResources().getString(R.string.take_photo))) {
                                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                 File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
-                                intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(RegistrationActivity.this, BuildConfig.APPLICATION_ID + ".provider",f));
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(RegistrationActivity.this, BuildConfig.APPLICATION_ID + ".provider", f));
                                 startActivityForResult(intent, 1);
-                            }
-                            else if (options[item].equals(getResources().getString(R.string.choose_from_gallery)))
-                            {
-                                Intent intent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            } else if (options[item].equals(getResources().getString(R.string.choose_from_gallery))) {
+                                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                                 startActivityForResult(intent, 2);
-                            }
-                            else if (options[item].equals("Cancel")) {
+                            } else if (options[item].equals("Cancel")) {
                                 dialog.dismiss();
                             }
                         }
                     });
                     builder.show();
-                }
-                else {
+                } else {
                     requestPermission();
                 }
             }
         });
 
 
-
     }
 
 
-    public void submitForm()
-    {
+    public void submitForm() {
         //  SignUp();
 
-            if (et_first_name.getText().toString().trim().length()==0)
-            {
-                et_first_name.requestFocus();
-                tl_f_name.setError(getResources().getString(R.string.enter_first_name));
+        if (et_first_name.getText().toString().trim().length() == 0) {
+            et_first_name.requestFocus();
+            tl_f_name.setError(getResources().getString(R.string.enter_first_name));
+        }
+
+
+        et_last_name.requestFocus();
+        if (et_last_name.getText().toString().trim().length() == 0) {
+
+            tl_last_name.setError(getResources().getString(R.string.enter_last_name));
+        }
+
+
+        if (!et_mobile.getText().toString().trim().isEmpty()) {
+            if (!isValidMobile(et_mobile.getText().toString().trim())) {
+                et_mobile.requestFocus();
+                if (et_mobile.getText().toString().trim().length() == 0) {
+                    tl_mobile_no.setError(getResources().getString(R.string.enter_mobile_no));
+                } else {
+                    tl_mobile_no.setError(getResources().getString(R.string.mobile_error));
+                }
+
+                return;
+            } else {
+                tl_mobile_no.setError(null);
             }
+        }
 
+        if (!et_email.getText().toString().trim().isEmpty()) {
+            if (!isValidMail(et_email.getText().toString().trim())) {
+                et_email.requestFocus();
+                if (et_email.getText().toString().trim().length() == 0) {
+                    tl_email.setError(getResources().getString(R.string.enter_email_id));
+                } else {
+                    tl_email.setError(getResources().getString(R.string.email_error));
+                }
 
-            et_last_name.requestFocus();
-            if (et_last_name.getText().toString().trim().length()==0)
-            {
-
-                tl_last_name.setError(getResources().getString(R.string.enter_last_name));
+                return;
+            } else {
+                tl_email.setError(null);
             }
+        }
 
-
-
-        if (!isValidMobile(et_mobile.getText().toString().trim()))
-        {
-            et_mobile.requestFocus();
-            if (et_mobile.getText().toString().trim().length()==0)
-            {
-                tl_mobile_no.setError(getResources().getString(R.string.enter_mobile_no));
-            }
-            else
-            {
-                tl_mobile_no.setError(getResources().getString(R.string.mobile_error));
-            }
-
+        if (et_mobile.getText().toString().trim().isEmpty() && et_email.getText().toString().trim().isEmpty()) {
+            tl_email.setError(getResources().getString(R.string.enter_email_id));
             return;
         }
-        else
-        {
-            tl_mobile_no.setError(null);
-        }
-        if (!isValidMail(et_email.getText().toString().trim()))
-        {
-            et_email.requestFocus();
-            if (et_email.getText().toString().trim().length()==0)
-            {
-                tl_email.setError(getResources().getString(R.string.enter_email_id));
-            }
-            else
-            {
-                tl_email.setError(getResources().getString(R.string.email_error));
-            }
-
-            return;
-        }
-        else
-        {
-            tl_email.setError(null);
-        }
 
 
-        if (!validatePassword(et_password.getText().toString().trim()))
-        {
+        if (!validatePassword(et_password.getText().toString().trim())) {
             et_password.requestFocus();
             tl_pass.setError(getResources().getString(R.string.password_error));
             return;
-        }
-        else
-        {
+        } else {
             tl_pass.setError(null);
         }
-        if (!validateConfirmPassword(et_cpassword.getText().toString().trim()))
-        {
+        if (!validateConfirmPassword(et_cpassword.getText().toString().trim())) {
             et_cpassword.requestFocus();
-            if (et_cpassword.getText().toString().trim().length()==0)
-            {
+            if (et_cpassword.getText().toString().trim().length() == 0) {
                 tl_c_pass.setError(getResources().getString(R.string.enter_confirm_pass));
-            }
-            else
+            } else
                 tl_c_pass.setError(getResources().getString(R.string.c_password_error));
             return;
-        }
-        else
-        {
+        } else {
             tl_c_pass.setError(null);
         }
         RegisterUser();
     }//submitFormClose
 
 
-    public void RegisterUser()
-    {
+    public void RegisterUser() {
         p_bar.setVisibility(View.VISIBLE);
         MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
         multipartTypedOutput.addPart("email", new TypedString(et_email.getText().toString().trim()));
@@ -266,12 +247,9 @@ public class RegistrationActivity extends AppCompatActivity {
         multipartTypedOutput.addPart("first_name", new TypedString(et_first_name.getText().toString().trim()));
         multipartTypedOutput.addPart("last_name", new TypedString(et_last_name.getText().toString().trim()));
         multipartTypedOutput.addPart("mobile", new TypedString(et_mobile.getText().toString().trim()));
-       if (f!=null)
-        {
+        if (f != null) {
             multipartTypedOutput.addPart("profile_image", new TypedFile("application/octet-stream", f));
-        }
-        else
-        {
+        } else {
             multipartTypedOutput.addPart("profile_image", new TypedString(""));
         }
 
@@ -285,30 +263,29 @@ public class RegistrationActivity extends AppCompatActivity {
                 try {
                     p_bar.setVisibility(View.GONE);
 
-                    JSONObject jsonObject=new JSONObject(jsonElement.toString());
-                    String status=jsonObject.getString("status");
-                    String message=jsonObject.getString("message");
+                    JSONObject jsonObject = new JSONObject(jsonElement.toString());
+                    String status = jsonObject.getString("status");
+                    String message = jsonObject.getString("message");
 
-                    if (status.equals("1"))
-                    {
+                    if (status.equals("1")) {
                         Toast.makeText(RegistrationActivity.this, message, Toast.LENGTH_LONG).show();
 
-                        JSONObject data=jsonObject.getJSONObject("data");
-                        String email=data.getString("email");
-                        String first_name=data.getString("first_name");
-                        String last_name=data.getString("email");
-                        String mobile=data.getString("mobile");
-                        String is_premium=data.getString("is_premium");
-                        String is_seller=data.getString("is_seller");
-                        String status1=data.getString("status");
-                        String role_id=data.getString("role_id");
-                        String email_status=data.getString("email_status");
-                        String mobile_status=data.getString("mobile_status");
-                        String term_accept=data.getString("term_accept");
-                        String username=data.getString("username");
-                        String id=data.getString("id");
-                        String profile_image=data.getString("profile_image");
-                        String token= jsonObject.getString("token");
+                        JSONObject data = jsonObject.getJSONObject("data");
+                        String email = data.getString("email");
+                        String first_name = data.getString("first_name");
+                        String last_name = data.getString("last_name");
+                        String mobile = data.getString("mobile");
+                        String is_premium = data.getString("is_premium");
+                        String is_seller = data.getString("is_seller");
+                        String status1 = data.getString("status");
+                        String role_id = data.getString("role_id");
+                        String email_status = data.getString("email_status");
+                        String mobile_status = data.getString("mobile_status");
+                        String term_accept = data.getString("term_accept");
+                        String username = data.getString("username");
+                        String id = data.getString("id");
+                        String profile_image = data.getString("profile_image");
+                        String token = jsonObject.getString("token");
                         PrefManager.getInstance(RegistrationActivity.this);
                         PrefManager.setEmail(email);
                         PrefManager.setApiToken(token);
@@ -319,22 +296,16 @@ public class RegistrationActivity extends AppCompatActivity {
                         PrefManager.setProfilePic(profile_image);
                         PrefManager.setIsLogin(true);
                         PrefManager.getInstance(RegistrationActivity.this).setFeedbackStatus("0");
-                        startActivity(new Intent(RegistrationActivity.this,HomeActivity.class));
+                        startActivity(new Intent(RegistrationActivity.this, HomeActivity.class));
                         finish();
 
                        /* Intent intent = new Intent();
                         intent.putExtra("intent_from",  intent_from);
                         setResult(RESULT_OK, intent);
                         finish();*/
+                    } else if (status.equals("0")) {
+                        Toast.makeText(RegistrationActivity.this, "" + getResources().getString(R.string.user_already_registered), Toast.LENGTH_SHORT).show();
                     }
-                    else if (status.equals("0"))
-                    {
-                        Toast.makeText(RegistrationActivity.this, ""+getResources().getString(R.string.user_already_registered), Toast.LENGTH_SHORT).show();
-                    }
-
-
-
-
 
 
                 } catch (Exception je) {
@@ -356,12 +327,13 @@ public class RegistrationActivity extends AppCompatActivity {
 
 
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == 1) {
-                 f = new File(Environment.getExternalStorageDirectory().toString());
+                f = new File(Environment.getExternalStorageDirectory().toString());
                 for (File temp : f.listFiles()) {
                     if (temp.getName().equals("temp.jpg")) {
                         f = temp;
@@ -386,7 +358,7 @@ public class RegistrationActivity extends AppCompatActivity {
                     String path = android.os.Environment.getExternalStorageDirectory() + File.separator + "Phoenix" + File.separator + "default";
                     f.delete();
                     OutputStream outFile = null;
-                    f=createImageFile();
+                    f = createImageFile();
                     File file = new File(path, String.valueOf(System.currentTimeMillis()) + ".jpg");
                     try {
                         outFile = new FileOutputStream(file);
@@ -402,13 +374,13 @@ public class RegistrationActivity extends AppCompatActivity {
             } else if (requestCode == 2) {
 
                 Uri selectedImage = data.getData();
-                String[] filePath = { MediaStore.Images.Media.DATA};
-                Cursor c = getContentResolver().query(selectedImage,filePath, null, null, null);
+                String[] filePath = {MediaStore.Images.Media.DATA};
+                Cursor c = getContentResolver().query(selectedImage, filePath, null, null, null);
                 assert c != null;
                 c.moveToFirst();
                 int columnIndex = c.getColumnIndex(filePath[0]);
                 String picturePath = c.getString(columnIndex);
-                f=new File(picturePath);
+                f = new File(picturePath);
                 c.close();
                 Bitmap thumbnail = (BitmapFactory.decodeFile(picturePath));
                 convertedImage = convertImgPathToBase64(picturePath);
@@ -442,6 +414,27 @@ public class RegistrationActivity extends AppCompatActivity {
         switch (RC) {
             case RequestPermissionCode:
                 if (PResult.length > 0 && PResult[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    final CharSequence[] options = {getResources().getString(R.string.take_photo), getResources().getString(R.string.choose_from_gallery), getResources().getString(R.string.cancel)};
+                    AlertDialog.Builder builder = new AlertDialog.Builder(RegistrationActivity.this);
+                    builder.setTitle(getResources().getString(R.string.add_profile_pic_title));
+                    builder.setItems(options, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int item) {
+                            if (options[item].equals(getResources().getString(R.string.take_photo))) {
+                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(RegistrationActivity.this, BuildConfig.APPLICATION_ID + ".provider", f));
+                                startActivityForResult(intent, 1);
+                            } else if (options[item].equals(getResources().getString(R.string.choose_from_gallery))) {
+                                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                startActivityForResult(intent, 2);
+                            } else if (options[item].equals("Cancel")) {
+                                dialog.dismiss();
+                            }
+                        }
+                    });
+                    builder.show();
 //                    Toast.makeText(DetailPage.this,"Permission Granted, Now your application can access CAMERA.", Toast.LENGTH_LONG).show();
                     Log.e("Permission Granted", "Permission Granted, Now your application can access CAMERA.");
                 } else {
@@ -451,67 +444,57 @@ public class RegistrationActivity extends AppCompatActivity {
         }
     }
 
-    public String convertImgPathToBase64(String filePath){
+    public String convertImgPathToBase64(String filePath) {
         Bitmap bmp = null;
         ByteArrayOutputStream bos = null;
         byte[] bt = null;
         String encodeString = null;
-        try{
+        try {
             bmp = BitmapFactory.decodeFile(filePath);
             bos = new ByteArrayOutputStream();
             bmp.compress(Bitmap.CompressFormat.JPEG, 50, bos);
             bt = bos.toByteArray();
             encodeString = Base64.encodeToString(bt, Base64.DEFAULT);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return encodeString;
     }
 
-    private String convertBitmapToBase64(Bitmap bm)
-    {
+    private String convertBitmapToBase64(Bitmap bm) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG,50,baos);
+        bm.compress(Bitmap.CompressFormat.JPEG, 50, baos);
         byte[] b = baos.toByteArray();
         String encImage = Base64.encodeToString(b, Base64.DEFAULT);
 
         return encImage;
     }
 
-    public void initView()
-    {
-        try{
-            intent_from=getIntent().getStringExtra("intent_from");
-        }
-        catch (Exception e)
-        {
+    public void initView() {
+        try {
+            intent_from = getIntent().getStringExtra("intent_from");
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        cv_profile=findViewById(R.id.cv_profile);
-        et_first_name=findViewById(R.id.et_first_name);
-        tl_f_name=findViewById(R.id.tl_f_name);
-        tl_c_pass=findViewById(R.id.tl_c_pass);
-        tl_pass=findViewById(R.id.tl_pass);
-        tl_last_name=findViewById(R.id.tl_last_name);
-        tl_mobile_no=findViewById(R.id.tl_mobile_no);
-        tl_email=findViewById(R.id.tl_email);
+        cv_profile = findViewById(R.id.cv_profile);
+        et_first_name = findViewById(R.id.et_first_name);
+        tl_f_name = findViewById(R.id.tl_f_name);
+        tl_c_pass = findViewById(R.id.tl_c_pass);
+        tl_pass = findViewById(R.id.tl_pass);
+        tl_last_name = findViewById(R.id.tl_last_name);
+        tl_mobile_no = findViewById(R.id.tl_mobile_no);
+        tl_email = findViewById(R.id.tl_email);
 
 
-
-        et_last_name=findViewById(R.id.et_last_name);
-        et_mobile=findViewById(R.id.et_mobile);
-        et_password=findViewById(R.id.et_password);
-        et_cpassword=findViewById(R.id.et_cpassword);
-        et_email=findViewById(R.id.et_email);
-        btn_register=findViewById(R.id.btn_register);
+        et_last_name = findViewById(R.id.et_last_name);
+        et_mobile = findViewById(R.id.et_mobile);
+        et_password = findViewById(R.id.et_password);
+        et_cpassword = findViewById(R.id.et_cpassword);
+        et_email = findViewById(R.id.et_email);
+        btn_register = findViewById(R.id.btn_register);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
-
-
-
 
 
     }//initViewClose
@@ -530,15 +513,16 @@ public class RegistrationActivity extends AppCompatActivity {
         m = p.matcher(email);
         check = m.matches();
 
-        if(!check) {
-            et_mobile.setError("Not Valid Email");
+        if (!check) {
+            tl_email.setError(getResources().getString(R.string.not_valid_mail));
         }
         return check;
     }
+
     private boolean isValidMobile(String phone) {
-        boolean check=false;
-        if(!Pattern.matches("[a-zA-Z]+", phone)) {
-            if(phone.length() < 8 || phone.length() > 15) {
+        boolean check = false;
+        if (!Pattern.matches("[a-zA-Z]+", phone)) {
+            if (phone.length() < 8 || phone.length() > 15) {
                 // if(phone.length() != 10) {
                 check = false;
                 et_mobile.setError("Not Valid Number");
@@ -546,35 +530,34 @@ public class RegistrationActivity extends AppCompatActivity {
                 check = true;
             }
         } else {
-            check=false;
+            check = false;
         }
         return check;
     }
-    public  boolean isValidateFirstName( String firstName )
-    {
+
+    public boolean isValidateFirstName(String firstName) {
         if (firstName.trim().equals(""))
-            return  false;
+            return false;
         else
             return firstName.matches("[a-zA-Z]*");
 
     } // end method validateFirstName
 
     // validate last name
-    public  boolean isValidateLastName( String lastName )
-    {
+    public boolean isValidateLastName(String lastName) {
         if (lastName.trim().equals(""))
-            return  false;
+            return false;
         else
             return lastName.matches("[a-zA-Z]*");
     }
 
-    public boolean validatePassword( String password)
-    {
-       if (password.length()>0)
-       return true;
-       else
-           return false;
+    public boolean validatePassword(String password) {
+        if (password.length() > 0)
+            return true;
+        else
+            return false;
     }
+
     private File createImageFile() throws IOException {
         String timeStamp =
                 new SimpleDateFormat("yyyyMMdd_HHmmss",
@@ -591,13 +574,11 @@ public class RegistrationActivity extends AppCompatActivity {
         imageFilePath = image.getAbsolutePath();
         return image;
     }
-    public boolean validateConfirmPassword( String Cpassword)
-    {
-        if (Cpassword.length()>0 && Cpassword.equals(et_password.getText().toString()))
-        {
+
+    public boolean validateConfirmPassword(String Cpassword) {
+        if (Cpassword.length() > 0 && Cpassword.equals(et_password.getText().toString())) {
             return true;
-        }
-        else
+        } else
             return false;
     }
 

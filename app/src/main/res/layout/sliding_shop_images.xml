@@ -16,9 +16,7 @@
         android:id="@+id/opacityFilter"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="#5b000000"
         android:gravity="bottom"
         android:orientation="vertical" >
-
     </LinearLayout>
 </RelativeLayout>

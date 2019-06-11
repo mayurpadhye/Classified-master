@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
@@ -16,7 +17,11 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import mimosale.com.R;
+import mimosale.com.home.HomeActivity;
+import mimosale.com.login.LoginActivity;
+import mimosale.com.onItemClickListener;
 
 import java.io.ByteArrayOutputStream;
 
@@ -30,7 +35,7 @@ public class CustomUtils {
     public static final String JAPNEESE_CODE="ja";
     public static final int IMAGE_LIMIT = 5 ;
     public static final int VIDEO_LIMIT = 2 ;
-
+public static  SweetAlertDialog sweetAlert;
     public static void showToast(String msg, Context context){
 
         Toast toast= Toast.makeText(context,msg, Toast.LENGTH_SHORT);
@@ -53,6 +58,38 @@ public class CustomUtils {
                 return false;
         } else return false;
     }
+
+
+    public static void showSweetAlert(Context context, String msg, final onItemClickListener listener)
+    {
+        if (sweetAlert==null)
+        {
+            sweetAlert=new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE);
+            sweetAlert.setTitleText(context.getResources().getString(R.string.login_waning));
+            sweetAlert.setContentText(msg);
+            sweetAlert.setConfirmText(context.getResources().getString(R.string.ok));
+            sweetAlert.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                @Override
+                public void onClick(SweetAlertDialog sDialog) {
+                    listener.onClick(sDialog);
+                }
+
+            });
+
+            sweetAlert.show();
+        }
+
+    }
+
+    public static void dismissSweetAlert()
+    {
+        if (sweetAlert.isShowing())
+        {
+            sweetAlert.dismissWithAnimation();
+        }
+    }
+
+
 
     public static void hideKeyboard(View view, Context context) {
         InputMethodManager inputMethodManager =(InputMethodManager)context.getSystemService(Activity.INPUT_METHOD_SERVICE);

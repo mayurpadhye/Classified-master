@@ -19,13 +19,14 @@ import mimosale.com.login.LoginActivity;
 import mimosale.com.network.RestInterface;
 import mimosale.com.network.RetrofitClient;
 import mimosale.com.network.WebServiceURLs;
-import mimosale.com.noInternet.NoInternetActivity;
+
 import com.google.gson.JsonElement;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import mimosale.com.no_internet.NoInternetActivity;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -62,7 +63,7 @@ public class SplashActivity extends AppCompatActivity {
 
                     } else {
                         // startActivity(new Intent(SplashActivity.this, NoInternetActivity.class));
-                        Intent i = new Intent(SplashActivity.this, LoginActivity.class);
+                        Intent i = new Intent(SplashActivity.this, NoInternetActivity.class);
                         startActivity(i);
                         finish();
                     }

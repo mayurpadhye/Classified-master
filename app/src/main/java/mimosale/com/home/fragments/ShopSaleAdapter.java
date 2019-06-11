@@ -1,11 +1,14 @@
 package mimosale.com.home.fragments;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,25 +18,36 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import mimosale.com.R;
 
+import mimosale.com.helperClass.PrefManager;
 import mimosale.com.home.shop_sale.ShopSaleModel;
+import mimosale.com.login.LoginActivity;
+import mimosale.com.network.RestInterface;
+import mimosale.com.network.RetrofitClient;
 import mimosale.com.network.WebServiceURLs;
-import mimosale.com.preferences.MyPreferencesActivity;
-import mimosale.com.products.ProductDetailsActivity;
 import mimosale.com.products.ProductDetailsActivityNew;
-import mimosale.com.shop.ShopDetailActivity;
 import mimosale.com.shop.ShopDetailsActivityNew;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.github.siyamed.shapeimageview.RoundedImageView;
+import com.google.gson.JsonElement;
 import com.romainpiel.shimmer.Shimmer;
 import com.romainpiel.shimmer.ShimmerTextView;
 import com.squareup.picasso.Picasso;
 import com.varunest.sparkbutton.SparkButton;
+import com.varunest.sparkbutton.SparkEventListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -42,35 +56,30 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
 
     Context mctx;
     Shimmer shimmer;
+    ProgressDialog pDialog;
 
     public ShopSaleAdapter(List<ShopSaleModel> allProductPojoList, Context mctx) {
         this.allProductPojoList = allProductPojoList;
         this.mctx = mctx;
         shimmer = new Shimmer();
+        pDialog = new ProgressDialog(mctx);
+        pDialog.setMessage("Loading...");
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView;
-        if(viewType == R.layout.row_shop_sale){
-            itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_shop_sale, parent, false);
-        }
 
-        else {
-            itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_more, parent, false);
-        }
-
-
+        itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_shop_sale, parent, false);
         itemView.getLayoutParams().width = (int) (getScreenWidth() / 1.5);
         return new MyViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
 
-        if (position==allProductPojoList.size())
-        {
+        if (position == allProductPojoList.size()) {
 
 
            /* holder.cv_add_pref.setOnClickListener(new View.OnClickListener() {
@@ -82,9 +91,7 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
                 }
             });*/
 
-        }
-        else
-        {
+        } else {
             final ShopSaleModel items = allProductPojoList.get(position);
 
             holder.tv_fragment.animate().alpha(0f).setDuration(2000);
@@ -94,21 +101,22 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
             RequestOptions requestOptions = new RequestOptions();
             requestOptions.placeholder(R.drawable.placeholder_logo);
             requestOptions.fitCenter();
-
             holder.shimmer_view_container1.startShimmerAnimation();
             shimmer.start(holder.shimmer_premium);
-
             Picasso.with(mctx).load(WebServiceURLs.SHOP_IMAGE + items.getImage()).resize(120, 120).into(holder.iv_product_image1);
             Picasso.with(mctx).load(WebServiceURLs.SHOP_IMAGE + items.getImage2()).resize(120, 120).into(holder.iv_product_image2);
-            // Glide.with(mctx).load("http://4.bp.blogspot.com/-zlCqi4iWQb8/Tk_iLyLnoVI/AAAAAAAAED4/egErzO8ARQ0/s1600/s%25C3%25BCti+4548.jpg").into(holder.iv_product_image1);
-            //   Glide.with(mctx).setDefaultRequestOptions(requestOptions).load(WebServiceURLs.SHOP_IMAGE + items.getImage2()).into(holder.iv_product_image2);
             holder.tv_price_range.setText("" + items.getLow_price() + "-" + items.getHigh_price());
             holder.tv_desc.setText(items.getDescription());
-            if (!items.getDiscount().equals("null") )
+            if (!items.getDiscount().equals("null"))
                 holder.tv_discount.setText(items.getDiscount() + "%");
-            else
-            {
+            else {
                 holder.tv_discount.setVisibility(View.GONE);
+            }
+
+            if (items.getFav_status().equals("1")) {
+                holder.spark_button.setChecked(true);
+            } else {
+                holder.spark_button.setChecked(false);
             }
 
             if (position == 0) {
@@ -120,24 +128,80 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
                 public void onClick(View v) {
 
                     if (items.getType().equals("shop"))
-                        mctx.startActivity(new Intent(mctx,ShopDetailsActivityNew.class).putExtra("shop_id",items.getId()).putExtra("shop_name",items.getName()));
+                        mctx.startActivity(new Intent(mctx, ShopDetailsActivityNew.class).putExtra("shop_id", items.getId()).putExtra("shop_name", items.getName()));
 
                     else
                         mctx.startActivity(new Intent(mctx, ProductDetailsActivityNew.class).putExtra("product_id", items.getId()));
                 }
             });
 
+            if (items.getLike_status().equals("1"))
+            {
+                holder.iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_hand_red));
+            }
+            else
+            {
+                holder.iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_black));
+            }
+
+            holder.iv_like.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (PrefManager.getInstance(mctx).IS_LOGIN())
+                    {
+                        likeProduct(items.getId(),position,holder.iv_like,items.getLike_status());
+                    }
+                    else
+                    {
+                        dialogLoginWarning("shop_fav",holder.spark_button);
+
+                    }
+                }
+            });
+
+            holder.spark_button.setEventListener(new SparkEventListener() {
+                @Override
+                public void onEvent(ImageView button, boolean buttonState) {
+                    if (buttonState) {
+
+                        if (PrefManager.getInstance(mctx).IS_LOGIN()) {
+                            addToFavorite(items.getId(), position, holder.spark_button);
+                        } else {
+                            dialogLoginWarning("shop_fav", holder.spark_button);
+
+                        }
+
+                    } else {
+
+                        if (PrefManager.getInstance(mctx).IS_LOGIN()) {
+                            removeFromFavorite(items.getId(), position, holder.spark_button);
+                        } else {
+                            dialogLoginWarning("shop_fav", holder.spark_button);
+
+                        }
+                        // Button is inactive
+                    }
+                }
+
+                @Override
+                public void onEventAnimationEnd(ImageView button, boolean buttonState) {
+
+                }
+
+                @Override
+                public void onEventAnimationStart(ImageView button, boolean buttonState) {
+
+                }
+            });
+
         }
 
     }
-    @Override
-    public int getItemViewType(int position) {
-        return (position == allProductPojoList.size()) ? R.layout.view_more : R.layout.row_shop_sale;
-    }
+
 
     @Override
     public int getItemCount() {
-        return allProductPojoList.size()+1;
+        return allProductPojoList.size();
     }
 
 
@@ -182,4 +246,175 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
 
         return size.x;
     }
+
+
+    public void likeProduct(String product_id, final int position, final ImageView iv_like, final String like_status) {
+        String like_flag = "";
+        if (like_status.equals("0")) {
+            like_flag = "like";
+        } else
+            like_flag = "unlike";
+
+
+        try {
+            pDialog.show();
+            RetrofitClient retrofitClient = new RetrofitClient();
+            RestInterface service = retrofitClient.getAPIClient(WebServiceURLs.DOMAIN_NAME);
+            service.like_product("shop", PrefManager.getInstance(mctx).getUserId(), like_flag, product_id, "Bearer " + PrefManager.getInstance(mctx).getApiToken(), new Callback<JsonElement>() {
+                @Override
+                public void success(JsonElement jsonElement, Response response) {
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(jsonElement.toString());
+                        pDialog.dismiss();
+                        String status = jsonObject.getString("status");
+                        String message = jsonObject.getString("message");
+                        if (message.equals("Liked")) {
+                            allProductPojoList.get(position).setLike_status("1");
+                            notifyItemChanged(position);
+                            iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_hand_red));
+
+                        } else {
+                            allProductPojoList.get(position).setLike_status("0");
+                            notifyItemChanged(position);
+                            iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_black));
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    pDialog.dismiss();
+                    Toast.makeText(mctx, mctx.getResources().getString(R.string.check_internet), Toast.LENGTH_LONG).show();
+                    Log.i("fdfdfdfdfdf", "" + error.getMessage());
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            pDialog.dismiss();
+            Log.i("detailsException", "" + e.toString());
+        }
+    }
+
+    public void addToFavorite(String shop_id, int position, final SparkButton spark_button) {
+
+
+        try {
+            pDialog.show();
+            RetrofitClient retrofitClient = new RetrofitClient();
+            RestInterface service = retrofitClient.getAPIClient(WebServiceURLs.DOMAIN_NAME);
+            service.add_to_fav("shop", PrefManager.getInstance(mctx).getUserId(), shop_id, "Bearer " + PrefManager.getInstance(mctx).getApiToken(), new Callback<JsonElement>() {
+                @Override
+                public void success(JsonElement jsonElement, Response response) {
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(jsonElement.toString());
+                        pDialog.dismiss();
+                        String status = jsonObject.getString("status");
+                        String message = jsonObject.getString("message");
+                        if (status.equals("1")) {
+                            spark_button.setChecked(true);
+                            Toast.makeText(mctx, "" + message, Toast.LENGTH_SHORT).show();
+
+                        } else {
+                            spark_button.setChecked(true);
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    pDialog.dismiss();
+                    Toast.makeText(mctx, mctx.getResources().getString(R.string.check_internet), Toast.LENGTH_LONG).show();
+                    Log.i("fdfdfdfdfdf", "" + error.getMessage());
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            pDialog.dismiss();
+            Log.i("detailsException", "" + e.toString());
+        }
+
+    }
+
+    public void removeFromFavorite(String shop_id, int position, final SparkButton sparkButton) {
+        try {
+            pDialog.show();
+            RetrofitClient retrofitClient = new RetrofitClient();
+            RestInterface service = retrofitClient.getAPIClient(WebServiceURLs.DOMAIN_NAME);
+            service.remove_from_fav("shop", PrefManager.getInstance(mctx).getUserId(), shop_id, "Bearer " + PrefManager.getInstance(mctx).getApiToken(), new Callback<JsonElement>() {
+                @Override
+                public void success(JsonElement jsonElement, Response response) {
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(jsonElement.toString());
+                        pDialog.dismiss();
+                        String status = jsonObject.getString("status");
+                        String message = jsonObject.getString("message");
+                        if (status.equals("1")) {
+                            Toast.makeText(mctx, "" + message, Toast.LENGTH_SHORT).show();
+                            sparkButton.setChecked(false);
+                        } else {
+                            sparkButton.setChecked(true);
+                        }
+
+                    } catch (JSONException e) {
+                        sparkButton.setChecked(true);
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    pDialog.dismiss();
+                    sparkButton.setChecked(true);
+                    Toast.makeText(mctx, mctx.getResources().getString(R.string.check_internet), Toast.LENGTH_LONG).show();
+                    Log.i("fdfdfdfdfdf", "" + error.getMessage());
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            pDialog.dismiss();
+            Log.i("detailsException", "" + e.toString());
+        }
+
+    }
+
+    public void dialogLoginWarning(final String intent_from, final SparkButton spark_button) {
+
+        new SweetAlertDialog(mctx, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(mctx.getResources().getString(R.string.login_waning))
+                .setContentText(mctx.getResources().getString(R.string.please_login))
+                .setConfirmText(mctx.getResources().getString(R.string.login))
+                .setCancelText(mctx.getResources().getString(R.string.cancel))
+
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        Intent i = new Intent(mctx, LoginActivity.class);
+                        i.putExtra("intent_from", intent_from);
+                        ((Activity) mctx).startActivityForResult(i, 1);
+                        sDialog.dismissWithAnimation();
+                    }
+                })
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        spark_button.setChecked(false);
+                    }
+                })
+                .show();
+
+    }
+
 }

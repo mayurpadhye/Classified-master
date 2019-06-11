@@ -28,8 +28,12 @@
         android:windowSoftInputMode="adjustPan"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:icon,android:theme">
-        <activity android:name=".settings.ChangeLanguageActivity" />
-        <activity android:name=".search.SearchResultActivity" />
+        <activity
+            android:name=".settings.ChangeLanguageActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name=".search.SearchResultActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -50,7 +54,7 @@
 
         <activity
             android:name=".spalsh.SplashActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBarTransperent">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -60,69 +64,73 @@
         </activity>
         <activity
             android:name=".login.LoginActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBarTransperent" />
         <activity
             android:name=".noInternet.NoInternetActivity"
-            android:screenOrientation="portrait" />
+            android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity
             android:name=".home.HomeActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBarTransperent" />
         <activity
             android:name=".signup.RegistrationActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBarTransperent" />
         <activity
             android:name=".shop.ShopPostingActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBarTransperent" />
         <activity
             android:name=".shop.ShopPreviewActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBarTransperent" />
         <activity
             android:name=".profile.ProfileActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBarTransperent" />
         <activity
             android:name=".preferences.AddPreferencesActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBarTransperent" />
         <activity
             android:name=".products.AllProductsActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBarTransperent" />
         <activity
             android:name=".post.SalePostingActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBarTransperent" />
         <activity
             android:name=".products.AddProductsActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBarTransperent" />
         <activity
             android:name=".products.ProductDetailsActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBarTransperent" />
         <activity
             android:name=".home.shop_sale.SelectPostingActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBarTransperent" />
         <activity
             android:name=".post.SalePostingPreviewActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBarTransperent" />
         <activity
             android:name=".my_posting.MyPostingActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBarTransperent" />
         <activity
             android:name=".post.MyPostingDetailsAcrivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBarTransperent" />
-        <activity android:name=".home.preferences.MyPreferences" />
-        <activity android:name=".preferences.MyPreferencesActivity" />
+        <activity
+            android:name=".home.preferences.MyPreferences"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name=".preferences.MyPreferencesActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
 
         <meta-data
             android:name="preloaded_fonts"
@@ -130,24 +138,63 @@
 
         <activity
             android:name=".shop.ShopDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
-        <activity android:name=".feedback.FeedBackActivity" />
-        <activity android:name=".following.FollowingShopActivity" />
-        <activity android:name=".account.TermsAndConditionActivity" />
+        <activity
+            android:name=".feedback.FeedBackActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name=".following.FollowingShopActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name=".account.TermsAndConditionActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity
             android:name=".google_map.ShopsOnMapActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/title_activity_shops_on_map" />
-        <activity android:name=".profile.ProfilePictureActivity" />
-        <activity android:name=".account.HelpSupportActivity" />
-        <activity android:name=".shop.ShopDetailsActivityNew" />
+        <activity
+            android:name=".profile.ProfilePictureActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name=".account.HelpSupportActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name=".shop.ShopDetailsActivityNew"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity
             android:name=".map.MapsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".products.ProductDetailsActivityNew" />
-        <activity android:name=".shop.ShopPostingPreviewNew" />
-        <activity android:name=".shop.EditShopActivity" />
-        <activity android:name=".home.AllShopSaleListActivity" />
-        <activity android:name=".post.SaleDetailsActivity"></activity>
+        <activity
+            android:name=".products.ProductDetailsActivityNew"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name=".shop.ShopPostingPreviewNew"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name=".shop.EditShopActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name=".home.AllShopSaleListActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name=".post.SaleDetailsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name=".products.UpdateProductAcitvity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name=".products.ProductPreviewActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name=".no_internet.NoInternetActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity android:name=".ImagePickerActivity"></activity>
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBarTransperent" />
     </application>
 
 </manifest>

@@ -8,7 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import mimosale.com.R;
+import mimosale.com.helperClass.CustomUtils;
 import mimosale.com.home.fragments.AllProductPojo;
 import mimosale.com.home.fragments.ShopSaleAdapter;
 import mimosale.com.home.shop_sale.ProductsAdapter;
@@ -39,7 +42,7 @@ import retrofit.client.Response;
 public class SearchResultActivity extends AppCompatActivity implements TextWatcher {
 RecyclerView rv_shop;
 ProgressBar p_bar;
-
+    private static final String TAG = "SearchResultActivity";
 LinearLayout ll_search;
 EditText et_search;
     List<AllProductPojo> allProductPojoList=new ArrayList<>();
@@ -51,7 +54,15 @@ EditText et_search;
         initView();
         ll_search.setVisibility(View.VISIBLE);
         et_search.addTextChangedListener(this);
-
+        et_search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    Log.i(TAG,"Enter pressed");
+                    serachresult(et_search.getText().toString().trim());
+                }
+                return false;
+            }
+        });
 
     }
 
@@ -88,6 +99,7 @@ EditText et_search;
                                 String name = j1.getString("name");
                                 String user_id = j1.getString("user_id");
                                 String preference_id = j1.getString("preference_id");
+                               // String fav_status = j1.getString("preference_id");
 
                                 String address_line1="",address_line2="",state="",country="";
                                 String pincode="",lat="",lon="",low_price="",high_price="",discount="",start_date="";
@@ -183,7 +195,7 @@ EditText et_search;
 
                                 String image = "";
 
-                                allShopSaleList.add(new ShopSaleModel(id,name,user_id,preference_id,address_line1,address_line2,city,state,country,pincode,lat,lon,low_price,high_price,discount,start_date,end_date,phone,hash_tags,description,web_url,image1,image2,type));
+                                allShopSaleList.add(new ShopSaleModel(id,name,user_id,preference_id,address_line1,address_line2,city,state,country,pincode,lat,lon,low_price,high_price,discount,start_date,end_date,phone,hash_tags,description,web_url,image1,image2,type,"","",""));
 
                             }
 
@@ -195,6 +207,9 @@ EditText et_search;
                         }
                         else
                         {
+                            rv_shop.setVisibility(View.GONE);
+                            ll_search.setVisibility(View.VISIBLE);
+
 
                         }
                         p_bar.setVisibility(View.GONE);
@@ -259,6 +274,7 @@ EditText et_search;
         {
             serachresult(s.toString());
             ll_search.setVisibility(View.GONE);
+
         }
         else
         {

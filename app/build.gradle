@@ -30,8 +30,16 @@ android {
     }
     compileOptions {
         incremental = false
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
     }
-
+    aaptOptions { cruncherEnabled = false }
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
 }
 
 dependencies {
@@ -75,6 +83,8 @@ dependencies {
     })
     implementation 'com.sothree.slidinguppanel:library:3.4.0'
     implementation 'com.commit451:PhotoView:1.2.4'
-
-
+    implementation 'org.jsoup:jsoup:1.10.2'
+    implementation "com.karumi:dexter:5.0.0"
+    implementation 'com.github.yalantis:ucrop:2.2.2'
+    implementation 'com.android.support:support-vector-drawable:23.2.0'
 }

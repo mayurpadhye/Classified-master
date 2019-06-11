@@ -39,6 +39,7 @@ public class AddNewPrefAdapter  extends RecyclerView.Adapter<AddNewPrefAdapter.M
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         final AllPrefPojo items = myPreferencePojoList.get(position);
+        holder.setIsRecyclable(false);
         holder.iv_delete.setVisibility(View.GONE);
         holder.cb_add_new.setVisibility(View.VISIBLE);
         if (items.getSelected().equals("true"))

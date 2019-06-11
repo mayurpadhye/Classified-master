@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import mimosale.com.R;
 import mimosale.com.products.AddProductsActivity;
+import mimosale.com.products.UpdateProductAcitvity;
 import mimosale.com.shop.ImageVideoData;
 
 public class PostingImagesAdapter extends RecyclerView.Adapter<PostingImagesAdapter.MyViewHolder> {
@@ -97,7 +98,7 @@ public class PostingImagesAdapter extends RecyclerView.Adapter<PostingImagesAdap
                 {
                     if (event_from.equals("create"))
                     {
-                        if(((AddProductsActivity)activity).imageFiles.size()>0) {
+                        if(((AddProductsActivity)activity).imageFiles_products.size()>0) {
 
 
                             new SweetAlertDialog(mContext, SweetAlertDialog.WARNING_TYPE)
@@ -110,7 +111,7 @@ public class PostingImagesAdapter extends RecyclerView.Adapter<PostingImagesAdap
                                         @Override
                                         public void onClick(SweetAlertDialog sDialog) {
                                             result_list.remove(position);// removes from list
-                                            ((AddProductsActivity) activity).imageFiles.remove(position);
+                                            ((AddProductsActivity) activity).imageFiles_products.remove(position);
                                             notifyItemRemoved(position); // updates position
                                             notifyItemRangeChanged(position, result_list.size());
                                             sDialog.dismissWithAnimation();
@@ -133,6 +134,36 @@ public class PostingImagesAdapter extends RecyclerView.Adapter<PostingImagesAdap
                     {
 
 
+                        if(((UpdateProductAcitvity)activity).imageFiles_product_update.size()>0) {
+
+
+                            new SweetAlertDialog(mContext, SweetAlertDialog.WARNING_TYPE)
+                                    .setTitleText(mContext.getResources().getString(R.string.are_you_sure))
+                                    .setContentText(mContext.getResources().getString(R.string.want_to_delete))
+                                    .setConfirmText(mContext.getResources().getString(R.string.delete))
+                                    .setCancelText(mContext.getResources().getString(R.string.no))
+
+                                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sDialog) {
+                                            result_list.remove(position);// removes from list
+                                            ((UpdateProductAcitvity) activity).imageFiles_product_update.remove(position);
+                                            notifyItemRemoved(position); // updates position
+                                            notifyItemRangeChanged(position, result_list.size());
+                                            sDialog.dismissWithAnimation();
+                                        }
+                                    })
+                                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                            sweetAlertDialog.dismissWithAnimation();
+                                        }
+                                    })
+                                    .show();
+
+
+
+                        }
                     }
                 }
             }

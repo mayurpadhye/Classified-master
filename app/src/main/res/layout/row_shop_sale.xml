@@ -138,7 +138,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
                     android:layout_weight="0.5"
-
                     android:src="@drawable/sofa"
                     app:siBorderWidth="0dp"
                     app:siRadius="5dp" />

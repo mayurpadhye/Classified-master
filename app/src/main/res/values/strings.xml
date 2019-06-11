@@ -98,7 +98,7 @@
     <string name="post"><![CDATA[Posts (Shop & Sale,Products)]]></string>
     <string name="my_post"><![CDATA[My Posts (Shop & Sale,Products)]]></string>
     <string name="search_by_pincode">Search By Pincode</string>
-    <string name="short_description">Short Description</string>
+    <string name="short_description">Short Description (Max. 120 characters)</string>
     <string name="add_discount">Add Discount</string>
     <string name="min_discount">Min Discount</string>
     <string name="max_discount">Max Discount</string>
@@ -260,7 +260,7 @@
     <string name="title_location_permission">Location Permission</string>
     <string name="text_location_permission">Please grant the location permission</string>
     <string name="country">Country</string>
-    <string name="toolbar_title">Terms and Condition</string>
+    <string name="toolbar_title">Terms and Condition</string>0
     <string name="title_activity_shops_on_map">Map</string>
     <string name="unfollowing">Unfollow</string>
     <string name="no_product_posting">You have not posted any product yet.</string>
@@ -310,6 +310,18 @@
     <string name="unlike">Unlike</string>
     <string name="liked">Liked</string>
     <string name="unliked">Unliked</string>
+    <string name="update_product">Update Product</string>
+    <string name="back">Go Back</string>
+    <string name="no_internet">There is No Internet Connection.</string>
+    <string name="not_valid_mail">Not Valid Email</string>
+    <string name="login_first">Please Login First</string>
+    <string name="price_range">Price Range</string>
+    <string name="sale_duration">Sale Duration</string>
+    <string name="we_love_feedback">We\'d love your feedback!</string>
+    <string name="app_upto_date">Update App</string>
+    <string name="update_now">Update Now</string>
+    <string name="update_message">New version is available. please update the App.</string>
+    <string name="maximum_char_limit">Maximum character limit is 120</string>
     <string-array name="discount_array">
         <item>Select Discount</item>
         <item>Upto 10%</item>
@@ -322,4 +334,20 @@
         <item>Upto 80%</item>
         <item>Upto 90%</item>
     </string-array>
+
+    <string name="msg_error_unable_select_profile_pic">Unable to set profile image. Please try again!</string>
+    <string name="lbl_set_profile_photo">Set profile image</string>
+    <string name="lbl_take_camera_picture">Take a picture</string>
+    <string name="lbl_choose_from_gallery">Choose from gallery</string>
+    <string name="toast_image_intent_null">Image picker option is missing!</string>
+    <string name="coupon_title">Coupon Title</string>
+    <string name="no_of_claims">Number of Claims</string>
+    <string name="coupon_desc">Coupon Description</string>
+    <string name="please_enter_coupon_title">Please Enter Coupon Title</string>
+    <string name="please_enter_coupon_desc">Please Enter Coupon Description</string>
+    <string name="please_enter_nno_claims">Please Enter Number of Claims</string>
+    <string name="claimed">Claimed</string>
+    <string name="please_rate">Please give rating</string>
+    <string name="please_write_review">Please Write Review</string>
+    <string name="wallet">Wallet</string>
 </resources>

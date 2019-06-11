@@ -154,9 +154,9 @@ public interface RestInterface {
     @FormUrlEncoded
     @POST(WebServiceURLs.ALL_SHOP_AND_SALE)
     void getAllShopAndSale(  @Field("user_id") String user_id, Callback<JsonElement> callback);
-
-    @GET(WebServiceURLs.GET_ALL_PRODUCTS)
-    void getAllProducts(  Callback<JsonElement> callback);
+    @FormUrlEncoded
+    @POST(WebServiceURLs.GET_ALL_PRODUCTS)
+    void getAllProducts( @Field("user_id") String user_id, Callback<JsonElement> callback);
 
     @GET(WebServiceURLs.GET_ALL_PREFRENCES)
     void getAllPref(  Callback<JsonElement> callback);
@@ -225,8 +225,40 @@ public interface RestInterface {
                            @Field("user_id") String user_id,@Header("Authorization") String header,  Callback<JsonElement> callback);
 
     @FormUrlEncoded
-    @POST(WebServiceURLs.DELETE_SALE)
+    @POST(WebServiceURLs.LIKE_SHOP_PRODUCT)
     void like_product(@Field("type") String type,@Field("user_id") String user_id,@Field("status") String status,@Field("mimo_id") String mimo_id,@Header("Authorization") String header,  Callback<JsonElement> callback);
+
+    @FormUrlEncoded
+    @POST(WebServiceURLs.ADD_TO_FAV)
+    void add_to_fav(@Field("type") String type,@Field("user_id") String user_id,@Field("mimo_id") String mimo_id,@Header("Authorization") String header,  Callback<JsonElement> callback);
+
+    @FormUrlEncoded
+    @POST(WebServiceURLs.REMOVE_FROM_FAV)
+    void remove_from_fav(@Field("type") String type,@Field("user_id") String user_id,@Field("mimo_id") String mimo_id,@Header("Authorization") String header,  Callback<JsonElement> callback);
+
+    @FormUrlEncoded
+    @POST(WebServiceURLs.GET_ALL_FAVORITE)
+    void getFavList(@Field("user_id") String user_id,@Header("Authorization") String header,  Callback<JsonElement> callback);
+
+    @FormUrlEncoded
+    @POST(WebServiceURLs.CLAIM_COUPON)
+    void claim_coupon(
+            @Field("user_id") String user_id,
+            @Field("coupon_id") String coupon_id,
+            @Field("type") String type
+            ,@Header("Authorization") String header,  Callback<JsonElement> callback);
+
+    @FormUrlEncoded
+    @POST(WebServiceURLs.WRITE_REVIEW)
+    void write_review(
+            @Field("user_id") String user_id,
+            @Field("mimo_id") String mimo_id,
+            @Field("type") String type,
+            @Field("rating") String rating,
+            @Field("review") String review
+            ,@Header("Authorization") String header,  Callback<JsonElement> callback);
 
 
 }
+
+

@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:focusable="false"
     android:focusableInTouchMode="true"
-    tools:context=".classi.search.SearchResultActivity">
+   >
     <RelativeLayout
         android:id="@+id/rl_main"
         android:layout_width="match_parent"
@@ -23,6 +23,8 @@
             android:background="@drawable/edit_back"
             android:focusableInTouchMode="true"
             android:backgroundTint="@null"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
             android:backgroundTintMode="@null"
             android:layout_toLeftOf="@+id/iv_map"
             android:padding="10dp"

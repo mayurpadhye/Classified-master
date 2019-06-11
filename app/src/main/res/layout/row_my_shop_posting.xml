@@ -278,6 +278,7 @@
                 android:id="@+id/iv_like"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:visibility="invisible"
                 android:layout_toLeftOf="@+id/spark_button"
                 android:padding="5dp"
                 android:src="@drawable/like_black" />
@@ -291,6 +292,7 @@
                 android:layout_marginRight="3dp"
                 android:layout_toLeftOf="@+id/iv_like"
                 android:text="3.4 k"
+                android:visibility="invisible"
                 android:textColor="#755252"
                 android:textSize="12dp" />
 
@@ -298,7 +300,7 @@
                 android:id="@+id/spark_button"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-
+                android:visibility="invisible"
                 android:layout_alignParentRight="true"
                 app:sparkbutton_activeImage="@drawable/active_like"
                 app:sparkbutton_iconSize="20dp"

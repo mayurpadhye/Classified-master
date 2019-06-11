@@ -71,8 +71,10 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpResponse;
 import com.android.volley.toolbox.StringRequest;
 
+import mimosale.com.ImagePickerActivity;
 import mimosale.com.R;
 import mimosale.com.helperClass.AppController;
 import mimosale.com.helperClass.CustomFileUtils;
@@ -125,6 +127,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.iceteck.silicompressorr.SiliCompressor;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -133,6 +141,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -157,13 +166,20 @@ import retrofit.mime.MultipartTypedOutput;
 import retrofit.mime.TypedFile;
 import retrofit.mime.TypedString;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.Manifest.permission_group.CAMERA;
 import static mimosale.com.helperClass.CustomPermissions.MY_PERMISSIONS_REQUEST_LOCATION;
+import static mimosale.com.helperClass.CustomPermissions.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE;
 import static mimosale.com.helperClass.CustomUtils.IMAGE_LIMIT;
 import static mimosale.com.helperClass.CustomUtils.VIDEO_LIMIT;
 import static mimosale.com.helperClass.CustomUtils.showToast;
 
 public class ShopPostingActivity extends AppCompatActivity implements View.OnClickListener {
-    public ArrayList<File> imageFiles;
+    public static ArrayList<File> imageFiles_shop;
+    private static final String TAG = ShopPostingActivity.class.getSimpleName();
+    public static final int REQUEST_IMAGE = 100;
     Button btn_upload;
     String pref_id1 = "";
     RecyclerView rv_images;
@@ -181,7 +197,7 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
     String intet_from = "";
     ProgressDialog progressDialog;
     LinearLayout ll_discount;
-    ArrayList<ImageVideoData> image_thumbnails, video_thumbnails;
+  public static   ArrayList<ImageVideoData> image_thumbnails_shop, video_thumbnails;
     EventImagesAdapter adapter;
     LinearLayoutManager llm_images;
     Button btn_preview;
@@ -201,13 +217,14 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
     EditText et_start_date, et_end_date, et_city, et_state, et_country;
     TextView tv_other_details, tv_address_details, tv_pricing_details, tv_shop_details;
     TextInputLayout tl_shop_name, tl_shop_desc, tl_min_price, tl_max_price, tl_pincode, tl_city, tl_address_line1;
-    TextInputLayout tl_address_line2, tl_phone_no, tl_hash_tag, tl_url, tl_end_date, tl_start_date;
+    TextInputLayout tl_address_line2, tl_phone_no, tl_hash_tag, tl_url, tl_end_date, tl_start_date,tl_coupon_desc;
     EditText et_shop_name, et_shop_desc, et_min_price, et_max_price, et_pincode,
-            et_address_line1, et_address_line2, et_phone, et_hash_tag, et_url;//et_min_discount,et_max_discount tl_min_discount, tl_max_discount,
+            et_address_line1, et_address_line2, et_phone, et_hash_tag, et_url,et_coupon_title,et_no_claims,et_coupon_desc;//et_min_discount,et_max_discount tl_min_discount, tl_max_discount,
     String shop_id = "";
     Spinner sp_discount;
     String discount = "";
     private String mLastUpdateTime;
+    private static final int PERMISSION_REQUEST_CODE = 200;
 
     // location updates interval - 10sec
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
@@ -232,7 +249,7 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
     private Boolean mRequestingLocationUpdates;
     final Calendar myCalendar = Calendar.getInstance();
     ProgressDialog pDialog;
-
+TextInputLayout tl_coupon_title,tl_no_claims;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -251,10 +268,36 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
 
             }
         });
+
+        et_shop_desc.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                if(s.length()>120)
+                {
+                    et_shop_desc.setError(getResources().getString(R.string.maximum_char_limit));
+                }
+                else
+                {
+                   // et_shop_desc.setError(null);
+                    tl_shop_desc.setError(null);
+                }
+
+            }
+        });
         btn_add_address.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkLocationPermission()) {
+                if (checkLocationPer()) {
 
 
                     mSettingsClient
@@ -301,7 +344,7 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
 
 
                 } else
-                    checkLocationPermission();
+                    requestLocationPermission() ;
 
             }
         });
@@ -309,12 +352,12 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onClick(View v) {
 
-                if (checkLocationPermission()) {
+                if (checkLocationPer()) {
                     init();
 
 
                 } else {
-                    checkLocationPermission();
+                    requestLocationPermission();
                 }
 
 
@@ -404,12 +447,12 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
-        et_city.setOnClickListener(new View.OnClickListener() {
+        /*et_city.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(ShopPostingActivity.this, MapsActivity.class));
             }
-        });
+        });*/
 
         et_pincode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -518,7 +561,6 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
     }
 
 
-    // slide the view from its current position to below itself
     public void slideDown(View view) {
 
         TranslateAnimation animate = new TranslateAnimation(
@@ -773,6 +815,12 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
     }
 
     public void initView() {
+        et_coupon_title=findViewById(R.id.et_coupon_title);
+        et_no_claims=findViewById(R.id.et_no_claims);
+        tl_no_claims=findViewById(R.id.tl_no_claims);
+        tl_coupon_title=findViewById(R.id.tl_coupon_title);
+        tl_coupon_desc=findViewById(R.id.tl_coupon_desc);
+        et_coupon_desc=findViewById(R.id.et_coupon_desc);
         Intent i = getIntent();
         isUpdate = i.getStringExtra("isUpdate");
         btn_current_address = findViewById(R.id.btn_current_address);
@@ -838,18 +886,20 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
         toolbar_title.setText(getResources().getString(R.string.shop_posting));
         toolbar_title.setTextColor(getResources().getColor(R.color.black));
         btn_preview = findViewById(R.id.btn_preview);
-        imageFiles = new ArrayList<>();
+        imageFiles_shop = new ArrayList<>();
         llm_images = new LinearLayoutManager(getApplicationContext());
         llm_images.setOrientation(LinearLayoutManager.HORIZONTAL);
         progressDialog = new ProgressDialog(ShopPostingActivity.this);
         progressDialog.setTitle(getString(R.string.app_name));
         progressDialog.setMessage(getString(R.string.please_wait));
         progressDialog.setCanceledOnTouchOutside(false);
-        image_thumbnails = new ArrayList<ImageVideoData>();
-        adapter = new EventImagesAdapter(ShopPostingActivity.this, ShopPostingActivity.this, image_thumbnails, "create");
+        image_thumbnails_shop = new ArrayList<ImageVideoData>();
+        adapter = new EventImagesAdapter(ShopPostingActivity.this, ShopPostingActivity.this, image_thumbnails_shop, "create");
+
         video_thumbnails = new ArrayList<>();
         btn_upload = findViewById(R.id.btn_upload);
         rv_images = findViewById(R.id.rv_images);
+        rv_images.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         tl_shop_name = findViewById(R.id.tl_shop_name);
         tl_shop_desc = findViewById(R.id.tl_shop_desc);
         // tl_min_discount = findViewById(R.id.tl_min_discount);
@@ -881,7 +931,7 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
         btn_upload.setOnClickListener(this);
         btn_preview.setOnClickListener(this);
         iv_back.setOnClickListener(this);
-
+        rv_images.setAdapter(adapter);
         sp_category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedItem = parent.getItemAtPosition(position).toString();
@@ -897,7 +947,7 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
-        if (isUpdate.equals("update_shop")) {
+       /* if (isUpdate.equals("update_shop")) {
             try {
 
                 String shop_name = i.getStringExtra("shop_name");
@@ -964,7 +1014,7 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+        }*/
 
 
     }//initViewclose
@@ -993,7 +1043,17 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
             tl_shop_desc.setError(null);
         }
 
-        if (pref_id.equals("")) {
+        if (et_shop_desc.getText().toString().trim().length()>120)
+        {
+            et_shop_desc.requestFocus();
+            tl_shop_desc.setError(getResources().getString(R.string.maximum_char_limit));
+            return;
+        }
+        else {
+            tl_shop_desc.setError(null);
+        }
+
+        if (pref_id.equals(getResources().getString(R.string.select_category))) {
             if (!ll_shop_visible)
                 slideDown(ll_shop_details);
             Toast.makeText(context, getResources().getString(R.string.please_select_pref_category), Toast.LENGTH_SHORT).show();
@@ -1001,24 +1061,45 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
         }
 
 
-        if (et_min_price.getText().toString().trim().length() == 0) {
-            if (!ll_pricing_visible)
-                slideDown(ll_pricing);
-            et_min_price.requestFocus();
-            tl_min_price.setError(getResources().getString(R.string.min_price_error));
-            return;
-        } else {
-            tl_min_price.setError(null);
-        }
+        if (sp_discount.getSelectedItemPosition()!=0)
+        {
+          if (et_coupon_title.getText().toString().trim().isEmpty())
+          {
+              et_coupon_title.requestFocus();
+              tl_coupon_title.setError(getResources().getString(R.string.please_enter_coupon_title));
+              return;
+          }
+          else if (et_coupon_desc.getText().toString().trim().isEmpty())
+          {
+              tl_coupon_title.setError(null);
+              tl_coupon_desc.setError(getResources().getString(R.string.please_enter_coupon_desc));
+              return;
+          }
+          else if (et_no_claims.getText().toString().trim().isEmpty())
+          {
+              tl_coupon_desc.setError(null);
+              tl_no_claims.setError(getResources().getString(R.string.please_enter_nno_claims));
+              return;
+          }
+          else if (!et_start_date.getText().toString().trim().isEmpty() || !et_end_date.getText().toString().trim().isEmpty())
+          {
+              if (et_start_date.getText().toString().trim().length() == 0) {
+                  tl_start_date.setError("" + getResources().getString(R.string.enter_start_date));
+                  return;
+              } else if (et_end_date.getText().toString().trim().length() == 0) {
+                  tl_end_date.setError(getResources().getString(R.string.enter_end_date));
+                  return;
+              }
 
-        if (et_max_price.getText().toString().trim().length() == 0) {
-            if (!ll_pricing_visible)
-                slideDown(ll_pricing);
-            et_max_price.requestFocus();
-            tl_max_price.setError(getResources().getString(R.string.max_price_error));
-            return;
-        } else {
-            tl_max_price.setError(null);
+              if (!isDateAfter(et_start_date.getText().toString().trim(), et_end_date.getText().toString().trim())) {
+                  if (!ll_pricing_visible)
+                      slideDown(ll_pricing);
+                  tl_start_date.setError(getResources().getString(R.string.end_date_must_be_greater));
+                  return;
+              }
+          }
+
+
         }
 
         if (!et_min_price.getText().toString().trim().isEmpty() && !et_max_price.getText().toString().trim().isEmpty()) {
@@ -1062,18 +1143,6 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
             tl_address_line1.setError(null);
         }
 
-
-        if (et_address_line2.getText().toString().trim().length() == 0) {
-            if (!ll_address_visible)
-                slideDown(ll_address_details);
-            et_address_line2.requestFocus();
-            tl_address_line2.setError(getResources().getString(R.string.enter_complete_address));
-            return;
-
-        } else {
-            tl_address_line2.setError(null);
-        }
-
         if (!isValidMobile(et_phone.getText().toString().trim())) {
             if (!ll_address_visible)
                 slideDown(ll_address_details);
@@ -1087,7 +1156,7 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
             return;
         }
 
-        if (et_hash_tag.getText().toString().trim().length() == 0) {
+        /*if (et_hash_tag.getText().toString().trim().length() == 0) {
             if (!ll_other_visible)
                 slideDown(ll_others);
             et_hash_tag.requestFocus();
@@ -1095,9 +1164,9 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
             return;
         } else {
             tl_hash_tag.setError(null);
-        }
+        }*/
 
-        if (imageFiles.size() <= 1) {
+        if (imageFiles_shop.size() <= 1) {
             if (!ll_shop_visible)
                 slideDown(ll_shop_details);
             Toast.makeText(context, "" + getResources().getString(R.string.please_select_atleast_two_images), Toast.LENGTH_SHORT).show();
@@ -1114,26 +1183,11 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
                 tl_max_discount.setError("" + getResources().getString(R.string.max_dis_error));
                 return;
             }*/
-            if (et_start_date.getText().toString().trim().length() != 0 || et_end_date.getText().toString().trim().length() != 0) {
-                if (!ll_pricing_visible)
-                    slideDown(ll_pricing);
-                if (et_start_date.getText().toString().trim().length() == 0) {
-                    tl_start_date.setError("" + getResources().getString(R.string.enter_start_date));
-                    return;
-                } else if (et_end_date.getText().toString().trim().length() == 0) {
-                    tl_end_date.setError(getResources().getString(R.string.enter_end_date));
-                    return;
-                }
 
-                if (!isDateAfter(et_start_date.getText().toString().trim(), et_end_date.getText().toString().trim())) {
-                    if (!ll_pricing_visible)
-                        slideDown(ll_pricing);
-                    tl_start_date.setError(getResources().getString(R.string.end_date_must_be_greater));
-                    return;
-                }
-            }
 
         }
+
+
 
         if (type.equals("save")) {
 
@@ -1148,21 +1202,21 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
         } else {
             Intent i = new Intent(ShopPostingActivity.this, ShopPostingPreviewNew.class);
             i.putExtra("shop_name", et_shop_name.getText().toString());
-            i.putExtra("type", type);
-            JsonArray jsonElements = (JsonArray) new Gson().toJsonTree(image_thumbnails);
-            i.putExtra("shop_images", jsonElements.toString());
+            i.putExtra("type", "save");
+           /* JsonArray jsonElements = (JsonArray) new Gson().toJsonTree(image_thumbnails);
+            i.putExtra("shop_images", jsonElements.toString());*/
             i.putExtra("shop_desc", et_shop_desc.getText().toString());
             i.putExtra("shop_category", sp_category.getSelectedItem().toString());
             i.putExtra("min_discount", "");
             i.putExtra("max_discount", "");
             if (sp_discount.getSelectedItemPosition() != 0)
-                i.putExtra("discount", sp_discount.getSelectedItem().toString());
+                i.putExtra("discount", discount);
             else
                 i.putExtra("discount", "");
 
             i.putExtra("start_date", et_start_date.getText().toString());
-            i.putExtra("lati", lat_new);
-            i.putExtra("longi", lon_new);
+            i.putExtra("lati", ""+lat_new);
+            i.putExtra("longi", ""+lon_new);
             i.putExtra("end_date", et_end_date.getText().toString());
             i.putExtra("min_price", et_min_price.getText().toString());
             i.putExtra("max_price", et_max_price.getText().toString());
@@ -1178,10 +1232,8 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
             i.putExtra("country", et_country.getText().toString());
             i.putExtra("lat", lattitude);
             i.putExtra("lan", langitude);
-            JsonArray jsonElements1 = (JsonArray) new Gson().toJsonTree(imageFiles);
+           JsonArray jsonElements1 = (JsonArray) new Gson().toJsonTree(imageFiles_shop);
             i.putExtra("image_thumbnail", jsonElements1.toString());
-
-
             startActivity(i);
         }
 
@@ -1238,9 +1290,9 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
             multipartTypedOutput.addPart("shop_id", new TypedString(shop_id));
 
 
-            if (imageFiles.size() > 0) {
-                for (int i = 0; i < imageFiles.size(); i++) {
-                    multipartTypedOutput.addPart("shop_photos[]", new TypedFile("application/octet-stream", new File(imageFiles.get(i).getAbsolutePath())));
+            if (imageFiles_shop.size() > 0) {
+                for (int i = 0; i < imageFiles_shop.size(); i++) {
+                    multipartTypedOutput.addPart("shop_photos[]", new TypedFile("application/octet-stream", new File(imageFiles_shop.get(i).getAbsolutePath())));
                 }
             } else {
                 multipartTypedOutput.addPart("shop_photos", new TypedString(""));
@@ -1305,15 +1357,14 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
         try {
             PrefManager.getInstance(context).getUserId();
             p_bar.setVisibility(View.VISIBLE);
-
             MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
             multipartTypedOutput.addPart("name", new TypedString(et_shop_name.getText().toString().trim()));
             multipartTypedOutput.addPart("preference_id", new TypedString(pref_id));
             multipartTypedOutput.addPart("address_line1", new TypedString(et_address_line1.getText().toString().trim()));
             multipartTypedOutput.addPart("address_line2", new TypedString(et_address_line2.getText().toString().trim()));
             multipartTypedOutput.addPart("city", new TypedString(et_city.getText().toString()));
-            multipartTypedOutput.addPart("state", new TypedString("AM"));
-            multipartTypedOutput.addPart("country", new TypedString("AM"));
+            multipartTypedOutput.addPart("state", new TypedString(et_state.getText().toString()));
+            multipartTypedOutput.addPart("country", new TypedString(et_country.getText().toString()));
             multipartTypedOutput.addPart("pincode", new TypedString(et_pincode.getText().toString()));
             multipartTypedOutput.addPart("lat", new TypedString("" + lat_new));
             multipartTypedOutput.addPart("lon", new TypedString("" + lon_new));
@@ -1321,6 +1372,8 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
             multipartTypedOutput.addPart("high_price", new TypedString(et_max_price.getText().toString()));
             multipartTypedOutput.addPart("min_discount", new TypedString(""));
             multipartTypedOutput.addPart("max_discount", new TypedString(""));
+            multipartTypedOutput.addPart("start_date", new TypedString(et_start_date.getText().toString().trim()));
+            multipartTypedOutput.addPart("end_date", new TypedString(et_end_date.getText().toString().trim()));
             multipartTypedOutput.addPart("discount", new TypedString(discount));
             multipartTypedOutput.addPart("phone", new TypedString(et_phone.getText().toString()));
             multipartTypedOutput.addPart("hash_tags", new TypedString(et_hash_tag.getText().toString()));
@@ -1328,17 +1381,16 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
             multipartTypedOutput.addPart("web_url", new TypedString(tv_url.getText().toString() + "" + et_url.getText().toString()));
             multipartTypedOutput.addPart("status", new TypedString("1"));
             multipartTypedOutput.addPart("user_id", new TypedString(PrefManager.getInstance(context).getUserId()));
-
-
-            if (imageFiles.size() > 0) {
-                for (int i = 0; i < imageFiles.size(); i++) {
-                    multipartTypedOutput.addPart("shop_photos[]", new TypedFile("application/octet-stream", new File(imageFiles.get(i).getAbsolutePath())));
+            multipartTypedOutput.addPart("coupon_title", new TypedString(et_coupon_title.getText().toString()));
+            multipartTypedOutput.addPart("coupon_description", new TypedString(et_coupon_desc.getText().toString()));
+            multipartTypedOutput.addPart("no_of_claims", new TypedString(et_no_claims.getText().toString()));
+            if (imageFiles_shop.size() > 0) {
+                for (int i = 0; i < imageFiles_shop.size(); i++) {
+                    multipartTypedOutput.addPart("shop_photos[]", new TypedFile("application/octet-stream", new File(imageFiles_shop.get(i).getAbsolutePath())));
                 }
             } else {
                 multipartTypedOutput.addPart("shop_photos", new TypedString(""));
             }
-
-
             RetrofitClient retrofitClient = new RetrofitClient();
             RestInterface service = retrofitClient.getAPIClient(WebServiceURLs.DOMAIN_NAME);
             service.addShopPosting("Bearer " + PrefManager.getInstance(context).getApiToken(),
@@ -1425,15 +1477,34 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
         switch (v.getId()) {
             case R.id.btn_upload:
                 CustomUtils.hideKeyboard(v, getApplicationContext());
-                if (imageFiles.size() >= IMAGE_LIMIT) {
+                if (imageFiles_shop.size() >= IMAGE_LIMIT) {
                     CustomUtils.showAlertDialog(ShopPostingActivity.this, getString(R.string.can_not_share_more_than_five_images));
                 } else {
-                    selectImage();
+                    if (checkPermission())
+                        Dexter.withActivity(this)
+                                .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                .withListener(new MultiplePermissionsListener() {
+                                    @Override
+                                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                                        if (report.areAllPermissionsGranted()) {
+                                            showImagePickerOptions();
+                                        } else {
+                                            // TODO - handle permission denied case
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                                        token.continuePermissionRequest();
+                                    }
+                                }).check();
+                    else
+                        requestPermission();
                 }
                 break;
 
             case R.id.btn_preview:
-                startActivity(new Intent(ShopPostingActivity.this, ShopPreviewActivity.class));
+                //startActivity(new Intent(ShopPostingActivity.this, ShopPreviewActivity.class));
                 //SaveShopPostData();
                 break;
             case R.id.iv_back:
@@ -1442,7 +1513,46 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
         }
 
     }
+    private void showImagePickerOptions() {
+        ImagePickerActivity.showImagePickerOptions(this, new ImagePickerActivity.PickerOptionListener() {
+            @Override
+            public void onTakeCameraSelected() {
+                launchCameraIntent();
+            }
 
+            @Override
+            public void onChooseGallerySelected() {
+                launchGalleryIntent();
+            }
+        });
+    }
+    private void launchCameraIntent() {
+        Intent intent = new Intent(ShopPostingActivity.this, ImagePickerActivity.class);
+        intent.putExtra(ImagePickerActivity.INTENT_IMAGE_PICKER_OPTION, ImagePickerActivity.REQUEST_IMAGE_CAPTURE);
+
+        // setting aspect ratio
+        intent.putExtra(ImagePickerActivity.INTENT_LOCK_ASPECT_RATIO, true);
+        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_X, 1); // 16x9, 1x1, 3:4, 3:2
+        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_Y, 1);
+
+        // setting maximum bitmap width and height
+        intent.putExtra(ImagePickerActivity.INTENT_SET_BITMAP_MAX_WIDTH_HEIGHT, true);
+        intent.putExtra(ImagePickerActivity.INTENT_BITMAP_MAX_WIDTH, 1000);
+        intent.putExtra(ImagePickerActivity.INTENT_BITMAP_MAX_HEIGHT, 1000);
+
+        startActivityForResult(intent, REQUEST_IMAGE);
+    }
+
+    private void launchGalleryIntent() {
+        Intent intent = new Intent(ShopPostingActivity.this, ImagePickerActivity.class);
+        intent.putExtra(ImagePickerActivity.INTENT_IMAGE_PICKER_OPTION, ImagePickerActivity.REQUEST_GALLERY_IMAGE);
+
+        // setting aspect ratio
+        intent.putExtra(ImagePickerActivity.INTENT_LOCK_ASPECT_RATIO, true);
+        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_X, 1); // 16x9, 1x1, 3:4, 3:2
+        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_Y, 1);
+        startActivityForResult(intent, REQUEST_IMAGE);
+    }
     private void selectImage() {
         final String[] items = new String[]{getString(R.string.camera), getString(R.string.gallery)};
 
@@ -1525,179 +1635,166 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
 
     }
 
+    public boolean checkPermission()
+    {
+        int result = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+        int result1 = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+        int result2 = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA);
+        int result3 = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+        int result4 = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        return result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED && result2 == PackageManager.PERMISSION_GRANTED ;
+    }
+    private void requestPermission() {
+
+        ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE,Manifest.permission.CAMERA}, PERMISSION_REQUEST_CODE);
+
+    }
+
+    public boolean checkLocationPer()
+    {
+        int result3 = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+        int result4 = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        return result3 == PackageManager.PERMISSION_GRANTED && result4 == PackageManager.PERMISSION_GRANTED ;
+    }
+
+    private void requestLocationPermission() {
+
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
+
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0) {
+
+                    boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean StorageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    boolean cameraAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+
+
+
+                    if (locationAccepted && StorageAccepted && cameraAccepted)
+                        Dexter.withActivity(this)
+                                .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                .withListener(new MultiplePermissionsListener() {
+                                    @Override
+                                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                                        if (report.areAllPermissionsGranted()) {
+                                            showImagePickerOptions();
+                                        } else {
+                                            // TODO - handle permission denied case
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                                        token.continuePermissionRequest();
+                                    }
+                                }).check();
+                    else {
+
+
+                    }
+
+
+
+                }
+
+
+                break;
+            case MY_PERMISSIONS_REQUEST_LOCATION:
+                boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+             if (locationAccepted)
+             {
+
+
+
+                 mSettingsClient
+                         .checkLocationSettings(mLocationSettingsRequest)
+                         .addOnSuccessListener(ShopPostingActivity.this, new OnSuccessListener<LocationSettingsResponse>() {
+                             @SuppressLint("MissingPermission")
+                             @Override
+                             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                                 Log.i("ShopPoastingMap", "All location settings are satisfied.");
+
+
+                                 //noinspection MissingPermission
+                                 startActivityForResult(new Intent(ShopPostingActivity.this, MapsActivity.class), 2);
+                             }
+                         })
+                         .addOnFailureListener(ShopPostingActivity.this, new OnFailureListener() {
+                             @Override
+                             public void onFailure(@NonNull Exception e) {
+                                 int statusCode = ((ApiException) e).getStatusCode();
+                                 switch (statusCode) {
+                                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                                         Log.i("ShopPoastingMap", "Location settings are not satisfied. Attempting to upgrade " +
+                                                 "location settings ");
+                                         try {
+                                             // Show the dialog by calling startResolutionForResult(), and check the
+                                             // result in onActivityResult().
+                                             ResolvableApiException rae = (ResolvableApiException) e;
+                                             rae.startResolutionForResult(ShopPostingActivity.this, REQUEST_CHECK_SETTINGS);
+                                         } catch (IntentSender.SendIntentException sie) {
+                                             Log.i("ShopPoastingMap", "PendingIntent unable to execute request.");
+                                         }
+                                         break;
+                                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                                         String errorMessage = "Location settings are inadequate, and cannot be " +
+                                                 "fixed here. Fix in Settings.";
+                                         Log.e("ShopPoastingMap", errorMessage);
+
+                                         Toast.makeText(ShopPostingActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                                 }
+
+                                 updateLocationUI();
+                             }
+                         });
+
+             }
+
+               break;
+
+        }
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
-    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case CustomPermissions.MY_PERMISSIONS_REQUEST_CAMERA:
-                    Bitmap bitmap_thumbnail = (Bitmap) data.getExtras().get("data");
-                    bitmap_thumbnail.getByteCount();
-                    Uri tempUri = CustomUtils.getImageUri(getApplicationContext(), bitmap_thumbnail);
+    public void onActivityResult(int requestCode, int resultCode, final Intent data)    {
+
+
+
+        if (requestCode ==REQUEST_IMAGE) {
+            if (resultCode == Activity.RESULT_OK) {
+                Uri uri = data.getParcelableExtra("path");
+                try {
+                    // You can update this bitmap to your server
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+
+                    Uri tempUri = CustomUtils.getImageUri(getApplicationContext(), bitmap);
                     File finalFile = new File(CustomUtils.getRealPathFromURI(getApplicationContext(), tempUri));
                     CustomUtils.showLog("Camera File path ", finalFile.getAbsolutePath() + "");
-                    if (imageFiles.size() <= CustomUtils.IMAGE_LIMIT) {
+                    if (imageFiles_shop.size() <= CustomUtils.IMAGE_LIMIT) {
                         ArrayList<String> selected_image = new ArrayList<>();
                         selected_image.add(tempUri.toString());
                         new ImageCompressAsyncTask(this).execute(selected_image);
                     } else {
                         CustomUtils.showAlertDialog(ShopPostingActivity.this, getString(R.string.can_not_share_more_than_five_images));
                     }
-                    break;
+                    // loading profile image from local cache
+                    //   loadProfile(uri.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
-                case CustomPermissions.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
-                    if (data.getClipData() != null) {
-                        int count = data.getClipData().getItemCount();
-                        int imageCount = imageFiles.size();
-                        int selectedImages = imageCount + count;
-                        if (selectedImages > IMAGE_LIMIT) {
-                            CustomUtils.showAlertDialog(ShopPostingActivity.this, getString(R.string.can_not_share_more_than_five_images));
-                            return;
-                        } else {
-                            ArrayList<String> images = new ArrayList<>();
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
 
-                            for (int i = 0; i < count; i++) {
-                                images.add(data.getClipData().getItemAt(i).getUri().toString());
-                                //  CustomUtil.showLog("Image selected ", data.getClipData().getItemAt(i).getUri().toString());
-
-                                String picturePath = CustomFileUtils.getPath(getApplicationContext(), data.getClipData().getItemAt(i).getUri());
-                                File file = new File(picturePath);
-                                imageFiles.add(file);
-                                long lengthInMB = lengthInMB = (file.length() / 1024) / 1024;
-                                ArrayList<String> image = new ArrayList<>();
-                                image.add(data.getClipData().getItemAt(i).getUri().toString());
-
-                                if (lengthInMB >= 20) {
-                                    new ImageCompressAsyncTask(this).execute(image);
-                                } else {
-
-                                    Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
-                                    ImageVideoData image_v = new ImageVideoData();
-                                  /* image_v.setBitmap(bitmap);
-                                    image_v.setPath(picturePath);
-                                    image_thumbnails.add(image_v);
-*/
-
-                                    ExifInterface ei = null;
-                                    try {
-                                        ei = new ExifInterface(picturePath);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                                            ExifInterface.ORIENTATION_UNDEFINED);
-
-                                    Bitmap rotatedBitmap = null;
-                                    switch (orientation) {
-
-                                        case ExifInterface.ORIENTATION_ROTATE_90:
-                                            rotatedBitmap = rotateImage(bitmap, 90);
-                                            break;
-
-                                        case ExifInterface.ORIENTATION_ROTATE_180:
-                                            rotatedBitmap = rotateImage(bitmap, 180);
-                                            break;
-
-                                        case ExifInterface.ORIENTATION_ROTATE_270:
-                                            rotatedBitmap = rotateImage(bitmap, 270);
-                                            break;
-
-                                        case ExifInterface.ORIENTATION_NORMAL:
-                                        default:
-                                            rotatedBitmap = bitmap;
-                                    }
-                                    //File file1 = new File(String.valueOf(data.getData()));
-
-                                    image_v.setBitmap(rotatedBitmap);
-                                    image_v.setPath(picturePath);
-                                    image_thumbnails.add(image_v);
-
-                                       /* adapter = new EventImagesAdapter(getApplicationContext(), CreateEventActivity.this, image_thumbnails);
-                                        rv_event_image.setLayoutManager(llm_images);
-                                        rv_event_image.setAdapter(adapter);*/
-                                }
-
-
-                            }
-
-                            //    new ImageCompressAsyncTask(CreateEventActivity.this).execute(images);
-                            if (imageFiles.size() <= IMAGE_LIMIT) {
-                                adapter = new EventImagesAdapter(ShopPostingActivity.this, ShopPostingActivity.this, image_thumbnails, "create");
-                                rv_images.setLayoutManager(llm_images);
-                                rv_images.setAdapter(adapter);
-                            } else {
-                                //showToast(getString(R.string.can_not_share_more_than_five_images), CreateEventActivity.this);
-                                if (imageCount <= imageFiles.size()) {
-                                    for (int i = imageFiles.size(); i > imageCount; i--) {
-                                        image_thumbnails.remove(i - 1);
-                                        imageFiles.remove(i - 1);
-                                    }
-
-                                }
-                                CustomUtils.showAlertDialog(ShopPostingActivity.this, getString(R.string.can_not_share_more_than_five_images));
-                            }
-                        }
-                    } else if (data.getData() != null) {
-                        Uri selectedImage = data.getData();
-                        String picturePath = CustomFileUtils.getPath(getApplicationContext(), selectedImage);
-                        File file = new File(picturePath);
-                        imageFiles.add(file);
-                        if (imageFiles.size() <= IMAGE_LIMIT) {
-                            long lengthInMB = (file.length() / 1024) / 1024;
-                            ArrayList<String> image = new ArrayList<>();
-                            image.add(selectedImage.toString());
-                            if (lengthInMB >= 20) {
-                                new ImageCompressAsyncTask(this).execute(image);
-                            } else {
-
-                                Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
-                                ImageVideoData image_v = new ImageVideoData();
-                             /* image_v.setBitmap(bitmap);
-                                image_v.setPath(picturePath);
-                                image_thumbnails.add(image_v);*/
-
-                                ExifInterface ei = null;
-                                try {
-                                    ei = new ExifInterface(picturePath);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                                        ExifInterface.ORIENTATION_UNDEFINED);
-
-                                Bitmap rotatedBitmap = null;
-                                switch (orientation) {
-
-                                    case ExifInterface.ORIENTATION_ROTATE_90:
-                                        rotatedBitmap = rotateImage(bitmap, 90);
-                                        break;
-
-                                    case ExifInterface.ORIENTATION_ROTATE_180:
-                                        rotatedBitmap = rotateImage(bitmap, 180);
-                                        break;
-
-                                    case ExifInterface.ORIENTATION_ROTATE_270:
-                                        rotatedBitmap = rotateImage(bitmap, 270);
-                                        break;
-
-                                    case ExifInterface.ORIENTATION_NORMAL:
-                                    default:
-                                        rotatedBitmap = bitmap;
-                                }
-                                //File file1 = new File(String.valueOf(data.getData()));
-
-                                image_v.setBitmap(rotatedBitmap);
-                                image_v.setPath(picturePath);
-                                image_thumbnails.add(image_v);
-                                adapter = new EventImagesAdapter(ShopPostingActivity.this, ShopPostingActivity.this, image_thumbnails, "create");
-                                rv_images.setLayoutManager(llm_images);
-                                rv_images.setAdapter(adapter);
-                            }
-                        } else {
-                            CustomUtils.showAlertDialog(ShopPostingActivity.this, getString(R.string.can_not_share_more_than_five_images));
-                        }
-                    }
-                    break;
 
                 case 1:
 
@@ -1806,8 +1903,8 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
                     ImageVideoData image_v = new ImageVideoData();
                     image_v.setBitmap(decodedByte);
                     image_v.setPath(filePath);
-                    image_thumbnails.add(image_v);
-                    imageFiles.add(imageFile);
+                    image_thumbnails_shop.add(image_v);
+                    imageFiles_shop.add(imageFile);
                     Thread.sleep(500);
                     progressDialog.dismiss();
                 } catch (Exception e) {
@@ -1821,7 +1918,8 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
         @Override
         protected void onPostExecute(String compressedFilePath) {
             super.onPostExecute(compressedFilePath);
-            adapter.notifyDataSetChanged();
+            rv_images.getAdapter().notifyDataSetChanged();
+
             progressDialog.dismiss();
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();

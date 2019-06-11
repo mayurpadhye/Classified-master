@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
+import com.viewpagerindicator.CirclePageIndicator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +39,9 @@ import java.util.List;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import mimosale.com.R;
 import mimosale.com.helperClass.PrefManager;
+import mimosale.com.home.HomeActivity;
 import mimosale.com.home.fragments.AllProductPojo;
+import mimosale.com.my_posting.MyPostingActivity;
 import mimosale.com.network.RestInterface;
 import mimosale.com.network.RetrofitClient;
 import mimosale.com.network.WebServiceURLs;
@@ -48,6 +52,12 @@ import retrofit.client.Response;
 import retrofit.mime.MultipartTypedOutput;
 import retrofit.mime.TypedFile;
 import retrofit.mime.TypedString;
+
+import static mimosale.com.shop.EditShopActivity.imageFiles;
+import static mimosale.com.shop.EditShopActivity.image_thumbnails;
+import static mimosale.com.shop.ShopPostingActivity.imageFiles_shop;
+import static mimosale.com.shop.ShopPostingActivity.image_thumbnails_shop;
+
 
 public class ShopPostingPreviewNew extends AppCompatActivity implements View.OnClickListener {
     RecyclerView rv_shop_products;
@@ -70,10 +80,11 @@ public class ShopPostingPreviewNew extends AppCompatActivity implements View.OnC
     ProgressDialog pDialog;
     TextView tv_desc;
     Intent i;
+    BottomSheetDialog bottomSheetDialog;
     List<String> shopImagesPojoList = new ArrayList<>();
     List<AllProductPojo> allProductPojoList = new ArrayList<>();
-    ArrayList<ImageVideoData> image_thumbnail = new ArrayList<>();
-    ArrayList<ImageVideoData> IMAGES;
+    //ArrayList<ImageVideoData> image_thumbnail = new ArrayList<>();
+    //ArrayList<ImageVideoData> IMAGES;
     String discount = "";
     RecyclerView rv_products;
     private GoogleMap gmap;
@@ -87,23 +98,43 @@ public class ShopPostingPreviewNew extends AppCompatActivity implements View.OnC
     RelativeLayout rl_like;
     TextView tv_photos;
     String status_follow = "follow";
-    String lati = "", longi = "";
+    String lati = "0.0", longi = "0.0";
     ImageView iv_follow;
-    List<File> image_thumbnail1 = new ArrayList<>();
+   // List<File> image_thumbnail1 = new ArrayList<>();
     ProgressBar p_bar;
-
+ImageView iv_product_image;
+RelativeLayout rl_discount,rl_view_more;
+    Dialog dialog_view_more;
+    TextView tv_price_range_dialog,tv_discount_dialog,tv_sale_duration,tv_website_dialog,tv_address_info;
+    Button btn_ok;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop_posting_preview_new);
+
+
         initView();
+
+        rl_view_more.setOnClickListener(this);
+
+    }
+
+    public void initView() {
         i = getIntent();
+        dialog_view_more=new Dialog(this);
+        dialog_view_more.setContentView(R.layout.dialog_shop_info);
+        tv_price_range_dialog=dialog_view_more.findViewById(R.id.tv_price_range);
+        tv_discount_dialog=dialog_view_more.findViewById(R.id.tv_discount);
+        tv_sale_duration=dialog_view_more.findViewById(R.id.tv_sale_duration);
+        tv_website_dialog=dialog_view_more.findViewById(R.id.tv_website_dialog);
+        tv_address_info=dialog_view_more.findViewById(R.id.tv_address_info);
+        btn_ok=dialog_view_more.findViewById(R.id.btn_ok);
+        btn_ok.setOnClickListener(this);
         shop_name = i.getStringExtra("shop_name");
         shop_desc = i.getStringExtra("shop_desc");
         pref_id = i.getStringExtra("pref_id");
         shop_category = i.getStringExtra("shop_category");
         type = i.getStringExtra("type");
-
         discount = i.getStringExtra("discount");
         start_date = i.getStringExtra("start_date");
         end_date = i.getStringExtra("end_date");
@@ -119,13 +150,9 @@ public class ShopPostingPreviewNew extends AppCompatActivity implements View.OnC
         hash_tag = i.getStringExtra("hash_tag");
         web_url = i.getStringExtra("web_url");
         // image_thumbnail1=(List<File>) getIntent().getSerializableExtra("image_thumbnail");
-        parseJSON();
-
-    }
-
-    public void initView() {
-
         p_bar = findViewById(R.id.p_bar);
+        iv_product_image = findViewById(R.id.iv_product_image);
+        rl_view_more = findViewById(R.id.rl_view_more);
         tv_follow_text = findViewById(R.id.tv_follow_text);
         tv_phone_no = findViewById(R.id.tv_phone_no);
         tv_desc = findViewById(R.id.tv_desc);
@@ -137,6 +164,7 @@ public class ShopPostingPreviewNew extends AppCompatActivity implements View.OnC
         rl_like = findViewById(R.id.rl_like);
         tv_photos = findViewById(R.id.tv_photos);
         rl_follow = findViewById(R.id.rl_follow);
+        if (getIntent().hasExtra("shop_id"))
         shop_id = getIntent().getStringExtra("shop_id");
         rv_shop_products = findViewById(R.id.rv_shop_products);
         GridLayoutManager gridLayoutManager1 = new GridLayoutManager(ShopPostingPreviewNew.this, 1);
@@ -148,26 +176,34 @@ public class ShopPostingPreviewNew extends AppCompatActivity implements View.OnC
         btn_back = findViewById(R.id.btn_back);
         iv_back.setOnClickListener(this);
         tv_discount = findViewById(R.id.tv_discount);
-
+        rl_discount = findViewById(R.id.rl_discount);
         tv_category = findViewById(R.id.tv_category);
         tv_price_range_detail = findViewById(R.id.tv_price_range_detail);
         tv_price_range = findViewById(R.id.tv_price_range);
         tv_location = findViewById(R.id.tv_location);
         mPager = (ViewPager) findViewById(R.id.pager);
-
-
+        btn_ok.setOnClickListener(this);
         toolbar_title.setText(shop_name);
         tv_desc.setText(shop_desc);
         tv_complete_address.setText(address_line_1 + " " + address_line_2);
         tv_phone_no.setText(phone_number);
-        tv_discount.setText(discount + "%");
+        tv_discount.setText(getResources().getString(R.string.upto)+" "+discount+"%");
+
+        tv_price_range_dialog.setText(min_price+"Yen - " +max_price+"Yen");
+        if (!start_date.equals("") && !end_date.equals(""))
+        {
+            tv_sale_duration.setText(start_date+" - "+end_date);
+
+        }
+        tv_website_dialog.setText(web_url);
+        tv_address_info.setText(address_line_1);
+
         if (type.equals("save")) {
             btn_submit.setText(getResources().getString(R.string.save));
         } else {
             btn_submit.setText(getResources().getString(R.string.update));
 
         }
-
         btn_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -179,12 +215,32 @@ public class ShopPostingPreviewNew extends AppCompatActivity implements View.OnC
                 }
             }
         });
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
+        if (discount.equals(""))
+        {
+            iv_product_image.setVisibility(View.VISIBLE);
+            rl_discount.setVisibility(View.GONE);
+            tv_discount_dialog.setText(getResources().getString(R.string.not_avail));
+        }
+        else
+        {
+            tv_discount_dialog.setText("" + discount + "%");
+            iv_product_image.setVisibility(View.GONE);
+            rl_discount.setVisibility(View.VISIBLE);
 
+        }
+
+        parseJSON();
     }//initViewClose
 
     private void parseJSON() {
-        Gson gson = new Gson();
+       /* Gson gson = new Gson();
         Type type = new TypeToken<ArrayList<ImageVideoData>>() {
         }.getType();
         image_thumbnail = gson.fromJson(i.getStringExtra("shop_images"), type);
@@ -194,16 +250,60 @@ public class ShopPostingPreviewNew extends AppCompatActivity implements View.OnC
 
         Type type2 = new TypeToken<ArrayList<File>>() {
         }.getType();
-        image_thumbnail1 = gson.fromJson(i.getStringExtra("image_thumbnail"), type2);
+        image_thumbnail1 = gson.fromJson(i.getStringExtra("image_thumbnail"), type2);*/
+
+
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (type.equals("save"))
+        {
+            iv_product_image.setImageBitmap(image_thumbnails_shop.get(0).getBitmap());
 
-        ShopSlidingImagesAdapter bannerAdapter = new ShopSlidingImagesAdapter(image_thumbnail, layoutInflater, ShopPostingPreviewNew.this);
+            ShopSlidingImagesAdapter bannerAdapter = new ShopSlidingImagesAdapter(image_thumbnails_shop, layoutInflater, ShopPostingPreviewNew.this);
+            mPager.setAdapter(bannerAdapter);
+            CirclePageIndicator indicator = (CirclePageIndicator)
+                    findViewById(R.id.indicator);
+            indicator.setViewPager(mPager);
+            final float density = getResources().getDisplayMetrics().density;
+            indicator.setRadius(5 * density);
+        }
+        else
+        {
+            iv_product_image.setImageBitmap(image_thumbnails.get(0).getBitmap());
+
+            ShopSlidingImagesAdapter bannerAdapter = new ShopSlidingImagesAdapter(image_thumbnails, layoutInflater, ShopPostingPreviewNew.this);
+            mPager.setAdapter(bannerAdapter);
+            CirclePageIndicator indicator = (CirclePageIndicator)
+                    findViewById(R.id.indicator);
+            indicator.setViewPager(mPager);
+            final float density = getResources().getDisplayMetrics().density;
+            indicator.setRadius(5 * density);
+        }
+
+
+
+      /*  ShopSlidingImagesAdapter bannerAdapter = new ShopSlidingImagesAdapter(image_thumbnails, layoutInflater, ShopPostingPreviewNew.this);
         mPager.setAdapter(bannerAdapter);
-
+        CirclePageIndicator indicator = (CirclePageIndicator)
+                findViewById(R.id.indicator);
+        indicator.setViewPager(mPager);
+        final float density = getResources().getDisplayMetrics().density;
+        indicator.setRadius(5 * density);*/
     }
 
     @Override
     public void onClick(View v) {
+        switch (v.getId())
+        {
+            case R.id.iv_back:
+                finish();
+                break;
+            case R.id.rl_view_more:
+                dialog_view_more.show();
+                break;
+            case R.id.btn_ok:
+                dialog_view_more.dismiss();
+
+        }
 
     }
 
@@ -238,11 +338,13 @@ public class ShopPostingPreviewNew extends AppCompatActivity implements View.OnC
             multipartTypedOutput.addPart("status", new TypedString("1"));
             multipartTypedOutput.addPart("user_id", new TypedString(PrefManager.getInstance(ShopPostingPreviewNew.this).getUserId()));
             multipartTypedOutput.addPart("shop_id", new TypedString(shop_id));
+            multipartTypedOutput.addPart("start_date", new TypedString(start_date));
+            multipartTypedOutput.addPart("end_date", new TypedString(end_date));
+            Toast.makeText(this, discount, Toast.LENGTH_SHORT).show();
 
-
-            if (image_thumbnail1.size() > 0) {
-                for (int i = 0; i < image_thumbnail1.size(); i++) {
-                    multipartTypedOutput.addPart("shop_photos[]", new TypedFile("application/octet-stream", new File(image_thumbnail1.get(i).getAbsolutePath())));
+            if (image_thumbnails.size() > 0) {
+                for (int i = 0; i < image_thumbnails.size(); i++) {
+                    multipartTypedOutput.addPart("shop_photos[]", new TypedFile("application/octet-stream", new File(imageFiles.get(i).getAbsolutePath())));
                 }
             } else {
                 multipartTypedOutput.addPart("shop_photos", new TypedString(""));
@@ -262,7 +364,7 @@ public class ShopPostingPreviewNew extends AppCompatActivity implements View.OnC
 
                                 if (status.equals("1")) {
 
-                                    Toast.makeText(ShopPostingPreviewNew.this, "Shop Successfully Updated", Toast.LENGTH_SHORT).show();
+                                //    Toast.makeText(ShopPostingPreviewNew.this, "Shop Successfully Updated", Toast.LENGTH_SHORT).show();
 
                                     new SweetAlertDialog(ShopPostingPreviewNew.this, SweetAlertDialog.SUCCESS_TYPE)
                                             .setTitleText(getResources().getString(R.string.success))
@@ -271,7 +373,9 @@ public class ShopPostingPreviewNew extends AppCompatActivity implements View.OnC
                                             .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                                 @Override
                                                 public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                                    finish();
+                                                  startActivity(new Intent(ShopPostingPreviewNew.this,MyPostingActivity.class));
+                                                  finish();
+
                                                 }
                                             })
                                             .show();
@@ -321,8 +425,6 @@ public class ShopPostingPreviewNew extends AppCompatActivity implements View.OnC
             multipartTypedOutput.addPart("lon", new TypedString(longi));
             multipartTypedOutput.addPart("low_price", new TypedString(min_price));
             multipartTypedOutput.addPart("high_price", new TypedString(max_price));
-            multipartTypedOutput.addPart("min_discount", new TypedString(""));
-            multipartTypedOutput.addPart("max_discount", new TypedString(""));
             multipartTypedOutput.addPart("discount", new TypedString(discount));
             multipartTypedOutput.addPart("phone", new TypedString(phone_number));
             multipartTypedOutput.addPart("hash_tags", new TypedString(hash_tag));
@@ -330,10 +432,11 @@ public class ShopPostingPreviewNew extends AppCompatActivity implements View.OnC
             multipartTypedOutput.addPart("web_url", new TypedString(web_url));
             multipartTypedOutput.addPart("status", new TypedString("1"));
             multipartTypedOutput.addPart("user_id", new TypedString(PrefManager.getInstance(ShopPostingPreviewNew.this).getUserId()));
-
-            if (image_thumbnail1.size() > 0) {
-                for (int i = 0; i < image_thumbnail1.size(); i++) {
-                    multipartTypedOutput.addPart("shop_photos[]", new TypedFile("application/octet-stream", new File(image_thumbnail1.get(i).getAbsolutePath())));
+            multipartTypedOutput.addPart("start_date", new TypedString(start_date));
+            multipartTypedOutput.addPart("end_date", new TypedString(end_date));
+            if (image_thumbnails_shop.size() > 0) {
+                for (int i = 0; i < image_thumbnails_shop.size(); i++) {
+                    multipartTypedOutput.addPart("shop_photos[]", new TypedFile("application/octet-stream", new File(imageFiles_shop.get(i).getAbsolutePath())));
                 }
             } else {
                 multipartTypedOutput.addPart("shop_photos", new TypedString(""));
@@ -353,7 +456,7 @@ public class ShopPostingPreviewNew extends AppCompatActivity implements View.OnC
 
                                 if (status.equals("1")) {
 
-                                    Toast.makeText(ShopPostingPreviewNew.this, "" + jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                            //        Toast.makeText(ShopPostingPreviewNew.this, "" + jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
 
                                     new SweetAlertDialog(ShopPostingPreviewNew.this, SweetAlertDialog.SUCCESS_TYPE)
                                             .setTitleText(getResources().getString(R.string.success))
@@ -362,6 +465,7 @@ public class ShopPostingPreviewNew extends AppCompatActivity implements View.OnC
                                             .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                                 @Override
                                                 public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                                    startActivity(new Intent(ShopPostingPreviewNew.this,HomeActivity.class));
                                                     finish();
                                                 }
                                             })

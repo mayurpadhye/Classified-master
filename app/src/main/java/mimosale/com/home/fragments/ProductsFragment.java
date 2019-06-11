@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import mimosale.com.R;
+import mimosale.com.helperClass.PrefManager;
 import mimosale.com.home.shop_sale.ProductsAdapter;
 import mimosale.com.home.shop_sale.ShopSaleModel;
 import mimosale.com.network.RestInterface;
@@ -56,14 +57,14 @@ ProgressBar p_bar;
         // Inflate the layout for this fragment
         v= inflater.inflate(R.layout.fragment_products, container, false);
         initView(v);
-
+        getAllProducts();
        return v;
     }
     @Override
     public void onResume() {
         super.onResume();
 
-        getAllProducts();
+
     }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -73,33 +74,28 @@ ProgressBar p_bar;
 
     public void initView(View v)
     {
-
         rv_products=v.findViewById(R.id.rv_products);
         p_bar=v.findViewById(R.id.p_bar);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         rv_products.setLayoutManager(llm);
         rv_products.setHasFixedSize(false);
 
-
-
-    }//initViewClsoe
+        }//initViewClsoe
 
     @Override public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
     }
     public void getAllProducts() {
-
         try {
             p_bar.setVisibility(View.VISIBLE);
             RetrofitClient retrofitClient = new RetrofitClient();
             RestInterface service = retrofitClient.getAPIClient(WebServiceURLs.DOMAIN_NAME);
-            service.getAllProducts(new Callback<JsonElement>() {
+            service.getAllProducts(PrefManager.getInstance(getActivity()).getUserId(),new Callback<JsonElement>() {
                 @Override
                 public void success(JsonElement jsonElement, Response response) {
-                    //this method call if webservice success
+
                     try {
                         allProductPojoList.clear();
                         JSONObject jsonObject = new JSONObject(jsonElement.toString());
@@ -119,18 +115,13 @@ ProgressBar p_bar;
                                 String status1 = j1.getString("status");
                                 String image1 = j1.getString("image1");
                                 String image2 = j1.getString("image2");
+                                String like_count = j1.getString("like_count");
+                                String like_status = j1.getString("like_status");
+                                String fav_status = j1.getString("fav_status");
                                 String image= "";
-                               /* JSONArray product_images=j1.getJSONArray("product_images");
-                                for (int k=0;k<product_images.length();k++)
-                                {
-                                    JSONObject j2=product_images.getJSONObject(k);
-                                     image=j2.getString("image");
-                                }
-                                */
-                                allProductPojoList.add(new AllProductPojo(id,name,shop_id,user_id,description,price,hash_tag,status1,image1,image2));
+                                allProductPojoList.add(new AllProductPojo(id,name,shop_id,user_id,description,price,hash_tag,status1,image1,image2,like_count,like_status,fav_status));
                            }
-
-                            ProductsAdapter shopSaleAdapter = new ProductsAdapter(allProductPojoList, getActivity());
+                           ProductsAdapter shopSaleAdapter = new ProductsAdapter(allProductPojoList, getActivity());
                             rv_products.setAdapter(shopSaleAdapter);
                             p_bar.setVisibility(View.GONE);
 

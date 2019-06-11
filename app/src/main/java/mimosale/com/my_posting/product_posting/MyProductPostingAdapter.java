@@ -43,6 +43,7 @@ import mimosale.com.network.WebServiceURLs;
 import mimosale.com.products.AddProductsActivity;
 import mimosale.com.products.ProductDetailsActivity;
 import mimosale.com.products.ProductDetailsActivityNew;
+import mimosale.com.products.UpdateProductAcitvity;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -141,15 +142,11 @@ public class MyProductPostingAdapter  extends RecyclerView.Adapter<MyProductPost
                }
                if (item.getItemId()==R.id.edit)
                {
-                   Intent i=new Intent(mctx,AddProductsActivity.class);
-                           i.putExtra("shop_name",allProductPojoList.get(position).getShop_id());
-                           i.putExtra("product_name",allProductPojoList.get(position).getName());
-                           i.putExtra("desc",allProductPojoList.get(position).getDescription());
-                           i.putExtra("price",allProductPojoList.get(position).getPrice());
+                   Intent i=new Intent(mctx,UpdateProductAcitvity.class);
+
                            i.putExtra("product_id",allProductPojoList.get(position).getId());
-                           i.putExtra("discount","");
-                           i.putExtra("discount",allProductPojoList.get(position).getHash_tag());
-                           i.putExtra("isUpdate","true");
+                           i.putExtra("shop_id",allProductPojoList.get(position).getShop_id());
+
                            mctx.startActivity(i);
                }
                 return true;

@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -79,7 +81,31 @@ public class SalePostingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sale_posting);
         initView();
 
+        et_short_desc.addTextChangedListener(new TextWatcher() {
 
+            @Override
+            public void afterTextChanged(Editable s) {}
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                if(s.length() >120)
+                {
+                    et_short_desc.setError(getResources().getString(R.string.maximum_char_limit));
+                }
+                else
+                {
+
+                    tl_short_desc.setError(null);
+                }
+
+            }
+        });
         getUserShop();
 
         iv_back.setOnClickListener(new View.OnClickListener() {
@@ -240,6 +266,16 @@ public class SalePostingActivity extends AppCompatActivity {
             tl_short_desc.setError(null);
         }
 
+        if (et_short_desc.getText().toString().trim().length()>120)
+        {
+            et_short_desc.requestFocus();
+            tl_short_desc.setError(getResources().getString(R.string.maximum_char_limit));
+            return;
+        }
+        else {
+            tl_short_desc.setError(null);
+        }
+
         if (et_start_date.getText().toString().trim().length() != 0 || et_end_date.getText().toString().trim().length() != 0) {
 
             if (et_start_date.getText().toString().trim().length() == 0) {
@@ -255,17 +291,6 @@ public class SalePostingActivity extends AppCompatActivity {
                 tl_start_date.setError(getResources().getString(R.string.end_date_must_be_greater));
                 return;
             }
-        }
-
-
-        if (et_hash_tag.getText().toString().trim().length() == 0) {
-
-            et_hash_tag.requestFocus();
-            tl_hash_tag.setError(getResources().getString(R.string.enter_hash_tag));
-
-            return;
-        } else {
-            tl_hash_tag.setError(null);
         }
 
         if (sp_shops.getSelectedItem().toString().equals(getResources().getString(R.string.select_shop))) {

@@ -92,7 +92,6 @@ ProgressBar p_bar;
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.placeholder_logo);
         requestOptions.fitCenter();
-
         holder.shimmer_view_container1.startShimmerAnimation();
         shimmer.start(holder.shimmer_premium);
         Picasso.with(mctx).load(WebServiceURLs.SHOP_IMAGE + items.getImage()).into(holder.iv_product_image1);
@@ -103,7 +102,6 @@ ProgressBar p_bar;
         if (position == 0) {
             holder.ratingBar.setRating(2.5f);
         }
-
         holder.cv_shop_main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

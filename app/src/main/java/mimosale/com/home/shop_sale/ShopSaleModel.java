@@ -5,8 +5,11 @@ public class ShopSaleModel {
 
     String id,name,user_id,preference_id,address_line1,address_line2,city,state,country,pincode,lat,lon,low_price,high_price,min_discount,max_discount;
     String start_date,end_date,phone,hash_tags,description,web_url,image,image2,type,discount;
+String fav_status,like_count,like_status;
 
-    public ShopSaleModel(String id, String name, String user_id, String preference_id, String address_line1, String address_line2, String city, String state, String country, String pincode, String lat, String lon, String low_price, String high_price, String discount, String start_date, String end_date, String phone, String hash_tags, String description, String web_url,String image,String image2,String type) {
+
+
+    public ShopSaleModel(String id, String name, String user_id, String preference_id, String address_line1, String address_line2, String city, String state, String country, String pincode, String lat, String lon, String low_price, String high_price, String discount, String start_date, String end_date, String phone, String hash_tags, String description, String web_url,String image,String image2,String type,String fav_status,String like_status,String like_count) {
         this.id = id;
         this.name = name;
         this.user_id = user_id;
@@ -32,6 +35,33 @@ public class ShopSaleModel {
         this.web_url = web_url;
         this.image=image;
         this.type=type;
+        this.fav_status=fav_status;
+        this.like_status=like_status;
+        this.like_count=like_count;
+    }
+
+    public String getFav_status() {
+        return fav_status;
+    }
+
+    public String getLike_count() {
+        return like_count;
+    }
+
+    public void setLike_count(String like_count) {
+        this.like_count = like_count;
+    }
+
+    public String getLike_status() {
+        return like_status;
+    }
+
+    public void setLike_status(String like_status) {
+        this.like_status = like_status;
+    }
+
+    public void setFav_status(String fav_status) {
+        this.fav_status = fav_status;
     }
 
     public String getDiscount() {

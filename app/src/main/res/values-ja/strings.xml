@@ -264,4 +264,5 @@
     <string name="toolbar_title">利用規約</string>
     <string name="title_activity_shops_on_map">地図</string>
     <string name="unfollowing">フォローを解除</string>
+    <string name="maximum_char_limit">Maximum character limit is 120</string>
 </resources>

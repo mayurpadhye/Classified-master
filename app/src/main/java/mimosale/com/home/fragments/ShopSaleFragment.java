@@ -55,13 +55,13 @@ public class ShopSaleFragment extends Fragment {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_shop_sale, container, false);
         initView(v);
-        //getAllShopAndSale();
+        getAllShopAndSale();
         return v;
     }
     @Override
     public void onResume() {
         super.onResume();
-        getAllShopAndSale();
+
 
     }
     @Override
@@ -74,10 +74,6 @@ public class ShopSaleFragment extends Fragment {
     public void initView(View v) {
 
         rv_shop_sale = v.findViewById(R.id.rv_shop_sale);
-       /* GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
-        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-*/
-
         GridLayoutManager gridLayoutManager1 = new GridLayoutManager(getActivity(), 1);
         gridLayoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
         rv_shop_sale.setLayoutManager(gridLayoutManager1);
@@ -126,6 +122,9 @@ public class ShopSaleFragment extends Fragment {
                                 String hash_tags = j1.getString("hash_tags");
                                 String description = j1.getString("description");
                                 String web_url = j1.getString("web_url");
+                                String fav_status = j1.getString("fav_status");
+                                String like_status = j1.getString("like_status");
+                                String like_count = j1.getString("like_count");
                                 String image2="";
                                 String image1="";
                                 if(j1.has("image1")) {
@@ -145,7 +144,7 @@ public class ShopSaleFragment extends Fragment {
                                     JSONObject j2=shop_images.getJSONObject(k);
                                     image = j2.getString("image");
                                 }*/
-                                allShopSaleList.add(new ShopSaleModel(id,name,user_id,preference_id,address_line1,address_line2,city,state,country,pincode,lat,lon,low_price,high_price,discount,start_date,end_date,phone,hash_tags,description,web_url,image1,image2,"shop"));
+                                allShopSaleList.add(new ShopSaleModel(id,name,user_id,preference_id,address_line1,address_line2,city,state,country,pincode,lat,lon,low_price,high_price,discount,start_date,end_date,phone,hash_tags,description,web_url,image1,image2,"shop",fav_status,like_status,like_count));
 
                             }
 

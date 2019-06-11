@@ -1,17 +1,22 @@
 package mimosale.com.products;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,10 +33,12 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import mimosale.com.R;
 import mimosale.com.account.AccountFragment;
 import mimosale.com.favourite.FavouriteFragment;
+import mimosale.com.helperClass.CustomUtils;
 import mimosale.com.helperClass.PrefManager;
 import mimosale.com.home.HomeActivity;
 import mimosale.com.login.LoginActivity;
@@ -39,6 +46,7 @@ import mimosale.com.network.RestInterface;
 import mimosale.com.network.RetrofitClient;
 import mimosale.com.network.WebServiceURLs;
 import mimosale.com.notification.NotificationFragment;
+import mimosale.com.onItemClickListener;
 import mimosale.com.post.SalePostingActivity;
 import mimosale.com.shop.ShopDetailsActivityNew;
 import mimosale.com.shop.ShopPostingActivity;
@@ -77,34 +85,36 @@ public class ProductDetailsActivityNew extends AppCompatActivity implements View
     String like_status="";
     @BindView(R.id.toolbar_title)
     TextView toolbar_title;
-
     @BindView(R.id.tv_original_price_tag)
     TextView tv_original_price_tag;
-
     @BindView(R.id.tv_original_price)
     TextView tv_original_price;
-
     @BindView(R.id.ll_discounted_price)
     LinearLayout ll_discounted_price;
     @BindView(R.id.ll_original_price)
     LinearLayout ll_original_price;
     @BindView(R.id.tv_discounted_price)
     TextView tv_discounted_price;
-
     @BindView(R.id.ll_next)
     LinearLayout ll_next;
-
     @BindView(R.id.tv_brand_name)
     TextView tv_brand_name;
     @BindView(R.id.tv_model_name)
     TextView tv_model_name;
+    @BindView(R.id.iv_back)
+            ImageView iv_back;
+
     ProgressDialog pDialog;
     String product_id="";
     List<String> shopImagesPojoList = new ArrayList<>();
-    BottomSheetDialog bottomSheetDialog;
+    Dialog bottomSheetDialog;
     Button btn_ok;
     TextView tv_spec,tv_size,tv_color,tv_model_no,tv_brand;
-
+    Dialog dialog_review;
+    RatingBar ratingBar;
+    EditText et_review;
+    Button btn_submit;
+    ProgressBar progress_bar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,7 +123,7 @@ public class ProductDetailsActivityNew extends AppCompatActivity implements View
         pDialog = new ProgressDialog(this);
         pDialog.setMessage(getResources().getString(R.string.loading));
         product_id = getIntent().getStringExtra("product_id");
-        bottomSheetDialog=new BottomSheetDialog(ProductDetailsActivityNew.this);
+        bottomSheetDialog=new Dialog(ProductDetailsActivityNew.this);
         bottomSheetDialog.setContentView(R.layout.more_info_bottom_sheet);
         tv_spec=bottomSheetDialog.findViewById(R.id.tv_spec);
         tv_size=bottomSheetDialog.findViewById(R.id.tv_size);
@@ -124,15 +134,68 @@ public class ProductDetailsActivityNew extends AppCompatActivity implements View
         rl_view_more.setOnClickListener(this);
         btn_ok.setOnClickListener(this);
         rl_like.setOnClickListener(this);
+        dialog_review=new Dialog(this);
+        dialog_review.setContentView(R.layout.dialog_rating);
+        progress_bar=dialog_review.findViewById(R.id.progress_bar);
+        btn_submit=dialog_review.findViewById(R.id.btn_submit_review);
+        et_review=dialog_review.findViewById(R.id.et_review);
+        ratingBar=dialog_review.findViewById(R.id.ratingBar);
+        rl_write_review.setOnClickListener(this);
+        btn_submit.setOnClickListener(this);
         getProductDetails();
 
     }
+    @OnClick(R.id.iv_back)
+    void onBackClick()
+    {
+        finish();
+    }
 
 
+    public void claimCoupon() {
 
+
+        try {
+            pDialog.show();
+            RetrofitClient retrofitClient = new RetrofitClient();
+            RestInterface service = retrofitClient.getAPIClient(WebServiceURLs.DOMAIN_NAME);
+            service.claim_coupon(PrefManager.getInstance(ProductDetailsActivityNew.this).getUserId(), product_id, "product", "Bearer " + PrefManager.getInstance(ProductDetailsActivityNew.this).getApiToken(), new Callback<JsonElement>() {
+                @Override
+                public void success(JsonElement jsonElement, Response response) {
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(jsonElement.toString());
+                        pDialog.dismiss();
+                        String status = jsonObject.getString("status");
+                        String message = jsonObject.getString("message");
+                        CustomUtils.showSweetAlert(ProductDetailsActivityNew.this, message, new onItemClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog v) {
+                                v.dismissWithAnimation();
+                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    pDialog.dismiss();
+                    Toast.makeText(ProductDetailsActivityNew.this, getResources().getString(R.string.check_internet), Toast.LENGTH_LONG).show();
+                    Log.i("fdfdfdfdfdf", "" + error.getMessage());
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            pDialog.dismiss();
+            Log.i("detailsException", "" + e.toString());
+        }
+    }
     public void getProductDetails() {
         try {
-            Toast.makeText(this, ""+product_id, Toast.LENGTH_SHORT).show();
+
             RetrofitClient retrofitClient = new RetrofitClient();
             RestInterface service = retrofitClient.getAPIClient(WebServiceURLs.DOMAIN_NAME);
             service.getProductDetails(product_id, new Callback<JsonElement>() {
@@ -175,11 +238,7 @@ public class ProductDetailsActivityNew extends AppCompatActivity implements View
                                 }
 
                                 toolbar_title .setText(name);
-
-
-
                                 tv_desc.setText(description);
-
                                 if (discount.equals("null"))
                                 {
                                     iv_product_image.setVisibility(View.VISIBLE);
@@ -263,8 +322,8 @@ public class ProductDetailsActivityNew extends AppCompatActivity implements View
                                 indicator.setRadius(5 * density);
                                 }
 
-
-                    } catch (JSONException | NullPointerException e) {
+                                }
+                                catch (JSONException | NullPointerException e) {
                         e.printStackTrace();
                         Log.i("fdfdfdfdfdf", "" + e.getMessage());
                     }
@@ -304,9 +363,91 @@ public class ProductDetailsActivityNew extends AppCompatActivity implements View
                 else
                     dialogLoginWarning("like_product");
                 break;
+
+            case R.id.rl_write_review:
+                if (PrefManager.getInstance(ProductDetailsActivityNew.this).IS_LOGIN()) {
+
+                    dialog_review.show();
+                }
+                else
+                {
+                    dialogLoginWarning("product_review");
+                }
+                break;
+            case R.id.btn_submit:
+                if (validateReviewDialog())
+                {
+                    writeReview(""+ratingBar.getRating(),et_review.getText().toString().trim());
+                    dialog_review.dismiss();
+                }
+                else
+                {
+
+                }
+                break;
+            case R.id.rl_claim_now:
+                if (PrefManager.getInstance(ProductDetailsActivityNew.this).IS_LOGIN()) {
+                    claimCoupon();
+                } else {
+                    dialogLoginWarning("like_product");
+                }
+
         }
     }
+    public void writeReview(String rating,String review) {
+        try {
+            pDialog.show();
+            RetrofitClient retrofitClient = new RetrofitClient();
+            RestInterface service = retrofitClient.getAPIClient(WebServiceURLs.DOMAIN_NAME);
+            service.write_review(PrefManager.getInstance(ProductDetailsActivityNew.this).getUserId(), product_id, "product", rating,review, "Bearer " + PrefManager.getInstance(ProductDetailsActivityNew.this).getApiToken(), new Callback<JsonElement>() {
+                @Override
+                public void success(JsonElement jsonElement, Response response) {
 
+                    try {
+                        JSONObject jsonObject = new JSONObject(jsonElement.toString());
+                        pDialog.dismiss();
+                        String status = jsonObject.getString("status");
+                        String message = jsonObject.getString("message");
+                        CustomUtils.showSweetAlert(ProductDetailsActivityNew.this, message, new onItemClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog v) {
+                                v.dismissWithAnimation();
+                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    pDialog.dismiss();
+                    Toast.makeText(ProductDetailsActivityNew.this, getResources().getString(R.string.check_internet), Toast.LENGTH_LONG).show();
+                    Log.i("fdfdfdfdfdf", "" + error.getMessage());
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            pDialog.dismiss();
+            Log.i("detailsException", "" + e.toString());
+        }
+
+    }
+    public boolean validateReviewDialog()
+    {
+        if (ratingBar.getRating()==0)
+        {
+            CustomUtils.showToast(getResources().getString(R.string.please_rate),ProductDetailsActivityNew.this);
+            return false;
+        }
+        if (et_review.getText().toString().trim().isEmpty())
+        {
+            CustomUtils.showToast(getResources().getString(R.string.please_write_review),ProductDetailsActivityNew.this);
+            return false;
+        }
+        return true;
+    }
     public void dialogLoginWarning(final String intent_from) {
 
         new SweetAlertDialog(ProductDetailsActivityNew.this, SweetAlertDialog.WARNING_TYPE)
@@ -340,10 +481,10 @@ public class ProductDetailsActivityNew extends AppCompatActivity implements View
     { String like_flag="";
         if (like_status.equals("0"))
         {
-            like_flag="1";
+            like_flag="like";
         }
         else
-            like_flag="0";
+            like_flag="unlike";
 
 
         try {
@@ -360,11 +501,11 @@ public class ProductDetailsActivityNew extends AppCompatActivity implements View
                         String status = jsonObject.getString("status");
                         String message = jsonObject.getString("message");
                         if (message.equals("Liked")) {
-                            tv_like.setText(getResources().getString(R.string.liked));
+                            tv_like.setText(getResources().getString(R.string.unlike));
                             like_status="1";
 
                         } else {
-                            tv_like.setText(getResources().getString(R.string.unliked));
+                            tv_like.setText(getResources().getString(R.string.like));
                             like_status="0";
                         }
 

@@ -32,13 +32,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import mimosale.com.R;
 import mimosale.com.feedback.FeedBackActivity;
+import mimosale.com.helperClass.CustomUtils;
 import mimosale.com.helperClass.PrefManager;
 import mimosale.com.home.HomeActivity;
 import mimosale.com.network.RestInterface;
 import mimosale.com.network.RetrofitClient;
 import mimosale.com.network.WebServiceURLs;
+import mimosale.com.onItemClickListener;
 import mimosale.com.signup.RegistrationActivity;
 import com.google.gson.JsonElement;
 
@@ -124,7 +127,7 @@ String intent_from="";
                     JSONObject jsonObject = new JSONObject(jsonElement.toString());
                     String status=jsonObject.getString("status");
                     String message=jsonObject.getString("message");
-                    Toast.makeText(LoginActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(LoginActivity.this, ""+message, Toast.LENGTH_SHORT).show();
                     if (status.equals("1"))
                     {
                         String token= jsonObject.getString("token");
@@ -161,8 +164,17 @@ String intent_from="";
                         }
 
                     }
+                    else
+                    {
+                        CustomUtils.showSweetAlert(LoginActivity.this, message, new onItemClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog v) {
+                                CustomUtils.dismissSweetAlert();
+                            }
+                        });
+                    }
 
-
+                    p_bar.setVisibility(View.GONE);
 
 
                 } catch (JSONException | NullPointerException e) {

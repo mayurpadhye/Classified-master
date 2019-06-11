@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.design.internal.BottomNavigationMenuView;
@@ -19,6 +20,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,7 +30,9 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import mimosale.com.GooglePlayStoreAppVersionNameLoader;
 import mimosale.com.R;
+import mimosale.com.WSCallerVersionListener;
 import mimosale.com.account.AccountFragment;
 import mimosale.com.favourite.FavouriteFragment;
 import mimosale.com.helperClass.CustomUtils;
@@ -48,7 +52,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import static mimosale.com.helperClass.CustomPermissions.MY_PERMISSIONS_REQUEST_CALL_PHONE;
 import static mimosale.com.helperClass.CustomPermissions.MY_PERMISSIONS_REQUEST_LOCATION;
 
-public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener,WSCallerVersionListener {
     BottomNavigationView navigationView;
     BottomSheetDialog dialog;
     String languageToLoad = "",language_code="";
@@ -61,7 +65,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static String CURRENT_TAG = TAG_HOME;
     private boolean shouldLoadHomeFragOnBackPress = true;
 TextView et_search;
-
+    boolean isForceUpdate = true;
 RelativeLayout rl_posting;
     @Override
     protected void onResume() {
@@ -127,6 +131,8 @@ RelativeLayout rl_posting;
 
         }
         setContentView(R.layout.activity_home);
+        new GooglePlayStoreAppVersionNameLoader(getApplicationContext(), this).execute();
+
         navigationView = findViewById(R.id.bottom_navigation);
         rl_posting = findViewById(R.id.rl_posting);
 
@@ -514,6 +520,41 @@ RelativeLayout rl_posting;
         }
     }
 
+    @Override
+    public void onGetResponse(boolean isUpdateAvailable) {
+        Log.e("ResultAPPMAIN", String.valueOf(isUpdateAvailable));
+        if (isUpdateAvailable) {
+            showUpdateDialog();
+        }
+        else
+        {
+            Log.i("UpdateResult","notAvailable");
+        }
+    }
 
+    public void showUpdateDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(HomeActivity.this);
 
+        alertDialogBuilder.setTitle(HomeActivity.this.getString(R.string.app_name));
+        alertDialogBuilder.setMessage(HomeActivity.this.getString(R.string.update_message));
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setPositiveButton(R.string.update_now, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                HomeActivity.this.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
+                dialog.cancel();
+            }
+        });
+        alertDialogBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (isForceUpdate) {
+                    finish();
+                }
+                dialog.dismiss();
+            }
+        });
+        alertDialogBuilder.show();
+    }
 }
+
+

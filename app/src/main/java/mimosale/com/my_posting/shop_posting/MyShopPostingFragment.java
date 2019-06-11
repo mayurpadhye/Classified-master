@@ -104,8 +104,8 @@ List<MyShopPojo> myShopPojoList=new ArrayList<>();
                                 String high_price = j1.getString("high_price");
                                 String discount = j1.getString("discount");
 
-                                String start_date = j1.getString("start_date");
-                                String end_date = j1.getString("end_date");
+                               // String start_date = j1.getString("start_date");
+                               // String end_date = j1.getString("end_date");
                                 String phone = j1.getString("phone");
                                 String hash_tags = j1.getString("hash_tags");
                                 String description = j1.getString("description");
@@ -113,7 +113,7 @@ List<MyShopPojo> myShopPojoList=new ArrayList<>();
                                 String image1 = j1.getString("image1");
                                 String image2 = j1.getString("image2");
                                 String image = "";
-                                myShopPojoList.add(new MyShopPojo(id,name,user_id,preference_id,address_line1,address_line2,city,state,country,pincode,lat,lon,low_price,high_price,discount,start_date,end_date,phone,hash_tags,description,web_url,image1,image2));
+                                myShopPojoList.add(new MyShopPojo(id,name,user_id,preference_id,address_line1,address_line2,city,state,country,pincode,lat,lon,low_price,high_price,discount,"","",phone,hash_tags,description,web_url,image1,image2));
 
                             }
                             MyShopPostingAdapter shopSaleAdapter = new MyShopPostingAdapter(myShopPojoList, getActivity(),p_bar);

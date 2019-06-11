@@ -82,30 +82,22 @@ ProgressBar p_bar;
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.placeholder_logo);
         requestOptions.fitCenter();
-
         holder.shimmer_view_container1.startShimmerAnimation();
         shimmer.start(holder.shimmer_premium);
-
-
         Picasso.with(mctx).load(WebServiceURLs.SHOP_IMAGE + items.getImage1()).into(holder.iv_product_image1);
         Picasso.with(mctx).load(WebServiceURLs.SHOP_IMAGE + items.getImage2()).into(holder.iv_product_image2);
-
-
-
         holder.tv_price_range.setText("");
         holder.tv_desc.setText(items.getDescription());
         holder.tv_discount.setText(items.getDiscount()+ "%");
         if (position == 0) {
             holder.ratingBar.setRating(2.5f);
         }
-
         holder.cv_shop_main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mctx.startActivity(new Intent(mctx, ShopDetailsActivityNew.class).putExtra("shop_id",items.getId()));
+                mctx.startActivity(new Intent(mctx, ShopDetailsActivityNew.class).putExtra("shop_id",items.getShop_id()));
             }
         });
-
         holder.iv_pop_up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

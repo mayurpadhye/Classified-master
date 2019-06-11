@@ -30,6 +30,10 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/title"
                     android:textSize="14dp"
+                    android:imeOptions="actionNext"
+                    android:singleLine="true"
+                    android:inputType="textPersonName"
+                    android:nextFocusDown="@+id/et_start_date"
                     />
 
             </android.support.design.widget.TextInputLayout>
@@ -100,12 +104,14 @@
                             android:id="@+id/et_start_date"
                             android:editable="false"
                             android:clickable="true"
+                            android:singleLine="true"
                             android:focusableInTouchMode="true"
                             android:focusable="false"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="@string/start_date"
                             android:textSize="14dp"
+                            android:nextFocusDown="@+id/et_end_date"
                             />
 
                     </android.support.design.widget.TextInputLayout>
@@ -121,8 +127,11 @@
                             android:layout_height="wrap_content"
                             android:hint="@string/end_date"
                             android:textSize="14dp"
+                            android:singleLine="true"
                             android:editable="false"
                             android:clickable="true"
+
+                            android:nextFocusDown="@+id/et_short_desc"
                             android:focusableInTouchMode="true"
                             android:focusable="false"
                             />
@@ -194,27 +203,23 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/short_description"
                     android:textSize="14dp"
+                    android:inputType="textPersonName"
+                    android:nextFocusDown="@+id/et_hash_tag"
                     />
 
             </android.support.design.widget.TextInputLayout>
-
-
-
-
-
-
-            <android.support.design.widget.TextInputLayout
+              <android.support.design.widget.TextInputLayout
                 android:id="@+id/tl_hash_tag"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                >
+                android:layout_height="wrap_content">
                 <EditText
                     android:id="@+id/et_hash_tag"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/hash_tag"
                     android:textSize="14dp"
+                    android:singleLine="true"
+                    android:nextFocusDown="@+id/et_url"
                     />
 
             </android.support.design.widget.TextInputLayout>
@@ -231,6 +236,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/addurl"
                     android:textSize="14dp"
+                    android:singleLine="true"
                     />
 
             </android.support.design.widget.TextInputLayout>

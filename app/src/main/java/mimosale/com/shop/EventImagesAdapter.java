@@ -58,39 +58,31 @@ public class EventImagesAdapter extends RecyclerView.Adapter<EventImagesAdapter.
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         ImageVideoData imageVideoData=result_list.get(position);
-        if(result_list.get(position).getBitmap()!=null){
+        if(result_list.get(position).getBitmap()==null){
             //  holder.iv_activity.setImageBitmap(result_list.get(position).getBitmap());
+
             RequestOptions requestOptions = new RequestOptions();
             requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
             requestOptions.priority(Priority.IMMEDIATE);
             requestOptions.skipMemoryCache(false);
             requestOptions.dontAnimate();
-
-
-            Glide.with(mContext)
-
-                    .load(result_list.get(position).getPath()) // it can be a remote URL or a local absolute file path.
+            Glide.with(mContext).load(result_list.get(position).getPath()) // it can be a remote URL or a local absolute file path.
                     .apply(requestOptions)
                     .into(holder.iv_activity);
-
-            Picasso.with(mContext).load(result_list.get(position).getPath()).into(holder.iv_activity);
-           // Picasso.with(mctx).load(WebServiceURLs.SHOP_IMAGE + items.getImage2()).into(holder.iv_product_image2);
-
-
-
-            Log.i("imagePathhhhhBitmap",result_list.get(position).getPath());
+                   Log.i("imagePathhhhhBitmap",result_list.get(position).getPath());
         }else{
             holder.iv_activity.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_default_image));
             if(result_list.get(position).getPath()!=null)
                 holder.iv_activity.setImageURI(Uri.parse(imageVideoData.getPath()));
-               /* Glide.with(mContext)
-
-                        .load(result_list.get(position).getPath()) // it can be a remote URL or a local absolute file path.
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .priority(Priority.IMMEDIATE)
-                        .skipMemoryCache(false)
-                        .dontAnimate()
-                        .into(holder.iv_activity);*/
+            holder.iv_activity.setImageBitmap(imageVideoData.getBitmap());
+            RequestOptions requestOptions = new RequestOptions();
+            requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
+            requestOptions.priority(Priority.IMMEDIATE);
+            requestOptions.skipMemoryCache(false);
+            requestOptions.dontAnimate();
+            Glide.with(mContext).load(result_list.get(position).getPath()) // it can be a remote URL or a local absolute file path.
+                    .apply(requestOptions)
+                    .into(holder.iv_activity);
             Log.i("imagePathhhhh",result_list.get(position).getPath());
 
         }
@@ -101,7 +93,7 @@ public class EventImagesAdapter extends RecyclerView.Adapter<EventImagesAdapter.
                 {
                     if (event_from.equals("create"))
                     {
-                        if(((ShopPostingActivity)activity).imageFiles.size()>0) {
+                        if(((ShopPostingActivity)activity).imageFiles_shop.size()>0) {
 
 
                             new SweetAlertDialog(mContext, SweetAlertDialog.WARNING_TYPE)
@@ -114,7 +106,7 @@ public class EventImagesAdapter extends RecyclerView.Adapter<EventImagesAdapter.
                                         @Override
                                         public void onClick(SweetAlertDialog sDialog) {
                                             result_list.remove(position);// removes from list
-                                            ((ShopPostingActivity) activity).imageFiles.remove(position);
+                                            ((ShopPostingActivity) activity).imageFiles_shop.remove(position);
                                             notifyItemRemoved(position); // updates position
                                             notifyItemRangeChanged(position, result_list.size());
                                             sDialog.dismissWithAnimation();

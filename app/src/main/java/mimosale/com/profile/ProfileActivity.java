@@ -45,6 +45,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+
 import mimosale.com.BuildConfig;
 import mimosale.com.R;
 import mimosale.com.helperClass.PrefManager;
@@ -57,6 +58,7 @@ import mimosale.com.network.WebServiceURLs;
 import mimosale.com.preferences.MyPreferencePojo;
 import mimosale.com.preferences.MyPreferencesAdapter;
 import mimosale.com.signup.RegistrationActivity;
+
 import com.google.gson.JsonElement;
 import com.squareup.picasso.Picasso;
 
@@ -104,13 +106,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     TextView tv_change_profile;
     CircleImageView cv_profile;
     String convertedImage;
-
     File f;
-
     private ArrayList permissionsToRequest;
     private ArrayList permissionsRejected = new ArrayList();
     private ArrayList permissions = new ArrayList();
-
     private final static int ALL_PERMISSIONS_RESULT = 107;
 
     @Override
@@ -125,27 +124,24 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         requestOptions.placeholder(R.drawable.user);
         requestOptions.fitCenter();
         if (!PrefManager.getInstance(ProfileActivity.this).getProfilePic().equals(""))
-          //   Glide.with(ProfileActivity.this).setDefaultRequestOptions(requestOptions).load(WebServiceURLs.IMAGE_URL + PrefManager.getInstance(ProfileActivity.this).getProfilePic()).into(cv_profile);
-
+            //   Glide.with(ProfileActivity.this).setDefaultRequestOptions(requestOptions).load(WebServiceURLs.IMAGE_URL + PrefManager.getInstance(ProfileActivity.this).getProfilePic()).into(cv_profile);
             Picasso.with(ProfileActivity.this).load(WebServiceURLs.IMAGE_URL + PrefManager.getInstance(ProfileActivity.this).getProfilePic()).into(cv_profile);
-       // Picasso.with(mctx).load(WebServiceURLs.SHOP_IMAGE + items.getImage2()).into(holder.iv_product_image2);
-cv_profile.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        startActivity(new Intent(ProfileActivity.this,ProfilePictureActivity.class));
-    }
-});
+
+        cv_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ProfileActivity.this, ProfilePictureActivity.class));
+            }
+        });
     }//onCreateClose
 
     public void setData() {
-
         toolbar_title.setText(getResources().getString(R.string.profile));
         et_email.setText(PrefManager.getInstance(ProfileActivity.this).getEmail());
         et_mobile.setText(PrefManager.getInstance(ProfileActivity.this).getMobile());
         et_name.setText(PrefManager.getInstance(ProfileActivity.this).getFirstName());
         et_last_name.setText(PrefManager.getInstance(ProfileActivity.this).getLastName());
-
-    }//setDataClose
+        }//setDataClose
 
     public void initView() {
         btn_cahnge_pass = findViewById(R.id.btn_cahnge_pass);
@@ -183,7 +179,6 @@ cv_profile.setOnClickListener(new View.OnClickListener() {
                 // If the event is a key-down event on the "enter" button
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    // Perform action on Enter key press
                     et_old_pass.clearFocus();
                     et_new_pass.requestFocus();
                     return true;
@@ -191,15 +186,11 @@ cv_profile.setOnClickListener(new View.OnClickListener() {
                 return false;
             }
         });
-
         et_new_pass.setOnKeyListener(new View.OnKeyListener() {
 
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    // Perform action on Enter key press
-                    // check for username - password correctness here
                     et_new_pass.clearFocus();
                     et_confirm_pass.requestFocus();
                     return true;
@@ -211,11 +202,8 @@ cv_profile.setOnClickListener(new View.OnClickListener() {
         et_confirm_pass.setOnKeyListener(new View.OnKeyListener() {
 
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    // Perform action on Enter key press
-                    // check for username - password correctness here
                     return true;
                 }
                 return false;
@@ -237,7 +225,6 @@ cv_profile.setOnClickListener(new View.OnClickListener() {
                     try {
                         JSONObject jsonObject = new JSONObject(jsonElement.toString());
                         String status = jsonObject.getString("status");
-
                         if (status.equals("1")) {
                             JSONObject data = jsonObject.getJSONObject("data");
                             String id = data.getString("id");
@@ -256,8 +243,7 @@ cv_profile.setOnClickListener(new View.OnClickListener() {
                             String mobile_status = data.getString("mobile_status");
                             String term_accept = data.getString("term_accept");
                             String firebase_token = data.getString("firebase_token");
-
-                        }
+                            }
                         p_bar.setVisibility(View.GONE);
                     } catch (JSONException | NullPointerException e) {
                         e.printStackTrace();
@@ -284,30 +270,25 @@ cv_profile.setOnClickListener(new View.OnClickListener() {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_cahnge_pass:
+
                 change_pass_dialog.show();
                 break;
             case R.id.iv_back:
                 finish();
                 break;
             case R.id.btn_submit:
-                if (et_old_pass.getText().toString().trim().length()==0)
-                {
+                if (et_old_pass.getText().toString().trim().length() == 0) {
                     et_old_pass.requestFocus();
                     et_old_pass.setError(getResources().getString(R.string.enter_old_pass));
                     return;
-
-                }
-                if (et_new_pass.getText().toString().trim().length()!=0)
-                {
-                    if (!et_new_pass.getText().toString().trim().equals(et_confirm_pass.getText().toString().trim()))
-                    {
+                    }
+                if (et_new_pass.getText().toString().trim().length() != 0) {
+                    if (!et_new_pass.getText().toString().trim().equals(et_confirm_pass.getText().toString().trim())) {
                         et_confirm_pass.setError(getResources().getString(R.string.pass_not_matched));
                         return;
                     }
 
-                }
-                else
-                {
+                } else {
                     et_new_pass.requestFocus();
                     et_new_pass.setError(getResources().getString(R.string.enter_new_pass));
                     return;
@@ -318,10 +299,21 @@ cv_profile.setOnClickListener(new View.OnClickListener() {
                 for (int i = 0; i < editTexts.length; i++) {
                     editTexts[i].setEnabled(true);
                 }
+
+                if (et_email.getText().toString().trim().isEmpty())
+                {
+                    et_email.setEnabled(true);
+                }
+                else
+                    et_email.setEnabled(false);
+
+                if (et_mobile.getText().toString().trim().isEmpty())
+                    et_mobile.setEnabled(true);
+                else
+                    et_mobile.setEnabled(false);
                 app_bar_layout_edit.setVisibility(View.VISIBLE);
                 app_bar_profile.setVisibility(View.GONE);
                 btn_cahnge_pass.setVisibility(View.GONE);
-
                 break;
             case R.id.tv_cancel:
                 for (int i = 0; i < editTexts.length; i++) {
@@ -384,12 +376,10 @@ cv_profile.setOnClickListener(new View.OnClickListener() {
                         String message = jsonObject.getString("message");
                         if (status.equals("1")) {
 
-                            Toast.makeText(ProfileActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ProfileActivity.this, "" + message, Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
-                        }
-                        else
-                        {
-                            Toast.makeText(ProfileActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(ProfileActivity.this, "" + message, Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
                         }
                         p_bar.setVisibility(View.GONE);
@@ -545,32 +535,37 @@ cv_profile.setOnClickListener(new View.OnClickListener() {
             et_last_name.setError(getResources().getString(R.string.enter_last_name));
             return;
         }
-        if (!isValidMail(et_email.getText().toString().trim(), et_email)) {
+        if (!et_mobile.getText().toString().trim().isEmpty()) {
+            if (!isValidMobile(et_mobile.getText().toString().trim())) {
+                et_mobile.requestFocus();
+                if (et_mobile.getText().toString().trim().length() == 0) {
+                    et_mobile.setError(getResources().getString(R.string.enter_mobile_no));
+                } else {
+                    et_mobile.setError(getResources().getString(R.string.mobile_error));
+                }
 
-            if (et_email.getText().toString().trim().length() == 0) {
-                et_email.requestFocus();
-                et_email.setError(getResources().getString(R.string.enter_email_id));
-
+                return;
             } else {
+                et_mobile.setError(null);
+            }
+        }
+
+        if (!et_email.getText().toString().trim().isEmpty()) {
+            if (!isValidMail(et_email.getText().toString().trim(),et_email)) {
                 et_email.requestFocus();
-                et_email.setError(getResources().getString(R.string.email_error));
+                if (et_email.getText().toString().trim().length() == 0) {
+                    et_email.setError(getResources().getString(R.string.enter_email_id));
+                } else {
+                    et_email.setError(getResources().getString(R.string.email_error));
+                }
 
-            }
-
-            return;
-        }
-        if (!isValidMobile(et_mobile.getText().toString().trim())) {
-            et_mobile.requestFocus();
-            if (et_mobile.getText().toString().trim().length() == 0) {
-                et_mobile.setError(getResources().getString(R.string.enter_mobile_no));
+                return;
             } else {
-                et_mobile.setError(getResources().getString(R.string.mobile_error));
+                et_email.setError(null);
             }
-
-            return;
-        } else {
-            et_mobile.setError(null);
         }
+
+
         updateUserProfile();
     }//subMitFormClose
 
@@ -611,7 +606,6 @@ cv_profile.setOnClickListener(new View.OnClickListener() {
     }
 
     public void updateUserProfile() {
-
 
         p_bar.setVisibility(View.VISIBLE);
         MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();

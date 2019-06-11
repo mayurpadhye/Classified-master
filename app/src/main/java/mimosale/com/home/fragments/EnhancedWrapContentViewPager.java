@@ -27,10 +27,8 @@ public class EnhancedWrapContentViewPager extends ViewPager {
             for (int i = 0; i < getChildCount(); i++) {
                 View child = getChildAt(i);
                 child.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-                int childMeasuredHeight = child.getMeasuredHeight();
-                if (childMeasuredHeight > height) {
-                    height = childMeasuredHeight;
-                }
+                int h = child.getMeasuredHeight();
+                if (h > height) height = h;
             }
             heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
         }
