@@ -190,11 +190,12 @@
         <activity
             android:name=".no_internet.NoInternetActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />
-        <activity android:name=".ImagePickerActivity"></activity>
+        <activity android:name=".ImagePickerActivity" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBarTransperent" />
+        <activity android:name=".notification.MyCouponsDetails"></activity>
     </application>
 
 </manifest>

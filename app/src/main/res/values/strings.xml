@@ -350,4 +350,11 @@
     <string name="please_rate">Please give rating</string>
     <string name="please_write_review">Please Write Review</string>
     <string name="wallet">Wallet</string>
+    <string name="valid_till">Valid Till :</string>
+    <string name="my_coupons">My Coupons</string>
+    <string name="claimed_coupons">Claimed Coupons</string>
+    <string name="coupon_number">Coupon Number</string>
+    <string name="shop_description">Shop Description</string>
+    <string name="claimer_list">Claimer List</string>
+    <string name="coupon_details">Coupon Details</string>
 </resources>

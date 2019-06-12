@@ -39,6 +39,7 @@ import mimosale.com.helperClass.CustomUtils;
 import mimosale.com.helperClass.PrefManager;
 import mimosale.com.login.LoginActivity;
 import mimosale.com.notification.NotificationFragment;
+import mimosale.com.notification.WalletFragment;
 import mimosale.com.post.SalePostingActivity;
 import mimosale.com.products.AddProductsActivity;
 import mimosale.com.search.SearchResultActivity;
@@ -138,52 +139,38 @@ RelativeLayout rl_posting;
 
         BottomNavigationMenuView bottomNavigationMenuView =
                 (BottomNavigationMenuView) navigationView.getChildAt(0);
-        View v = bottomNavigationMenuView.getChildAt(3);
+       /* View v = bottomNavigationMenuView.getChildAt(3);
         BottomNavigationItemView itemView = (BottomNavigationItemView) v;
 
         View badge = LayoutInflater.from(HomeActivity.this)
                 .inflate(R.layout.notification_badge, itemView, true);
 
-        TextView tv_noti_itm = badge.findViewById(R.id.notifications);
+        TextView tv_noti_itm = badge.findViewById(R.id.notifications);*/
         et_search=findViewById(R.id.et_search);
-
         et_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(HomeActivity.this, SearchResultActivity.class));
             }
         });
-
-
         BottomNavigationMenuView menuView = (BottomNavigationMenuView) navigationView.getChildAt(0);
         for (int i = 0; i < menuView.getChildCount(); i++) {
             BottomNavigationItemView item = (BottomNavigationItemView) menuView.getChildAt(i);
-            View activeLabel = item.findViewById(R.id.largeLabel);
+           /* View activeLabel = item.findViewById(R.id.largeLabel);
             if (activeLabel instanceof TextView) {
                 activeLabel.setPadding(0, 0, 0, 0);
-            }
+            }*/
         }
         navigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
         if (savedInstanceState == null) {
             navItemIndex = 0;
             CURRENT_TAG = TAG_HOME;
             loadHomeFragment();
         }
-
         checkLocationPermission();
-
-        //  getSupportFragmentManager().beginTransaction().add(R.id.rv_main,new HomeFragment()).commit();
-    }
+        }
 
     public void loadHomeFragment() {
-       /* Fragment fragment = getHomeFragment();
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                android.R.anim.fade_out);
-        fragmentTransaction.replace(R.id.rv_main, fragment, CURRENT_TAG);
-        fragmentTransaction.commitAllowingStateLoss();
-*/
 
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -214,7 +201,7 @@ RelativeLayout rl_posting;
             case 1:
                 return new FavouriteFragment();
             case 2:
-                return new NotificationFragment();
+                return new WalletFragment();
             case 3:
                 return new AccountFragment();
 
@@ -272,12 +259,8 @@ RelativeLayout rl_posting;
 
 
                 case R.id.nav_add_post:
-
-
-
-                   showSelectPostingDailog();
-
-                    break;
+                     showSelectPostingDailog();
+                     break;
                 case R.id.nav_fav:
                     if (PrefManager.getInstance(HomeActivity.this).IS_LOGIN()) {
                         navItemIndex = 1;
@@ -357,7 +340,7 @@ RelativeLayout rl_posting;
                 } else if (data.getStringExtra("intent_from").equals("favorite")) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.rv_main, new FavouriteFragment()).commit();
                 } else if (data.getStringExtra("intent_from").equals("noti")) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.rv_main, new NotificationFragment()).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.rv_main, new WalletFragment()).commit();
                 } else if (data.getStringExtra("intent_from").equals("shop_posting")) {
                     startActivity(new Intent(HomeActivity.this, ShopPostingActivity.class));
                 } else if (data.getStringExtra("intent_from").equals("sale_posting")) {

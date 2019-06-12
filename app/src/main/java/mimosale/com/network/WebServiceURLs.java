@@ -51,6 +51,10 @@ public class  WebServiceURLs {
     public static final String LIKE_SHOP_PRODUCT="/likeMimo";
     public static final String CLAIM_COUPON="/claimNow";
     public static final String WRITE_REVIEW="/addRating";
+    public static final String GET_MY_COUPON="/myCouponList";
+    public static final String GET_CLAMIED_COUPONS="/claimedCouponList";
+    public static final String GET_MY_COUPON_DEATILS="/myCouponDetails";
+    public static final String GET_CLAIMED_COUPONS="/claimedCouponDetails";
 
 
 

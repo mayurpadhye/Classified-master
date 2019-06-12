@@ -103,7 +103,7 @@ public class ProductDetailsActivityNew extends AppCompatActivity implements View
     TextView tv_model_name;
     @BindView(R.id.iv_back)
             ImageView iv_back;
-
+String coupon_id="";
     ProgressDialog pDialog;
     String product_id="";
     List<String> shopImagesPojoList = new ArrayList<>();
@@ -113,7 +113,13 @@ public class ProductDetailsActivityNew extends AppCompatActivity implements View
     Dialog dialog_review;
     RatingBar ratingBar;
     EditText et_review;
-    Button btn_submit;
+    Button btn_submit_review;
+
+    @BindView(R.id.tv_claim_now)
+    TextView tv_claim_now;
+
+    @BindView(R.id.rl_claim_now)
+            RelativeLayout rl_claim_now;
     ProgressBar progress_bar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,11 +143,12 @@ public class ProductDetailsActivityNew extends AppCompatActivity implements View
         dialog_review=new Dialog(this);
         dialog_review.setContentView(R.layout.dialog_rating);
         progress_bar=dialog_review.findViewById(R.id.progress_bar);
-        btn_submit=dialog_review.findViewById(R.id.btn_submit_review);
+        btn_submit_review=dialog_review.findViewById(R.id.btn_submit_review);
         et_review=dialog_review.findViewById(R.id.et_review);
         ratingBar=dialog_review.findViewById(R.id.ratingBar);
         rl_write_review.setOnClickListener(this);
-        btn_submit.setOnClickListener(this);
+        btn_submit_review.setOnClickListener(this);
+        rl_claim_now.setOnClickListener(this);
         getProductDetails();
 
     }
@@ -159,7 +166,7 @@ public class ProductDetailsActivityNew extends AppCompatActivity implements View
             pDialog.show();
             RetrofitClient retrofitClient = new RetrofitClient();
             RestInterface service = retrofitClient.getAPIClient(WebServiceURLs.DOMAIN_NAME);
-            service.claim_coupon(PrefManager.getInstance(ProductDetailsActivityNew.this).getUserId(), product_id, "product", "Bearer " + PrefManager.getInstance(ProductDetailsActivityNew.this).getApiToken(), new Callback<JsonElement>() {
+            service.claim_coupon(PrefManager.getInstance(ProductDetailsActivityNew.this).getUserId(), coupon_id, "product", "Bearer " + PrefManager.getInstance(ProductDetailsActivityNew.this).getApiToken(), new Callback<JsonElement>() {
                 @Override
                 public void success(JsonElement jsonElement, Response response) {
 
@@ -168,6 +175,11 @@ public class ProductDetailsActivityNew extends AppCompatActivity implements View
                         pDialog.dismiss();
                         String status = jsonObject.getString("status");
                         String message = jsonObject.getString("message");
+                        if (status.equals("1"))
+                        {
+                            rl_claim_now.setEnabled(false);
+                            tv_claim_now.setText(getResources().getString(R.string.claimed));
+                        }
                         CustomUtils.showSweetAlert(ProductDetailsActivityNew.this, message, new onItemClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog v) {
@@ -226,6 +238,19 @@ public class ProductDetailsActivityNew extends AppCompatActivity implements View
                                 String size = j1.getString("size");
                                 String specification = j1.getString("specification");
                                 String selling_price = j1.getString("selling_price");
+                                String claimed_status = j1.getString("claimed_status");
+
+                                if (claimed_status.equals("1"))
+                                {
+                                    rl_claim_now.setEnabled(false);
+                                    tv_claim_now.setText(getResources().getString(R.string.claimed));
+                                }
+                                else
+                                {
+                                    rl_claim_now.setEnabled(true);
+                                    tv_claim_now.setText(getResources().getString(R.string.claim_now));
+                                }
+
                                  like_status = j1.getString("like_status");
                                 String like_count = j1.getString("like_count");
                                 if (like_status.equals("0"))
@@ -305,6 +330,38 @@ public class ProductDetailsActivityNew extends AppCompatActivity implements View
                             }
                                 tv_discount.setText(discount+"%");
 
+
+                            if (j1.has("latest_product_coupon")) {
+                                JSONObject latest_shop_coupon1;
+                                String latest_shop_string;
+
+                                // JSONObject latest_shop_coupon = j1.getJSONObject("latest_shop_coupon");
+
+                                Object latest_shop_coupon_obj = j1.get("latest_product_coupon");
+                                if (latest_shop_coupon_obj instanceof JSONObject) {
+                                    rl_discount.setVisibility(View.VISIBLE);
+                                    iv_product_image.setVisibility(View.GONE);
+                                    latest_shop_coupon1 = (JSONObject) latest_shop_coupon_obj;
+                                    String title = latest_shop_coupon1.getString("title");
+                                    String coupon_id1 = latest_shop_coupon1.getString("coupon_id");
+                                    coupon_id=coupon_id1;
+                                    String description_coupon = latest_shop_coupon1.getString("description");
+                                    String start_date = latest_shop_coupon1.getString("start_date");
+                                    String end_date = latest_shop_coupon1.getString("end_date");
+                                    String no_of_claims = latest_shop_coupon1.getString("no_of_claims");
+                                    coupon_id = coupon_id1;
+                                   /* if (!start_date.equals("null") && !end_date.equals("null")) {
+                                        tv_sale_duration.setText(start_date + " - " + end_date);}
+                                    else {tv_sale_duration.setText(getResources().getString(R.string.not_avail));}*/
+
+                                }
+                                else{
+                                    rl_discount.setVisibility(View.GONE);
+                                    iv_product_image.setVisibility(View.VISIBLE);
+
+                                }
+                            }
+
                                 JSONArray product_images = j1.getJSONArray("product_images");
                                 for (int j = 0; j < product_images.length(); j++) {
 
@@ -374,7 +431,7 @@ public class ProductDetailsActivityNew extends AppCompatActivity implements View
                     dialogLoginWarning("product_review");
                 }
                 break;
-            case R.id.btn_submit:
+            case R.id.btn_submit_review:
                 if (validateReviewDialog())
                 {
                     writeReview(""+ratingBar.getRating(),et_review.getText().toString().trim());

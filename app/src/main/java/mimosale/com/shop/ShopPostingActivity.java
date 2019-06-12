@@ -1404,8 +1404,6 @@ TextInputLayout tl_coupon_title,tl_no_claims;
 
                                 if (status.equals("1")) {
 
-                                    Toast.makeText(context, "" + jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
-
                                     new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
                                             .setTitleText(getResources().getString(R.string.success))
                                             .setContentText(getResources().getString(R.string.shop_posting_success))
@@ -1420,8 +1418,7 @@ TextInputLayout tl_coupon_title,tl_no_claims;
 
                                 } else {
                                     Toast.makeText(context, "" + jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
-
-                                }
+                                    }
 
                                 p_bar.setVisibility(View.GONE);
                             } catch (JSONException | NullPointerException e) {

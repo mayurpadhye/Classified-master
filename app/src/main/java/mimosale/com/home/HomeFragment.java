@@ -150,13 +150,10 @@ device_id=Settings.Secure.getString(getActivity().getContentResolver(), Settings
         view_main = v.findViewById(R.id.view_main);
         iv_banner_image = v.findViewById(R.id.iv_banner_image);
         mShimmerViewContainer = v.findViewById(R.id.shimmer_view_container);
-
         GridLayoutManager gridLayoutManager1 = new GridLayoutManager(getActivity(), 1);
         gridLayoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
-
         rv_preferences.setLayoutManager(gridLayoutManager1);
         rv_preferences.setHasFixedSize(true);
-
         TabLayout tabLayout = (TabLayout) v.findViewById(R.id.tabs);
         tabLayout.addTab(tabLayout.newTab().setText("A"));
         tabLayout.addTab(tabLayout.newTab().setText("B"));
@@ -172,7 +169,6 @@ device_id=Settings.Secure.getString(getActivity().getContentResolver(), Settings
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
         viewPager.setOffscreenPageLimit(4);
         iv_add_post.setOnClickListener(this);
-
         ViewGroup slidingTabStrip = (ViewGroup) tabLayout.getChildAt(0);
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
             View tab = slidingTabStrip.getChildAt(i);
@@ -182,24 +178,19 @@ device_id=Settings.Secure.getString(getActivity().getContentResolver(), Settings
         }
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
             }
-
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
 
             }
-
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
 
             }
-
-
-        });
+            });
     }//initClose
 
 

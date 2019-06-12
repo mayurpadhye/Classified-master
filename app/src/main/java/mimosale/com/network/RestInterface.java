@@ -259,6 +259,34 @@ public interface RestInterface {
             ,@Header("Authorization") String header,  Callback<JsonElement> callback);
 
 
+    @FormUrlEncoded
+    @POST(WebServiceURLs.GET_MY_COUPON_DEATILS)
+    void getCouponDetails(
+            @Field("coupon_id") String coupon_id,
+            @Field("type") String type,
+            @Field("user_id") String user_id
+            ,@Header("Authorization") String header,  Callback<JsonElement> callback);
+
+    @FormUrlEncoded
+    @POST(WebServiceURLs.GET_CLAIMED_COUPONS)
+    void getCliamedCoupons(
+            @Field("coupon_id") String coupon_id,
+            @Field("type") String type,
+            @Field("user_id") String user_id
+            ,@Header("Authorization") String header,  Callback<JsonElement> callback);
+
+
+
+    @FormUrlEncoded
+    @POST(WebServiceURLs.GET_MY_COUPON)
+    void getMyCouponsList(
+            @Field("user_id") String user_id,@Header("Authorization") String header, Callback<JsonElement> callback);
+    @FormUrlEncoded
+    @POST(WebServiceURLs.GET_CLAMIED_COUPONS)
+    void getClaimedCoupons(
+            @Field("user_id") String user_id,@Header("Authorization") String header, Callback<JsonElement> callback);
+
+
 }
 
 

@@ -3,14 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white_smoke"
-
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,24 +20,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="50dp"
-        >
-
+        android:orientation="horizontal">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
                 android:id="@+id/rv_preferences"
-                android:background="@color/white_smoke"
-                ></android.support.v7.widget.RecyclerView>
-
+                android:background="@color/white_smoke"></android.support.v7.widget.RecyclerView>
         </LinearLayout>
-
         <ImageView
             android:id="@+id/iv_add_post"
             android:layout_width="match_parent"
@@ -56,9 +46,7 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         app:cardUseCompatPadding="true"
-        app:cardCornerRadius="5dp"
-
-        ><RelativeLayout
+        app:cardCornerRadius="5dp"><RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <ImageView
@@ -70,20 +58,15 @@
             />
         <android.support.v4.view.ViewPager
             android:id="@+id/main_banner"
-           android:visibility="gone"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="@dimen/one_fifity_dp"></android.support.v4.view.ViewPager>
-
-
     </RelativeLayout>
     </android.support.v7.widget.CardView>
-
-            <LinearLayout
+        <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                >
-
+                android:orientation="vertical">
                 <android.support.design.widget.TabLayout
                     android:id="@+id/tabs"
                     android:layout_width="match_parent"
@@ -91,7 +74,6 @@
                     android:background="@color/white"
                     app:layout_anchor="@id/appBar"
                     app:tabGravity="fill"
-
                     app:tabTextColor="#000000"
                     app:tabIndicatorColor="#ff00"
                     app:tabSelectedTextColor="@color/black"

@@ -365,13 +365,12 @@
                             android:layout_height="40dp"
                             android:layout_below="@+id/tv_momo_discount"
                             android:layout_centerHorizontal="true"
-
+                           android:id="@+id/rl_claim_now"
                             android:layout_marginTop="25dp"
-                            android:background="@color/white"
-
-                            >
+                            android:background="@color/white">
 
                             <TextView
+                                android:id="@+id/tv_claim_now"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentBottom="true"

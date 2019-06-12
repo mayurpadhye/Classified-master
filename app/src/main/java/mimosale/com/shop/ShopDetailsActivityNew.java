@@ -581,8 +581,6 @@ public class ShopDetailsActivityNew extends AppCompatActivity implements View.On
                 }
                     break;
 
-
-
         }
     }
 
@@ -617,6 +615,11 @@ public class ShopDetailsActivityNew extends AppCompatActivity implements View.On
                         pDialog.dismiss();
                         String status = jsonObject.getString("status");
                         String message = jsonObject.getString("message");
+                        if (status.equals("1"))
+                        {
+                            rl_claim_now.setEnabled(false);
+                            tv_claim.setText(getResources().getString(R.string.claimed));
+                        }
                         CustomUtils.showSweetAlert(ShopDetailsActivityNew.this, message, new onItemClickListener() {
                                @Override
                                public void onClick(SweetAlertDialog v) {

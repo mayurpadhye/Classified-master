@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="55dp"
-android:layout_margin="5dp"
+
+    android:background="@color/colorAccent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -34,7 +35,7 @@ android:layout_margin="5dp"
             android:layout_centerVertical="true"
             android:editable="false"
             android:focusable="false"
-            android:background="@drawable/edit_back"
+            android:background="@drawable/rounded_shape_button"
             android:focusableInTouchMode="true"
             android:backgroundTint="@null"
             android:backgroundTintMode="@null"
@@ -43,7 +44,7 @@ android:layout_margin="5dp"
             android:drawableLeft="@drawable/search_24"
             android:drawablePadding="10dp"
             android:hint="@string/search"
-            android:textSize="14dp"
+            android:textSize="12dp"
             />
         <ImageView
             android:layout_width="30dp"
