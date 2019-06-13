@@ -107,6 +107,7 @@ RelativeLayout rl_discount,rl_view_more;
     Dialog dialog_view_more;
     TextView tv_price_range_dialog,tv_discount_dialog,tv_sale_duration,tv_website_dialog,tv_address_info;
     Button btn_ok;
+    String coupon_title="",coupon_desc="",no_of_coupon="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,6 +150,11 @@ RelativeLayout rl_discount,rl_view_more;
         longi = i.getStringExtra("longi");
         hash_tag = i.getStringExtra("hash_tag");
         web_url = i.getStringExtra("web_url");
+        coupon_title=getIntent().getStringExtra("coupon_title");
+        coupon_desc=getIntent().getStringExtra("coupon_desc");
+        no_of_coupon=getIntent().getStringExtra("no_of_coupon");
+
+
         // image_thumbnail1=(List<File>) getIntent().getSerializableExtra("image_thumbnail");
         p_bar = findViewById(R.id.p_bar);
         iv_product_image = findViewById(R.id.iv_product_image);
@@ -240,17 +246,6 @@ RelativeLayout rl_discount,rl_view_more;
     }//initViewClose
 
     private void parseJSON() {
-       /* Gson gson = new Gson();
-        Type type = new TypeToken<ArrayList<ImageVideoData>>() {
-        }.getType();
-        image_thumbnail = gson.fromJson(i.getStringExtra("shop_images"), type);
-        for (ImageVideoData contact : image_thumbnail) {
-            Log.i("Contact Details", "" + contact.getBitmap());
-        }
-
-        Type type2 = new TypeToken<ArrayList<File>>() {
-        }.getType();
-        image_thumbnail1 = gson.fromJson(i.getStringExtra("image_thumbnail"), type2);*/
 
 
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -280,14 +275,6 @@ RelativeLayout rl_discount,rl_view_more;
         }
 
 
-
-      /*  ShopSlidingImagesAdapter bannerAdapter = new ShopSlidingImagesAdapter(image_thumbnails, layoutInflater, ShopPostingPreviewNew.this);
-        mPager.setAdapter(bannerAdapter);
-        CirclePageIndicator indicator = (CirclePageIndicator)
-                findViewById(R.id.indicator);
-        indicator.setViewPager(mPager);
-        final float density = getResources().getDisplayMetrics().density;
-        indicator.setRadius(5 * density);*/
     }
 
     @Override
@@ -330,7 +317,7 @@ RelativeLayout rl_discount,rl_view_more;
             multipartTypedOutput.addPart("high_price", new TypedString(max_price));
             multipartTypedOutput.addPart("min_discount", new TypedString(""));
             multipartTypedOutput.addPart("max_discount", new TypedString(""));
-            multipartTypedOutput.addPart("discount", new TypedString(discount));
+
             multipartTypedOutput.addPart("phone", new TypedString(phone_number));
             multipartTypedOutput.addPart("hash_tags", new TypedString(hash_tag));
             multipartTypedOutput.addPart("description", new TypedString(shop_desc));
@@ -340,6 +327,16 @@ RelativeLayout rl_discount,rl_view_more;
             multipartTypedOutput.addPart("shop_id", new TypedString(shop_id));
             multipartTypedOutput.addPart("start_date", new TypedString(start_date));
             multipartTypedOutput.addPart("end_date", new TypedString(end_date));
+
+            if (!discount.equals(""))
+            {
+                multipartTypedOutput.addPart("discount", new TypedString(discount));
+                multipartTypedOutput.addPart("coupon_title", new TypedString(coupon_title));
+                multipartTypedOutput.addPart("coupon_description", new TypedString(coupon_desc));
+                multipartTypedOutput.addPart("no_of_claims", new TypedString(no_of_coupon));
+            }
+
+
             Toast.makeText(this, discount, Toast.LENGTH_SHORT).show();
 
             if (image_thumbnails.size() > 0) {
@@ -425,7 +422,6 @@ RelativeLayout rl_discount,rl_view_more;
             multipartTypedOutput.addPart("lon", new TypedString(longi));
             multipartTypedOutput.addPart("low_price", new TypedString(min_price));
             multipartTypedOutput.addPart("high_price", new TypedString(max_price));
-            multipartTypedOutput.addPart("discount", new TypedString(discount));
             multipartTypedOutput.addPart("phone", new TypedString(phone_number));
             multipartTypedOutput.addPart("hash_tags", new TypedString(hash_tag));
             multipartTypedOutput.addPart("description", new TypedString(shop_desc));
@@ -434,6 +430,14 @@ RelativeLayout rl_discount,rl_view_more;
             multipartTypedOutput.addPart("user_id", new TypedString(PrefManager.getInstance(ShopPostingPreviewNew.this).getUserId()));
             multipartTypedOutput.addPart("start_date", new TypedString(start_date));
             multipartTypedOutput.addPart("end_date", new TypedString(end_date));
+
+            if (!discount.equals(""))
+            {
+                multipartTypedOutput.addPart("discount", new TypedString(discount));
+                multipartTypedOutput.addPart("coupon_title", new TypedString(coupon_title));
+                multipartTypedOutput.addPart("coupon_description", new TypedString(coupon_desc));
+                multipartTypedOutput.addPart("no_of_claims", new TypedString(no_of_coupon));
+            }
             if (image_thumbnails_shop.size() > 0) {
                 for (int i = 0; i < image_thumbnails_shop.size(); i++) {
                     multipartTypedOutput.addPart("shop_photos[]", new TypedFile("application/octet-stream", new File(imageFiles_shop.get(i).getAbsolutePath())));

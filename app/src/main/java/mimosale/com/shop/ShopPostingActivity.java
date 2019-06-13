@@ -385,7 +385,6 @@ TextInputLayout tl_coupon_title,tl_no_claims;
             }
 
         };
-
         final DatePickerDialog.OnDateSetListener date2 = new DatePickerDialog.OnDateSetListener() {
 
             @Override
@@ -409,7 +408,6 @@ TextInputLayout tl_coupon_title,tl_no_claims;
                 datePickerDialog.show();
             }
         });
-
         et_start_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -422,8 +420,6 @@ TextInputLayout tl_coupon_title,tl_no_claims;
 
             }
         });
-
-
         switchbutton_discount.setChecked(false);
         switchbutton_pincode.setChecked(false);
         switchbutton_discount.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -446,14 +442,6 @@ TextInputLayout tl_coupon_title,tl_no_claims;
                 }
             }
         });
-
-        /*et_city.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ShopPostingActivity.this, MapsActivity.class));
-            }
-        });*/
-
         et_pincode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -947,74 +935,6 @@ TextInputLayout tl_coupon_title,tl_no_claims;
             }
         });
 
-       /* if (isUpdate.equals("update_shop")) {
-            try {
-
-                String shop_name = i.getStringExtra("shop_name");
-
-                String shop_desc = i.getStringExtra("shop_desc");
-                String shop_category = i.getStringExtra("shop_category");
-                String discount = i.getStringExtra("discount");
-                String start_date = i.getStringExtra("start_date");
-                String end_date = i.getStringExtra("end_date");
-                String min_price = i.getStringExtra("min_price");
-                String max_price = i.getStringExtra("max_price");
-                String pincode = i.getStringExtra("pincode");
-                String city = i.getStringExtra("city");
-                String state = i.getStringExtra("state");
-                String country = i.getStringExtra("country");
-                String address_line_1 = i.getStringExtra("address_line_1");
-                String address_line_2 = i.getStringExtra("address_line_2");
-                String phone_number = i.getStringExtra("phone_number");
-                String hash_tag = i.getStringExtra("hash_tag");
-                String web_url = i.getStringExtra("web_url");
-                pref_id1 = i.getStringExtra("pref_id");
-                shop_id = i.getStringExtra("shop_id");
-                List<String> stringList = new ArrayList<>();
-                List<String> Lines = Arrays.asList(getResources().getStringArray(R.array.discount_array));
-                if (!discount.equals("")) {
-                    switchbutton_discount.setChecked(true);
-                    ll_discount.setVisibility(View.VISIBLE);
-                    for (int k = 0; k < Lines.size(); k++) {
-                        if (Lines.get(k).contains(discount)) {
-                            sp_discount.setSelection(k);
-                            break;
-                        }
-                    }
-                }
-
-
-//sp_discount.setSelection();
-
-
-                et_shop_name.setText(shop_name);
-                et_shop_desc.setText(shop_desc);
-
-
-                if (!max_price.equals("null")) {
-                    et_max_price.setText(max_price);
-                }
-
-                if (!min_price.equals("null")) {
-                    et_min_price.setText(min_price);
-                }
-                Toast.makeText(context, ""+start_date, Toast.LENGTH_SHORT).show();
-
-                et_start_date.setText(start_date);
-                et_end_date.setText(end_date);
-                et_pincode.setText(pincode);
-                et_city.setText(city);
-                et_address_line1.setText(address_line_1);
-                et_address_line2.setText(address_line_2);
-                et_phone.setText(phone_number);
-                et_hash_tag.setText(hash_tag);
-                et_url.setText(web_url);
-                et_state.setText(state);
-                et_country.setText(country);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }*/
 
 
     }//initViewclose
@@ -1101,6 +1021,13 @@ TextInputLayout tl_coupon_title,tl_no_claims;
 
 
         }
+        if (switchbutton_discount.isChecked())
+        {
+            if (sp_discount.getSelectedItemPosition()==0 || et_coupon_desc.getText().toString().trim().isEmpty() || et_coupon_title.getText().toString().trim().isEmpty() || et_no_claims.getText().toString().trim().isEmpty()) {
+                CustomUtils.showToast(getResources().getString(R.string.please_select_discount), ShopPostingActivity.this);
+                return;
+            }
+        }
 
         if (!et_min_price.getText().toString().trim().isEmpty() && !et_max_price.getText().toString().trim().isEmpty()) {
             if (Integer.parseInt(et_min_price.getText().toString().trim()) > Integer.parseInt(et_max_price.getText().toString().trim())) {
@@ -1173,19 +1100,7 @@ TextInputLayout tl_coupon_title,tl_no_claims;
             return;
         }
 
-        if (sp_discount.getSelectedItemPosition() != 0) {
-            if (!ll_pricing_visible)
-                slideDown(ll_pricing);
-           /* if (et_min_discount.getText().toString().trim().length() > et_max_discount.getText().toString().trim().length()) {
-                tl_min_discount.setError("" + getResources().getString(R.string.min_discount_error));
-                return;
-            } else if (et_max_discount.getText().toString().trim().length() < et_min_discount.getText().toString().trim().length()) {
-                tl_max_discount.setError("" + getResources().getString(R.string.max_dis_error));
-                return;
-            }*/
 
-
-        }
 
 
 
@@ -1193,7 +1108,7 @@ TextInputLayout tl_coupon_title,tl_no_claims;
 
             if (isUpdate.equals("update_shop")) {
 
-                updateShopDetails();
+               // updateShopDetails();
 
             } else {
                 addShopDetails();
@@ -1215,6 +1130,11 @@ TextInputLayout tl_coupon_title,tl_no_claims;
                 i.putExtra("discount", "");
 
             i.putExtra("start_date", et_start_date.getText().toString());
+            i.putExtra("coupon_title",et_coupon_title.getText().toString().trim());
+            i.putExtra("coupon_desc",et_coupon_desc.getText().toString().trim());
+            i.putExtra("no_of_coupon",et_no_claims.getText().toString().trim());
+
+
             i.putExtra("lati", ""+lat_new);
             i.putExtra("longi", ""+lon_new);
             i.putExtra("end_date", et_end_date.getText().toString());
@@ -1374,16 +1294,19 @@ TextInputLayout tl_coupon_title,tl_no_claims;
             multipartTypedOutput.addPart("max_discount", new TypedString(""));
             multipartTypedOutput.addPart("start_date", new TypedString(et_start_date.getText().toString().trim()));
             multipartTypedOutput.addPart("end_date", new TypedString(et_end_date.getText().toString().trim()));
-            multipartTypedOutput.addPart("discount", new TypedString(discount));
             multipartTypedOutput.addPart("phone", new TypedString(et_phone.getText().toString()));
             multipartTypedOutput.addPart("hash_tags", new TypedString(et_hash_tag.getText().toString()));
             multipartTypedOutput.addPart("description", new TypedString(et_shop_desc.getText().toString()));
             multipartTypedOutput.addPart("web_url", new TypedString(tv_url.getText().toString() + "" + et_url.getText().toString()));
             multipartTypedOutput.addPart("status", new TypedString("1"));
             multipartTypedOutput.addPart("user_id", new TypedString(PrefManager.getInstance(context).getUserId()));
-            multipartTypedOutput.addPart("coupon_title", new TypedString(et_coupon_title.getText().toString()));
-            multipartTypedOutput.addPart("coupon_description", new TypedString(et_coupon_desc.getText().toString()));
-            multipartTypedOutput.addPart("no_of_claims", new TypedString(et_no_claims.getText().toString()));
+            if (!discount.equals(""))
+            {
+                multipartTypedOutput.addPart("discount", new TypedString(discount));
+                multipartTypedOutput.addPart("coupon_title", new TypedString(et_coupon_title.getText().toString().trim()));
+                multipartTypedOutput.addPart("coupon_description", new TypedString(et_coupon_desc.getText().toString().trim()));
+                multipartTypedOutput.addPart("no_of_claims", new TypedString(et_no_claims.getText().toString().trim()));
+            }
             if (imageFiles_shop.size() > 0) {
                 for (int i = 0; i < imageFiles_shop.size(); i++) {
                     multipartTypedOutput.addPart("shop_photos[]", new TypedFile("application/octet-stream", new File(imageFiles_shop.get(i).getAbsolutePath())));

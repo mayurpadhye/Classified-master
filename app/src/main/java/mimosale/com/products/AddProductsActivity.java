@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
@@ -44,6 +45,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -99,8 +101,10 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import mimosale.com.shop.ShopPostingActivity;
@@ -200,17 +204,18 @@ public class AddProductsActivity extends AppCompatActivity implements View.OnCli
     EditText et_no_claims;
     @BindView(R.id.et_coupon_desc)
     EditText et_coupon_desc;
-
     @BindView(R.id.et_start_date)
     EditText et_start_date;
     @BindView(R.id.et_end_date)
     EditText et_end_date;
-
+    Context context;
+    final Calendar myCalendar = Calendar.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_products);
         ButterKnife.bind(this);
+        context=this;
         i = getIntent();
         initView();
         getUserShop();
@@ -220,6 +225,28 @@ public class AddProductsActivity extends AppCompatActivity implements View.OnCli
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         sp_discount.setAdapter(spinnerArrayAdapter);
+        et_end_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(context, date2, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH));
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+                datePickerDialog.show();
+            }
+        });
+        et_start_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(context, date, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH));
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+                datePickerDialog.show();
+
+            }
+        });
         btn_upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -346,7 +373,46 @@ public class AddProductsActivity extends AppCompatActivity implements View.OnCli
 
 
     }
+    final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
 
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear,
+                              int dayOfMonth) {
+            // TODO Auto-generated method stub
+
+            myCalendar.set(Calendar.YEAR, year);
+            myCalendar.set(Calendar.MONTH, monthOfYear);
+            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            updateLabel();
+        }
+
+    };
+    final DatePickerDialog.OnDateSetListener date2 = new DatePickerDialog.OnDateSetListener() {
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear,
+                              int dayOfMonth) {
+            // TODO Auto-generated method stub
+            myCalendar.set(Calendar.YEAR, year);
+            myCalendar.set(Calendar.MONTH, monthOfYear);
+            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            setEndDate();
+        }
+
+    };
+    private void updateLabel() {
+        String myFormat = "yyyy/MM/dd"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.JAPAN);
+
+        et_start_date.setText(sdf.format(myCalendar.getTime()));
+    }
+
+    private void setEndDate() {
+        String myFormat = "yyyy/MM/dd"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.JAPAN);
+
+        et_end_date.setText(sdf.format(myCalendar.getTime()));
+    }
     public boolean checkPermission() {
         int result = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
         int result1 = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
@@ -799,15 +865,11 @@ public class AddProductsActivity extends AppCompatActivity implements View.OnCli
 
 
         }
-        /*if (et_hash_tag.getText().toString().trim().length() == 0) {
-
-            et_hash_tag.requestFocus();
-            tl_hash_tag.setError(getResources().getString(R.string.enter_hash_tag));
-
+        if (sp_discount.getSelectedItemPosition()==0 || et_coupon_desc.getText().toString().trim().isEmpty() || et_coupon_title.getText().toString().trim().isEmpty() || et_no_claims.getText().toString().trim().isEmpty()||et_start_date.getText().toString().trim().isEmpty() || et_end_date.getText().toString().trim().isEmpty()) {
+            CustomUtils.showToast(getResources().getString(R.string.please_select_discount), AddProductsActivity.this);
             return;
-        } else {
-            tl_hash_tag.setError(null);
-        }*/
+        }
+
         if (shop_id.equals("")) {
             Toast.makeText(this, "" + getResources().getString(R.string.select_shop), Toast.LENGTH_SHORT).show();
             return;
@@ -837,6 +899,12 @@ public class AddProductsActivity extends AppCompatActivity implements View.OnCli
             i.putExtra("specification", et_specification.getText().toString());
             i.putExtra("hash_tag", et_hash_tag.getText().toString());
             i.putExtra("types", "update");
+
+            i.putExtra("coupon_title",et_coupon_title.getText().toString().trim());
+            i.putExtra("coupon_desc",et_coupon_desc.getText().toString().trim());
+            i.putExtra("no_of_coupon",et_no_claims.getText().toString().trim());
+            i.putExtra("end_date", et_end_date.getText().toString().trim());
+            i.putExtra("start_date", et_start_date.getText().toString().trim());
             /*JsonArray jsonElements = (JsonArray) new Gson().toJsonTree(image_thumbnails);
             i.putExtra("product_images", jsonElements.toString());*/
            /* JsonArray jsonElements1 = (JsonArray) new Gson().toJsonTree(imageFiles_products);
@@ -924,7 +992,7 @@ public class AddProductsActivity extends AppCompatActivity implements View.OnCli
             multipartTypedOutput.addPart("description", new TypedString(et_desc.getText().toString().trim()));
             multipartTypedOutput.addPart("price", new TypedString(et_price.getText().toString().trim()));
             multipartTypedOutput.addPart("user_id", new TypedString(user_id));
-            multipartTypedOutput.addPart("discount", new TypedString(discount));
+
             multipartTypedOutput.addPart("brand", new TypedString(et_brand.getText().toString()));
             multipartTypedOutput.addPart("model_number", new TypedString(et_model_no.getText().toString()));
             multipartTypedOutput.addPart("quantity", new TypedString(et_qty.getText().toString()));
@@ -932,9 +1000,17 @@ public class AddProductsActivity extends AppCompatActivity implements View.OnCli
             multipartTypedOutput.addPart("color", new TypedString(et_color.getText().toString()));
             multipartTypedOutput.addPart("size", new TypedString(et_size.getText().toString()));
             multipartTypedOutput.addPart("preference_id ", new TypedString(preference_id));
-            multipartTypedOutput.addPart("coupon_title", new TypedString(et_coupon_title.getText().toString()));
-            multipartTypedOutput.addPart("coupon_description", new TypedString(et_coupon_desc.getText().toString()));
-            multipartTypedOutput.addPart("no_of_claims", new TypedString(et_no_claims.getText().toString()));
+
+            if (!discount.equals(""))
+            {
+                multipartTypedOutput.addPart("discount", new TypedString(discount));
+                multipartTypedOutput.addPart("coupon_title", new TypedString(et_coupon_title.getText().toString()));
+                multipartTypedOutput.addPart("coupon_description", new TypedString(et_coupon_desc.getText().toString()));
+                multipartTypedOutput.addPart("no_of_claims", new TypedString(et_no_claims.getText().toString()));
+                multipartTypedOutput.addPart("start_date", new TypedString(et_start_date.getText().toString()));
+                multipartTypedOutput.addPart("end_date", new TypedString(et_end_date.getText().toString()));
+            }
+
             if (imageFiles_products.size() > 0) {
                 for (int i = 0; i < imageFiles_products.size(); i++) {
                     multipartTypedOutput.addPart("product_photos[]", new TypedFile("application/octet-stream", new File(imageFiles_products.get(i).getAbsolutePath())));

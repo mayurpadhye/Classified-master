@@ -301,6 +301,7 @@ public class ShopDetailsActivityNew extends AppCompatActivity implements View.On
                                 JSONObject j1 = data.getJSONObject(i);
                                 String id = j1.getString("id");
                                 String name = j1.getString("name");
+                                toolbar_title.setText(name);
                                 String preference_id = j1.getString("preference_id");
                                 String address_line1 = j1.getString("address_line1");
                                 String address_line2 = j1.getString("address_line2");

@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.JsonElement;
+import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import org.json.JSONArray;
@@ -264,7 +265,7 @@ String coupon_id="";
 
                                 toolbar_title .setText(name);
                                 tv_desc.setText(description);
-                                if (discount.equals("null"))
+                                if (discount.equals("null") || discount.equals("0"))
                                 {
                                     iv_product_image.setVisibility(View.VISIBLE);
                                     rl_discount.setVisibility(View.GONE);
@@ -361,14 +362,16 @@ String coupon_id="";
 
                                 }
                             }
-
-                                JSONArray product_images = j1.getJSONArray("product_images");
+                            JSONArray product_images = j1.getJSONArray("product_images");
                                 for (int j = 0; j < product_images.length(); j++) {
-
                                     JSONObject j2 = product_images.getJSONObject(j);
                                     String image_id = j2.getString("id");
                                     String image = j2.getString("image");
                                     shopImagesPojoList.add(image);
+                                }
+                                if (product_images.length()>=1)
+                                {
+                                    Picasso.with(ProductDetailsActivityNew.this).load(WebServiceURLs.SHOP_IMAGE+shopImagesPojoList.get(1)).into(iv_product_image);
                                 }
                                 ShopImageDetailsAdapter bannerAdapter = new ShopImageDetailsAdapter(ProductDetailsActivityNew.this, shopImagesPojoList);
                                 pager.setAdapter(bannerAdapter);

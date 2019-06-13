@@ -189,7 +189,6 @@
 <string name="highlight">ハイライト</string>
 <string name="info">情報</string>
     <string name="change_language">言語を変えてください</string>
-
     <string name="please_select_atleast_two_images">少なくとも2つの画像を選択してください</string>
     <string name="min_discount_error">最小割引は最大割引より大きくてはいけません</string>
     <string name="max_dis_error">最大割引は最小割引より小さくてはいけません</string>
@@ -265,4 +264,22 @@
     <string name="title_activity_shops_on_map">地図</string>
     <string name="unfollowing">フォローを解除</string>
     <string name="maximum_char_limit">Maximum character limit is 120</string>
+
+    <string-array name="discount_array">
+        <item>Select Discount</item>
+        <item>Upto 5%</item>
+        <item>Upto 10%</item>
+        <item>Upto 15%</item>
+        <item>Upto 20%</item>
+        <item>Upto 25%</item>
+        <item>Upto 30%</item>
+        <item>Upto 35%</item>
+        <item>Upto 40%</item>
+        <item>Upto 45%</item>
+        <item>Upto 50%</item>
+        <item>Upto 60%</item>
+        <item>Upto 70%</item>
+        <item>Upto 80%</item>
+        <item>Upto 90%</item>
+    </string-array>
 </resources>

@@ -1,6 +1,7 @@
 package mimosale.com.notification;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -8,11 +9,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.gson.JsonElement;
+import com.romainpiel.shimmer.Shimmer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,6 +33,8 @@ import mimosale.com.network.RestInterface;
 import mimosale.com.network.RetrofitClient;
 import mimosale.com.network.WebServiceURLs;
 import mimosale.com.onRecyclerViewItemClick;
+import mimosale.com.products.ProductDetailsActivityNew;
+import mimosale.com.shop.ShopDetailsActivityNew;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -55,6 +61,10 @@ public class MyCouponsDetails extends AppCompatActivity {
             TextView tv_claimer;
     String coupon_id = "", type = "",Isclaimed="";
 
+@BindView(R.id.btn_goto)
+Button btn_goto;
+String mimo_id="";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +78,33 @@ public class MyCouponsDetails extends AppCompatActivity {
         coupon_id=getIntent().getStringExtra("coupon_id");
         type=getIntent().getStringExtra("type");
         Isclaimed=getIntent().getStringExtra("Isclaimed");
+        if (type.equals("product"))
+        {
+            btn_goto.setText(getResources().getString(R.string.goto_product));
+            mimo_id=getIntent().getStringExtra("shop_id");
+        }
+        else
+        {
+            btn_goto.setText(getResources().getString(R.string.goto_shop));
+            mimo_id=getIntent().getStringExtra("shop_id");
+        }
+
+        btn_goto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (type.equals("product"))
+                {
+                    startActivity(new Intent(MyCouponsDetails.this,ProductDetailsActivityNew.class).putExtra("product_id",mimo_id));
+                }
+                else
+                {
+                    startActivity(new Intent(MyCouponsDetails.this,ShopDetailsActivityNew.class).putExtra("shop_id" +
+                            "",mimo_id));
+
+                }
+            }
+        });
+
         if (Isclaimed.equals("false"))
         {
             tv_claimer.setVisibility(View.VISIBLE);

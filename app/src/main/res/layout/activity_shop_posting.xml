@@ -110,7 +110,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="0.2"
                                 android:padding="5dp"
-                                android:text="@string/shop_images"
+                                android:text="@string/shop_images_min_two"
                                 android:textColor="@color/black"
                                 android:textSize="13dp" />
 

@@ -168,6 +168,7 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
     List<String> allPrefIds = new ArrayList<>();
     String pref_id = "";
     Button btn_save;
+    String coupon_id="";
     String isUpdate = "";
     private static final int PERMISSION_REQUEST_CODE = 200;
     String lattitude = "", langitude = "";
@@ -175,9 +176,9 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
     EditText et_start_date, et_end_date, et_city, et_state, et_country;
     TextView tv_other_details, tv_address_details, tv_pricing_details, tv_shop_details;
     TextInputLayout tl_shop_name, tl_shop_desc, tl_min_price, tl_max_price, tl_pincode, tl_city, tl_address_line1;
-    TextInputLayout tl_address_line2, tl_phone_no, tl_hash_tag, tl_url, tl_end_date, tl_start_date;
+    TextInputLayout tl_address_line2, tl_phone_no, tl_hash_tag, tl_url, tl_end_date, tl_start_date,tl_coupon_desc,tl_no_claims,tl_coupon_title;
     EditText et_shop_name, et_shop_desc, et_min_price, et_max_price, et_pincode,
-            et_address_line1, et_address_line2, et_phone, et_hash_tag, et_url;//et_min_discount,et_max_discount tl_min_discount, tl_max_discount,
+            et_address_line1, et_address_line2, et_phone, et_hash_tag, et_url,et_coupon_title,et_no_claims,et_coupon_desc;//et_min_discount,et_max_discount tl_min_discount, tl_max_discount,
     String shop_id = "";
     Spinner sp_discount;
     String discount = "";
@@ -570,6 +571,12 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
         radioGroup = (RadioGroup) findViewById(R.id.rg_address);
         radioGroup.clearCheck();
         p_bar = findViewById(R.id.p_bar);
+        et_coupon_title=findViewById(R.id.et_coupon_title);
+        et_no_claims=findViewById(R.id.et_no_claims);
+        tl_no_claims=findViewById(R.id.tl_no_claims);
+        tl_coupon_title=findViewById(R.id.tl_coupon_title);
+        tl_coupon_desc=findViewById(R.id.tl_coupon_desc);
+        et_coupon_desc=findViewById(R.id.et_coupon_desc);
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
                 (EditShopActivity.this, android.R.layout.simple_spinner_item,
                         getResources().getStringArray(R.array.discount_array)); //selected item will look like a spinner set from XML
@@ -849,7 +856,53 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
             Toast.makeText(context, getResources().getString(R.string.please_select_pref_category), Toast.LENGTH_SHORT).show();
             return;
         }
+        if (sp_discount.getSelectedItemPosition()!=0)
+        {
+            if (et_coupon_title.getText().toString().trim().isEmpty())
+            {
+                et_coupon_title.requestFocus();
+                tl_coupon_title.setError(getResources().getString(R.string.please_enter_coupon_title));
+                return;
+            }
+            else if (et_coupon_desc.getText().toString().trim().isEmpty())
+            {
+                tl_coupon_title.setError(null);
+                tl_coupon_desc.setError(getResources().getString(R.string.please_enter_coupon_desc));
+                return;
+            }
+            else if (et_no_claims.getText().toString().trim().isEmpty())
+            {
+                tl_coupon_desc.setError(null);
+                tl_no_claims.setError(getResources().getString(R.string.please_enter_nno_claims));
+                return;
+            }
+            else if (!et_start_date.getText().toString().trim().isEmpty() || !et_end_date.getText().toString().trim().isEmpty())
+            {
+                if (et_start_date.getText().toString().trim().length() == 0) {
+                    tl_start_date.setError("" + getResources().getString(R.string.enter_start_date));
+                    return;
+                } else if (et_end_date.getText().toString().trim().length() == 0) {
+                    tl_end_date.setError(getResources().getString(R.string.enter_end_date));
+                    return;
+                }
 
+                if (!isDateAfter(et_start_date.getText().toString().trim(), et_end_date.getText().toString().trim())) {
+                    if (!ll_pricing_visible)
+                        slideDown(ll_pricing);
+                    tl_start_date.setError(getResources().getString(R.string.end_date_must_be_greater));
+                    return;
+                }
+            }
+
+
+        }
+        if (switchbutton_discount.isChecked())
+        {
+            if (sp_discount.getSelectedItemPosition()==0 || et_coupon_desc.getText().toString().trim().isEmpty() || et_coupon_title.getText().toString().trim().isEmpty() || et_no_claims.getText().toString().trim().isEmpty()) {
+                CustomUtils.showToast(getResources().getString(R.string.please_select_discount), EditShopActivity.this);
+                return;
+            }
+        }
         if (et_min_price.getText().toString().trim().length() == 0) {
             if (!ll_pricing_visible)
                 slideDown(ll_pricing);
@@ -923,9 +976,6 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
 
             return;
         }
-
-
-
         if (imageFiles.size() <= 1) {
             if (!ll_shop_visible)
                 slideDown(ll_shop_details);
@@ -979,6 +1029,11 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
                 i.putExtra("discount", discount);
             else
                 i.putExtra("discount", "");
+
+            i.putExtra("start_date", et_start_date.getText().toString());
+            i.putExtra("coupon_title",et_coupon_title.getText().toString().trim());
+            i.putExtra("coupon_desc",et_coupon_desc.getText().toString().trim());
+            i.putExtra("no_of_coupon",et_no_claims.getText().toString().trim());
             i.putExtra("start_date", et_start_date.getText().toString());
             i.putExtra("lati", ""+lat_new);
             i.putExtra("longi", ""+lon_new);
@@ -1040,8 +1095,6 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
                                 String low_price = j1.getString("low_price");
                                 String high_price = j1.getString("high_price");
                                 String discount = j1.getString("discount");
-                                String start_date = j1.getString("start_date");
-                                String end_date = j1.getString("end_date");
                                 String followStatus = j1.getString("followStatus");
                                 String phone = j1.getString("phone");
                                 String hash_tags = j1.getString("hash_tags");
@@ -1049,8 +1102,63 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
                                 String web_url = j1.getString("web_url");
                                 JSONArray shop_images = j1.getJSONArray("shop_images");
 
-                                et_end_date.setText(end_date);
-                                et_start_date.setText(start_date);
+                                if (discount.equals("0"))
+                                {
+                                    ll_discount.setVisibility(View.GONE);
+                                    switchbutton_discount.setChecked(false);
+                                    et_coupon_title.setEnabled(true);
+                                    et_coupon_desc.setEnabled(true);
+                                    et_no_claims.setEnabled(true);
+                                    sp_discount.setEnabled(true);
+                                }
+
+                                else
+                                {
+                                    ll_discount.setVisibility(View.VISIBLE);
+                                    switchbutton_discount.setChecked(true);
+                                    et_coupon_title.setEnabled(false);
+                                    et_coupon_desc.setEnabled(false);
+                                    et_no_claims.setEnabled(false);
+                                    sp_discount.setEnabled(false);
+                                }
+
+
+                                if (j1.has("latest_shop_coupon")) {
+                                    JSONObject latest_shop_coupon1;
+                                    String latest_shop_string;
+
+                                    // JSONObject latest_shop_coupon = j1.getJSONObject("latest_shop_coupon");
+
+                                    Object latest_shop_coupon_obj = j1.get("latest_shop_coupon");
+                                    if (latest_shop_coupon_obj instanceof JSONObject) {
+
+                                        latest_shop_coupon1 = (JSONObject) latest_shop_coupon_obj;
+                                        String title = latest_shop_coupon1.getString("title");
+                                        String coupon_id1 = latest_shop_coupon1.getString("coupon_id");
+                                        String description_coupon = latest_shop_coupon1.getString("description");
+                                        String start_date = latest_shop_coupon1.getString("start_date");
+                                        String end_date = latest_shop_coupon1.getString("end_date");
+                                        String no_of_claims = latest_shop_coupon1.getString("no_of_claims");
+                                        et_end_date.setText(end_date);
+                                        et_start_date.setText(start_date);
+                                        coupon_id = coupon_id1;
+                                        et_no_claims.setText(no_of_claims);
+                                        et_coupon_title.setText(title);
+                                        et_coupon_desc.setText(description_coupon);
+
+                                        /*if (!start_date.equals("null") && !end_date.equals("null")) {
+                                            tv_sale_duration.setText(start_date + " - " + end_date);}
+                                        else {tv_sale_duration.setText(getResources().getString(R.string.not_avail));}*/
+
+                                    }
+                                    else{
+
+
+                                    }
+                                }
+
+
+
                                 et_pincode.setText(pincode);
                                 shopImagesPojoList.clear();
                                  if(!lat.equals("null"))
@@ -1176,7 +1284,6 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
             multipartTypedOutput.addPart("high_price", new TypedString(et_max_price.getText().toString()));
             multipartTypedOutput.addPart("min_discount", new TypedString(""));
             multipartTypedOutput.addPart("max_discount", new TypedString(""));
-            multipartTypedOutput.addPart("discount", new TypedString(discount));
             multipartTypedOutput.addPart("phone", new TypedString(et_phone.getText().toString()));
             multipartTypedOutput.addPart("hash_tags", new TypedString(et_hash_tag.getText().toString()));
             multipartTypedOutput.addPart("description", new TypedString(et_shop_desc.getText().toString()));
@@ -1186,7 +1293,13 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
             multipartTypedOutput.addPart("shop_id", new TypedString(shop_id));
             multipartTypedOutput.addPart("start_date", new TypedString(et_start_date.getText().toString().trim()));
             multipartTypedOutput.addPart("end_date", new TypedString(et_end_date.getText().toString().trim()));
-
+            if (!discount.equals(""))
+            {
+                multipartTypedOutput.addPart("discount", new TypedString(discount));
+                multipartTypedOutput.addPart("coupon_title", new TypedString(et_coupon_title.getText().toString().trim()));
+                multipartTypedOutput.addPart("coupon_description", new TypedString(et_coupon_desc.getText().toString().trim()));
+                multipartTypedOutput.addPart("no_of_claims", new TypedString(et_no_claims.getText().toString().trim()));
+            }
 
             if (imageFiles.size() > 0) {
                 for (int i = 0; i < imageFiles.size(); i++) {
@@ -1210,11 +1323,10 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
 
                                 if (status.equals("1")) {
 
-                                    Toast.makeText(context, "Shop Successfully Updated", Toast.LENGTH_SHORT).show();
 
                                     new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
                                             .setTitleText(getResources().getString(R.string.success))
-                                            .setContentText(getResources().getString(R.string.shop_posting_success))
+                                            .setContentText(getResources().getString(R.string.shop_updated))
                                             .setConfirmText(getResources().getString(R.string.ok))
                                             .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                                 @Override

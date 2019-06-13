@@ -68,7 +68,6 @@ public class FollowingShopActivity extends AppCompatActivity {
                         allShopSaleList.clear();
                         JSONObject jsonObject = new JSONObject(jsonElement.toString());
                         String status = jsonObject.getString("status");
-
                         if (status.equals("1")) {
                             JSONArray data = jsonObject.getJSONArray("data");
                             for (int i = 0; i < data.length(); i++) {
@@ -88,8 +87,6 @@ public class FollowingShopActivity extends AppCompatActivity {
                                 String low_price = j1.getString("low_price");
                                 String high_price = j1.getString("high_price");
                                 String discount = j1.getString("discount");
-                                String start_date = j1.getString("start_date");
-                                String end_date = j1.getString("end_date");
                                 String phone = j1.getString("phone");
                                 String hash_tags = j1.getString("hash_tags");
                                 String description = j1.getString("description");
@@ -97,19 +94,15 @@ public class FollowingShopActivity extends AppCompatActivity {
                                 String image2="";
                                 String image1="";
                                 if(j1.has("image1")) {
-
                                     image1 = j1.getString("image1");
                                 }
                                 if(j1.has("image2"))
                                 {
                                     image2 = j1.getString("image2");
                                 }
-
                                 String image = "";
-
                                 allShopSaleList.add(new FollowingShopPojo(id,name,image1));
-
-                            }
+                                }
                             if (data.length()>0)
                             {
                                 FollowingShopAdapter shopSaleAdapter = new FollowingShopAdapter(allShopSaleList, FollowingShopActivity.this);
@@ -123,9 +116,6 @@ public class FollowingShopActivity extends AppCompatActivity {
                                 rv_shop.setVisibility(View.GONE);
                                 tv_no_record.setVisibility(View.VISIBLE);
                             }
-
-
-
                             tv_no_record.setVisibility(View.GONE);
                         }
                         else
@@ -133,13 +123,11 @@ public class FollowingShopActivity extends AppCompatActivity {
                             tv_no_record.setVisibility(View.VISIBLE);
                         }
                         p_bar.setVisibility(View.GONE);
-
-                    } catch (JSONException | NullPointerException e) {
+                        } catch (JSONException | NullPointerException e) {
                         p_bar.setVisibility(View.GONE);
                         e.printStackTrace();
                         Log.i("fdfdfdfdfdf", "" + e.getMessage());
-
-                    }
+                        }
                 }
 
                 @Override
@@ -147,13 +135,11 @@ public class FollowingShopActivity extends AppCompatActivity {
                     p_bar.setVisibility(View.GONE);
                     Toast.makeText(FollowingShopActivity.this, getResources().getString(R.string.check_internet), Toast.LENGTH_LONG).show();
                     Log.i("fdfdfdfdfdf", "" + error.getMessage());
-
-                }
+                    }
             });
         } catch (Exception e) {
             e.printStackTrace();
-
-        }
+            }
 
     }//getFollowingListClose
 
@@ -167,5 +153,5 @@ public class FollowingShopActivity extends AppCompatActivity {
         gridLayoutManager1.setOrientation(LinearLayoutManager.VERTICAL);
         rv_shop.setLayoutManager(gridLayoutManager1);
 
-    }
+        }
 }

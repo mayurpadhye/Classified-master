@@ -104,7 +104,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.2"
                     android:padding="5dp"
-                    android:text="@string/images"
+                    android:text="@string/min_two_image"
                     android:textSize="14dp"
                     />
                 <Button

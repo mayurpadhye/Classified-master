@@ -272,7 +272,7 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
                         if (message.equals("Liked")) {
                             allProductPojoList.get(position).setLike_status("1");
                             notifyItemChanged(position);
-                            iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_hand_red));
+                            iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_hand_black));
 
                         } else {
                             allProductPojoList.get(position).setLike_status("0");
@@ -301,8 +301,6 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
     }
 
     public void addToFavorite(String shop_id, int position, final SparkButton spark_button) {
-
-
         try {
             pDialog.show();
             RetrofitClient retrofitClient = new RetrofitClient();
@@ -318,6 +316,8 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
                         String message = jsonObject.getString("message");
                         if (status.equals("1")) {
                             spark_button.setChecked(true);
+                            allProductPojoList.get(position).setFav_status("1");
+                            notifyItemChanged(position);
                             Toast.makeText(mctx, "" + message, Toast.LENGTH_SHORT).show();
 
                         } else {
@@ -353,7 +353,6 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
             service.remove_from_fav("shop", PrefManager.getInstance(mctx).getUserId(), shop_id, "Bearer " + PrefManager.getInstance(mctx).getApiToken(), new Callback<JsonElement>() {
                 @Override
                 public void success(JsonElement jsonElement, Response response) {
-
                     try {
                         JSONObject jsonObject = new JSONObject(jsonElement.toString());
                         pDialog.dismiss();
@@ -362,8 +361,12 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
                         if (status.equals("1")) {
                             Toast.makeText(mctx, "" + message, Toast.LENGTH_SHORT).show();
                             sparkButton.setChecked(false);
+                            allProductPojoList.get(position).setFav_status("0");
+                            notifyItemChanged(position);
                         } else {
                             sparkButton.setChecked(true);
+                            allProductPojoList.get(position).setFav_status("1");
+                            notifyItemChanged(position);
                         }
 
                     } catch (JSONException e) {
@@ -378,8 +381,7 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
                     sparkButton.setChecked(true);
                     Toast.makeText(mctx, mctx.getResources().getString(R.string.check_internet), Toast.LENGTH_LONG).show();
                     Log.i("fdfdfdfdfdf", "" + error.getMessage());
-
-                }
+                    }
             });
         } catch (Exception e) {
             e.printStackTrace();

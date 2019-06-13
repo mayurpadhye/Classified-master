@@ -122,7 +122,7 @@ public class ProductPreviewActivity extends AppCompatActivity implements View.On
     ProgressBar p_bar;
     @BindView(R.id.btn_submit)
             Button btn_submit;
-
+String start_date="",end_date="";
     ArrayList<ImageVideoData> image_thumbnail=new ArrayList<>();
     ProgressDialog pDialog;
     String product_id="";
@@ -131,6 +131,7 @@ public class ProductPreviewActivity extends AppCompatActivity implements View.On
     Button btn_ok;
     TextView tv_spec,tv_size,tv_color,tv_model_no,tv_brand;
     List<File> image_thumbnail1=new ArrayList<>();
+    String coupon_title="",coupon_description="",no_of_claims="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -171,8 +172,12 @@ public class ProductPreviewActivity extends AppCompatActivity implements View.On
          hash_tag=getIntent().getStringExtra("hash_tag");
          specification=getIntent().getStringExtra("size");
          types=getIntent().getStringExtra("types");
-
-         if(getIntent().hasExtra("shop_id"))
+        coupon_title=getIntent().getStringExtra("coupon_title");
+        coupon_description=getIntent().getStringExtra("coupon_desc");
+        no_of_claims=getIntent().getStringExtra("no_of_coupon");
+        start_date=getIntent().getStringExtra("start_date");
+        end_date=getIntent().getStringExtra("end_date");
+        if(getIntent().hasExtra("shop_id"))
          {
              shop_id=getIntent().getStringExtra("shop_id");
          }
@@ -266,27 +271,14 @@ public class ProductPreviewActivity extends AppCompatActivity implements View.On
             LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             ShopSlidingImagesAdapter bannerAdapter = new ShopSlidingImagesAdapter(image_thumbnails_product,layoutInflater,ProductPreviewActivity.this);
             pager.setAdapter(bannerAdapter);
-            CirclePageIndicator indicator = (CirclePageIndicator)
-                    findViewById(R.id.indicator);
+            CirclePageIndicator indicator = (CirclePageIndicator)findViewById(R.id.indicator);
             indicator.setViewPager(pager);
             final float density = getResources().getDisplayMetrics().density;
             indicator.setRadius(5 * density);
         }
 
     }
-    private void parseJSON() {
-        /*Gson gson = new Gson();
-        Type type = new TypeToken<ArrayList<ImageVideoData>>() {
-        }.getType();
-        image_thumbnail = gson.fromJson(getIntent().getStringExtra("product_images"), type);
-        for (ImageVideoData contact : image_thumbnail){
-            Log.i("Contact Details",  ""+contact.getBitmap());
-        }
 
-        Type type2 = new TypeToken<ArrayList<File>>(){}.getType();
-        image_thumbnail1 = gson.fromJson(getIntent().getStringExtra("image_thumbnail"), type2);*/
-
-    }
 
     @Override
     public void onClick(View v) {
@@ -322,7 +314,6 @@ public class ProductPreviewActivity extends AppCompatActivity implements View.On
         try {
             String user_id = PrefManager.getInstance(ProductPreviewActivity.this).getUserId();
             p_bar.setVisibility(View.VISIBLE);
-
             MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
             multipartTypedOutput.addPart("name", new TypedString(product_name));
             multipartTypedOutput.addPart("shop_id", new TypedString(shop_id));
@@ -338,6 +329,18 @@ public class ProductPreviewActivity extends AppCompatActivity implements View.On
             multipartTypedOutput.addPart("size", new TypedString(size));
             multipartTypedOutput.addPart("product_id", new TypedString(product_id));
             multipartTypedOutput.addPart("preference_id", new TypedString(getIntent().getStringExtra("preference_id")));
+
+
+            if (!discount.equals(""))
+            {
+                multipartTypedOutput.addPart("discount", new TypedString(discount));
+                multipartTypedOutput.addPart("coupon_title", new TypedString(coupon_title));
+                multipartTypedOutput.addPart("coupon_description", new TypedString(coupon_description));
+                multipartTypedOutput.addPart("no_of_claims", new TypedString(no_of_claims));
+                multipartTypedOutput.addPart("start_date", new TypedString(start_date));
+                multipartTypedOutput.addPart("end_date", new TypedString(end_date));
+            }
+
             if (image_thumbnails_product.size() > 0) {
                 for (int i = 0; i < image_thumbnails_product.size(); i++) {
                     multipartTypedOutput.addPart("product_photos[]", new TypedFile("application/octet-stream", new File(imageFiles_products.get(i).getAbsolutePath())));
@@ -413,6 +416,15 @@ public class ProductPreviewActivity extends AppCompatActivity implements View.On
             multipartTypedOutput.addPart("color", new TypedString(color));
             multipartTypedOutput.addPart("size", new TypedString(size));
             multipartTypedOutput.addPart("preference_id", new TypedString(getIntent().getStringExtra("preference_id")));
+            if (!discount.equals(""))
+            {
+                multipartTypedOutput.addPart("discount", new TypedString(discount));
+                multipartTypedOutput.addPart("coupon_title", new TypedString(coupon_title));
+                multipartTypedOutput.addPart("coupon_description", new TypedString(coupon_description));
+                multipartTypedOutput.addPart("no_of_claims", new TypedString(no_of_claims));
+                multipartTypedOutput.addPart("start_date", new TypedString(start_date));
+                multipartTypedOutput.addPart("end_date", new TypedString(end_date));
+            }
             if (image_thumbnails_product.size() > 0) {
                 for (int i = 0; i < image_thumbnails_product.size(); i++) {
                     multipartTypedOutput.addPart("product_photos[]", new TypedFile("application/octet-stream", new File(imageFiles_products.get(i).getAbsolutePath())));

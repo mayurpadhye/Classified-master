@@ -1,6 +1,7 @@
 package mimosale.com.products;
 
 import android.annotation.TargetApi;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
@@ -32,6 +33,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -57,9 +59,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -146,6 +152,8 @@ public class UpdateProductAcitvity extends AppCompatActivity implements View.OnC
     TextInputLayout tl_discount;
     @BindView(R.id.iv_back)
     ImageView iv_back;
+    final Calendar myCalendar = Calendar.getInstance();
+    String coupon_id="";
     public static ArrayList<File> imageFiles_product_update = new ArrayList<>();
     ;
     Context context;
@@ -159,6 +167,26 @@ public class UpdateProductAcitvity extends AppCompatActivity implements View.OnC
     String discount = "";
     String shop_id = "";
     String preference_id="";
+    @BindView(R.id.tl_coupon_title)
+    TextInputLayout tl_coupon_title;
+    @BindView(R.id.tl_no_claims)
+    TextInputLayout tl_no_claims;
+    @BindView(R.id.tl_end_date)
+    TextInputLayout tl_end_date;
+    @BindView(R.id.tl_start_date)
+    TextInputLayout tl_start_date;
+    @BindView(R.id.tl_coupon_desc)
+    TextInputLayout tl_coupon_desc;
+    @BindView(R.id.et_coupon_title)
+    EditText et_coupon_title;
+    @BindView(R.id.et_no_claims)
+    EditText et_no_claims;
+    @BindView(R.id.et_coupon_desc)
+    EditText et_coupon_desc;
+    @BindView(R.id.et_start_date)
+    EditText et_start_date;
+    @BindView(R.id.et_end_date)
+    EditText et_end_date;
    public static ArrayList<ImageVideoData> image_thumbnails_product_update = new ArrayList<ImageVideoData>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,6 +207,28 @@ public class UpdateProductAcitvity extends AppCompatActivity implements View.OnC
         sp_discount.setAdapter(spinnerArrayAdapter);
         getProductDetails();
         getUserShop();
+        et_end_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(context, date2, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH));
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+                datePickerDialog.show();
+            }
+        });
+        et_start_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(context, date, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH));
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+                datePickerDialog.show();
+
+            }
+        });
         sp_discount.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -312,6 +362,47 @@ public class UpdateProductAcitvity extends AppCompatActivity implements View.OnC
                                 }
                             }
                         } else {}
+
+
+
+
+                        if (j1.has("latest_product_coupon")) {
+                            JSONObject latest_shop_coupon1;
+                            String latest_shop_string;
+
+                            // JSONObject latest_shop_coupon = j1.getJSONObject("latest_shop_coupon");
+
+                            Object latest_shop_coupon_obj = j1.get("latest_product_coupon");
+                            if (latest_shop_coupon_obj instanceof JSONObject) {
+
+                                latest_shop_coupon1 = (JSONObject) latest_shop_coupon_obj;
+                                String title = latest_shop_coupon1.getString("title");
+                                String coupon_id1 = latest_shop_coupon1.getString("coupon_id");
+                                coupon_id=coupon_id1;
+                                String description_coupon = latest_shop_coupon1.getString("description");
+                                String start_date = latest_shop_coupon1.getString("start_date");
+                                String end_date = latest_shop_coupon1.getString("end_date");
+                                String no_of_claims = latest_shop_coupon1.getString("no_of_claims");
+
+                                et_start_date.setText(start_date);
+                                et_end_date.setText(end_date);
+                                et_coupon_desc.setText(description_coupon);
+                                et_no_claims.setText(no_of_claims);
+
+                                coupon_id = coupon_id1;
+                                   /* if (!start_date.equals("null") && !end_date.equals("null")) {
+                                        tv_sale_duration.setText(start_date + " - " + end_date);}
+                                    else {tv_sale_duration.setText(getResources().getString(R.string.not_avail));}*/
+
+                            }
+                            else{
+
+
+                            }
+                        }
+
+
+
                         image_thumbnails_product_update.clear();
                         imageFiles_product_update.clear();
                         getAllPrefData(preference_id);
@@ -711,6 +802,47 @@ public class UpdateProductAcitvity extends AppCompatActivity implements View.OnC
 
         return file;
     }
+
+    final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear,
+                              int dayOfMonth) {
+            // TODO Auto-generated method stub
+
+            myCalendar.set(Calendar.YEAR, year);
+            myCalendar.set(Calendar.MONTH, monthOfYear);
+            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            updateLabel();
+        }
+
+    };
+    final DatePickerDialog.OnDateSetListener date2 = new DatePickerDialog.OnDateSetListener() {
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear,
+                              int dayOfMonth) {
+            // TODO Auto-generated method stub
+            myCalendar.set(Calendar.YEAR, year);
+            myCalendar.set(Calendar.MONTH, monthOfYear);
+            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            setEndDate();
+        }
+
+    };
+    private void updateLabel() {
+        String myFormat = "yyyy/MM/dd"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.JAPAN);
+
+        et_start_date.setText(sdf.format(myCalendar.getTime()));
+    }
+
+    private void setEndDate() {
+        String myFormat = "yyyy/MM/dd"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.JAPAN);
+
+        et_end_date.setText(sdf.format(myCalendar.getTime()));
+    }
     public void ProductValidte(String action) {
 
 
@@ -742,15 +874,50 @@ public class UpdateProductAcitvity extends AppCompatActivity implements View.OnC
         } else {
             tl_price.setError(null);
         }
-       /* if (et_hash_tag.getText().toString().trim().length() == 0) {
+        if (sp_discount.getSelectedItemPosition()!=0)
+        {
+            if (et_coupon_title.getText().toString().trim().isEmpty())
+            {
+                et_coupon_title.requestFocus();
+                tl_coupon_title.setError(getResources().getString(R.string.please_enter_coupon_title));
+                return;
+            }
+            else if (et_coupon_desc.getText().toString().trim().isEmpty())
+            {
+                tl_coupon_title.setError(null);
+                tl_coupon_desc.setError(getResources().getString(R.string.please_enter_coupon_desc));
+                return;
+            }
+            else if (et_no_claims.getText().toString().trim().isEmpty())
+            {
+                tl_coupon_desc.setError(null);
+                tl_no_claims.setError(getResources().getString(R.string.please_enter_nno_claims));
+                return;
+            }
+            else if (!et_start_date.getText().toString().trim().isEmpty() || !et_end_date.getText().toString().trim().isEmpty())
+            {
+                if (et_start_date.getText().toString().trim().length() == 0) {
+                    tl_start_date.setError("" + getResources().getString(R.string.enter_start_date));
+                    return;
+                } else if (et_end_date.getText().toString().trim().length() == 0) {
+                    tl_end_date.setError(getResources().getString(R.string.enter_end_date));
+                    return;
+                }
 
-            et_hash_tag.requestFocus();
-            tl_hash_tag.setError(getResources().getString(R.string.enter_hash_tag));
+                if (!isDateAfter(et_start_date.getText().toString().trim(), et_end_date.getText().toString().trim())) {
 
+                    tl_start_date.setError(getResources().getString(R.string.end_date_must_be_greater));
+                    return;
+                }
+            }
+
+
+        }
+        if (sp_discount.getSelectedItemPosition()==0 || et_coupon_desc.getText().toString().trim().isEmpty() || et_coupon_title.getText().toString().trim().isEmpty() || et_no_claims.getText().toString().trim().isEmpty() || et_start_date.getText().toString().trim().isEmpty() || et_end_date.getText().toString().trim().isEmpty() ) {
+            CustomUtils.showToast(getResources().getString(R.string.please_select_discount), UpdateProductAcitvity.this);
             return;
-        } else {
-            tl_hash_tag.setError(null);
-        }*/
+        }
+
         if (shop_id.equals("")) {
             Toast.makeText(this, "" + getResources().getString(R.string.select_shop), Toast.LENGTH_SHORT).show();
             return;
@@ -780,6 +947,11 @@ public class UpdateProductAcitvity extends AppCompatActivity implements View.OnC
             i.putExtra("shop_id",shop_id);
             i.putExtra("product_id",product_id);
             i.putExtra("preference_id",preference_id);
+            i.putExtra("coupon_title",et_coupon_title.getText().toString().trim());
+            i.putExtra("coupon_desc",et_coupon_desc.getText().toString().trim());
+            i.putExtra("no_of_coupon",et_no_claims.getText().toString().trim());
+            i.putExtra("end_date", et_end_date.getText().toString().trim());
+            i.putExtra("start_date", et_start_date.getText().toString().trim());
             JsonArray jsonElements = (JsonArray) new Gson().toJsonTree(image_thumbnails_product_update);
             i.putExtra("product_images", jsonElements.toString());
             JsonArray jsonElements1 = (JsonArray) new Gson().toJsonTree(imageFiles_product_update);
@@ -789,6 +961,23 @@ public class UpdateProductAcitvity extends AppCompatActivity implements View.OnC
 
 
     }
+    public static boolean isDateAfter(String startDate, String endDate) {
+        try {
+            String myFormatString = "yyyy/MM/dd"; // for example
+            SimpleDateFormat df = new SimpleDateFormat(myFormatString);
+            Date date1 = df.parse(endDate);
+            Date startingDate = df.parse(startDate);
+
+            if (date1.after(startingDate))
+                return true;
+            else
+                return false;
+        } catch (Exception e) {
+
+            return false;
+        }
+    }
+
     @OnClick(R.id.iv_back)
     void onBackClick() {
         finish();
@@ -994,6 +1183,15 @@ public class UpdateProductAcitvity extends AppCompatActivity implements View.OnC
             multipartTypedOutput.addPart("size", new TypedString(et_size.getText().toString()));
             multipartTypedOutput.addPart("product_id", new TypedString(product_id));
             multipartTypedOutput.addPart("preference_id", new TypedString(preference_id));
+            if (!discount.equals(""))
+            {
+                multipartTypedOutput.addPart("discount", new TypedString(discount));
+                multipartTypedOutput.addPart("coupon_title", new TypedString(et_coupon_title.getText().toString()));
+                multipartTypedOutput.addPart("coupon_description", new TypedString(et_coupon_desc.getText().toString()));
+                multipartTypedOutput.addPart("no_of_claims", new TypedString(et_no_claims.getText().toString()));
+                multipartTypedOutput.addPart("start_date", new TypedString(et_start_date.getText().toString()));
+                multipartTypedOutput.addPart("end_date", new TypedString(et_end_date.getText().toString()));
+            }
             if (imageFiles_product_update.size() > 0) {
                 for (int i = 0; i < imageFiles_product_update.size(); i++) {
                     multipartTypedOutput.addPart("product_photos[]", new TypedFile("application/octet-stream", new File(imageFiles_product_update.get(i).getAbsolutePath())));

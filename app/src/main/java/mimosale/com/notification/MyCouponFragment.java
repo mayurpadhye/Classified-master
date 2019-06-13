@@ -83,10 +83,11 @@ public class MyCouponFragment extends Fragment {
                             JSONArray data = jsonObject.getJSONArray("data");
                             for (int i = 0; i < data.length(); i++) {
                                 JSONObject j1 = data.getJSONObject(i);
+
+                                String type = j1.getString("type");
                                 String id = j1.getString("id");
                                 String coupon_id = j1.getString("coupon_id");
                                 String user_id = j1.getString("user_id");
-                                String shop_id = j1.getString("shop_id");
                                 String title = j1.getString("title");
                                 String description = j1.getString("description");
                                 String discount = j1.getString("discount");
@@ -94,11 +95,27 @@ public class MyCouponFragment extends Fragment {
                                 String end_date = j1.getString("end_date");
                                 String no_of_claims = j1.getString("no_of_claims");
                                 String status1 = j1.getString("status");
-                                String shop_name = j1.getString("shop_name");
-                                String totalClaimedCoupons = j1.getString("shop_name");
-                                String type = j1.getString("type");
+                                String totalClaimedCoupons = j1.getString("totalClaimedCoupons");
                                 String coupon_image = j1.getString("coupon_image");
+                                String shop_id="",shop_name="";
+                               if (type.equals("shop"))
+                                {
+                                     shop_id = j1.getString("shop_id");
+                                    shop_name = j1.getString("shop_name");
+
+
+                                }
+                                else
+                               {
+
+                                   shop_id = j1.getString("product_id");
+                                   shop_name = j1.getString("product_name");
+
+
+
+                               }
                                 myCouponsPojoList.add(new MyCouponsPojo(id, coupon_id, user_id, shop_id, title, description, discount, start_date, end_date, no_of_claims, status1, shop_name, totalClaimedCoupons, type, coupon_image));
+
 
 
                             }
@@ -107,7 +124,7 @@ public class MyCouponFragment extends Fragment {
                                 public void onItemClick(View v,int position) {
                                     if (v.getId()==R.id.cv_main)
                                     {
-                                        startActivity(new Intent(getActivity(),MyCouponsDetails.class).putExtra("coupon_id",myCouponsPojoList.get(position).getCoupon_id()).putExtra("type",myCouponsPojoList.get(position).getType()).putExtra("Isclaimed","false"));
+                                        startActivity(new Intent(getActivity(),MyCouponsDetails.class).putExtra("coupon_id",myCouponsPojoList.get(position).getCoupon_id()).putExtra("type",myCouponsPojoList.get(position).getType()).putExtra("Isclaimed","false").putExtra("shop_id",myCouponsPojoList.get(position).getShop_id()));
 
                                     }
                                 }

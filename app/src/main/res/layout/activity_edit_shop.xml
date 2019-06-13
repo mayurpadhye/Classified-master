@@ -88,7 +88,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="0.2"
                                 android:padding="5dp"
-                                android:text="@string/shop_images"
+                                android:text="@string/shop_images_min_two"
                                 android:textColor="@color/black"
                                 android:textSize="13dp" />
                             <Button
@@ -204,7 +204,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:visibility="gone">
+                            android:visibility="visible">
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="40dp"
@@ -217,6 +217,59 @@
                                     android:layout_height="35dp"
                                     android:layout_margin="3dp"></Spinner>
                             </LinearLayout>
+                            <android.support.design.widget.TextInputLayout
+                                android:id="@+id/tl_coupon_title"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5">
+
+                                <EditText
+                                    android:id="@+id/et_coupon_title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/coupon_title"
+                                    android:inputType="textPersonName"
+
+                                    android:importantForAutofill="noExcludeDescendants"
+                                    android:textSize="14dp" />
+
+                            </android.support.design.widget.TextInputLayout>
+
+                            <android.support.design.widget.TextInputLayout
+                                android:id="@+id/tl_coupon_desc"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5">
+
+                                <EditText
+                                    android:id="@+id/et_coupon_desc"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/coupon_desc"
+                                    android:inputType="textPersonName"
+
+                                    android:importantForAutofill="noExcludeDescendants"
+                                    android:textSize="14dp" />
+
+                            </android.support.design.widget.TextInputLayout>
+
+                            <android.support.design.widget.TextInputLayout
+                                android:id="@+id/tl_no_claims"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5">
+
+                                <EditText
+                                    android:id="@+id/et_no_claims"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/no_of_claims"
+                                    android:inputType="number"
+                                    android:singleLine="true"
+                                    android:importantForAutofill="noExcludeDescendants"
+                                    android:textSize="14dp" />
+
+                            </android.support.design.widget.TextInputLayout>
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -251,6 +304,8 @@
                                         android:textSize="14dp" />
                                 </android.support.design.widget.TextInputLayout>
                             </LinearLayout>
+
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
