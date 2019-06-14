@@ -412,7 +412,7 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
                     String[] dis = sp_discount.getSelectedItem().toString().split(" ", 2);
 
                     discount = dis[1].substring(0, 2);
-                    Toast.makeText(context, "" + discount, Toast.LENGTH_SHORT).show();
+
 
 
                 }
@@ -506,7 +506,6 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
     private void setEndDate() {
         String myFormat = "yyyy/MM/dd"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.JAPAN);
-
         et_end_date.setText(sdf.format(myCalendar.getTime()));
     }
 
@@ -518,37 +517,27 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
                 ActivityCompat.requestPermissions(EditShopActivity.this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
-
-
-            } else {
+                } else {
 
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
             }
-
-
             return false;
-
-        } else {
+            } else {
             return true;
         }
     }
-
     public void initView() {
         Intent i = getIntent();
         isUpdate = i.getStringExtra("isUpdate");
         btn_current_address = findViewById(R.id.btn_current_address);
         btn_add_address = findViewById(R.id.btn_add_address);
         pDialog = new ProgressDialog(this);
-        pDialog.setMessage("Loading...");
+        pDialog.setMessage(getResources().getString(R.string.loading));
         mAutocompleteTextView = (AutoCompleteTextView) findViewById(R.id
                 .autoCompleteTextView);
         mAutocompleteTextView.setThreshold(3);
@@ -590,7 +579,7 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 RadioButton rb = (RadioButton) group.findViewById(checkedId);
                 if (null != rb && checkedId > -1) {
-                    Toast.makeText(EditShopActivity.this, rb.getText(), Toast.LENGTH_SHORT).show();
+
                     if (rb.getText().equals(getResources().getString(R.string.search_by_pincode))) {
                         tl_pincode.setVisibility(View.VISIBLE);
                     } else {
@@ -601,7 +590,6 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
 
             }
         });
-
         toolbar_title = findViewById(R.id.toolbar_title);
         sp_category = findViewById(R.id.sp_category);
         iv_back = findViewById(R.id.iv_back);
@@ -638,8 +626,6 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
         tl_url = findViewById(R.id.tl_url);
         et_shop_name = findViewById(R.id.et_shop_name);
         et_shop_desc = findViewById(R.id.et_shop_desc);
-        //   et_min_discount = findViewById(R.id.et_min_discount);
-        //  et_max_discount = findViewById(R.id.et_max_discount);
         et_min_price = findViewById(R.id.et_min_price);
         et_max_price = findViewById(R.id.et_max_price);
         et_pincode = findViewById(R.id.et_pincode);
@@ -650,12 +636,9 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
         et_url = findViewById(R.id.et_url);
         tl_end_date = findViewById(R.id.tl_end_date);
         tl_start_date = findViewById(R.id.tl_start_date);
-
-
         btn_upload.setOnClickListener(this);
         btn_preview.setOnClickListener(this);
         iv_back.setOnClickListener(this);
-
         sp_category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedItem = parent.getItemAtPosition(position).toString();
@@ -673,7 +656,6 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
 
         if (isUpdate.equals("update_shop")) {
             try {
-
                 String shop_name = i.getStringExtra("shop_name");
                 String shop_desc = i.getStringExtra("shop_desc");
                 String shop_category = i.getStringExtra("shop_category");
@@ -695,7 +677,7 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
                 shop_id = i.getStringExtra("shop_id");
                 List<String> stringList = new ArrayList<>();
                 List<String> Lines = Arrays.asList(getResources().getStringArray(R.array.discount_array));
-                if (!discount.equals("")) {
+                if (!discount.equals("0")) {
                     switchbutton_discount.setChecked(true);
                     ll_discount.setVisibility(View.VISIBLE);
                     for (int k = 0; k < Lines.size(); k++) {
@@ -720,11 +702,25 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
                 if(!address_line_2.equals("null"))
                 et_address_line2.setText(address_line_2);
                 et_phone.setText(phone_number);
+                if (!hash_tag.equals("null"))
                 et_hash_tag.setText(hash_tag);
                 String webUrl = web_url.substring(0, 7);
                 et_url.setText(webUrl);
                 et_state.setText(state);
                 et_country.setText(country);
+
+                if(!discount.equals("0"))
+                {
+                    switchbutton_discount.setChecked(true);
+                    ll_discount.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    switchbutton_discount.setChecked(false);
+                    ll_discount.setVisibility(View.GONE);
+                }
+
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1287,7 +1283,7 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
             multipartTypedOutput.addPart("phone", new TypedString(et_phone.getText().toString()));
             multipartTypedOutput.addPart("hash_tags", new TypedString(et_hash_tag.getText().toString()));
             multipartTypedOutput.addPart("description", new TypedString(et_shop_desc.getText().toString()));
-            multipartTypedOutput.addPart("web_url", new TypedString(tv_url.getText().toString() + "" + et_url.getText().toString()));
+            multipartTypedOutput.addPart("web_url", new TypedString(et_url.getText().toString()));
             multipartTypedOutput.addPart("status", new TypedString("1"));
             multipartTypedOutput.addPart("user_id", new TypedString(PrefManager.getInstance(context).getUserId()));
             multipartTypedOutput.addPart("shop_id", new TypedString(shop_id));
@@ -1337,7 +1333,7 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
                                             .show();
 
                                 } else {
-                                    Toast.makeText(context, "Unable to update Shop", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, getResources().getString(R.string.unable_to_update), Toast.LENGTH_SHORT).show();
 
                                 }
 

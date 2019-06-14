@@ -4,7 +4,7 @@ public class AllProductPojo {
 
 String id,name,shop_id,user_id,description,price,hash_tag,status,product_images,image2,discount;
     String like_count, like_status, fav_status;
-    public AllProductPojo(String id, String name, String shop_id, String user_id, String description, String price, String hash_tag, String status, String product_images,String image2,String like_count,String like_status,String fav_status) {
+    public AllProductPojo(String id, String name, String shop_id, String user_id, String description, String price, String hash_tag, String status, String product_images,String image2,String like_count,String like_status,String fav_status,String discount) {
         this.id = id;
         this.name = name;
         this.shop_id = shop_id;
@@ -18,6 +18,7 @@ String id,name,shop_id,user_id,description,price,hash_tag,status,product_images,
         this.like_count=like_count;
         this.like_status=like_status;
         this.fav_status=fav_status;
+        this.discount=discount;
     }
 
     public AllProductPojo(String id, String name, String shop_id, String user_id, String description, String price, String hash_tag, String status, String product_images,String image2)

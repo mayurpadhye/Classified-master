@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">MimoSale</string>
     <string name="ok">OK</string>
     <string name="success">成功</string>
@@ -263,11 +263,13 @@
     <string name="toolbar_title">利用規約</string>
     <string name="title_activity_shops_on_map">地図</string>
     <string name="unfollowing">フォローを解除</string>
-    <string name="maximum_char_limit">Maximum character limit is 120</string>
-
+    <string name="maximum_char_limit">
+最大文字数は120です</string>
+    <string name="login_details_are_no_correct" tools:ignore="ExtraTranslation">ログイン情報が正しくありません</string>
+    <string name="email_or_mobile_number" tools:ignore="ExtraTranslation">電子メール/携帯電話番号</string>
     <string-array name="discount_array">
         <item>Select Discount</item>
-        <item>Upto 5%</item>
+        <item>Upto 05%</item>
         <item>Upto 10%</item>
         <item>Upto 15%</item>
         <item>Upto 20%</item>

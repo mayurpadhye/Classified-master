@@ -166,7 +166,7 @@ String intent_from="";
                     }
                     else
                     {
-                        CustomUtils.showSweetAlert(LoginActivity.this, message, new onItemClickListener() {
+                        CustomUtils.showSweetAlert(LoginActivity.this, getResources().getString(R.string.login_details_are_no_correct), new onItemClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog v) {
                                 CustomUtils.dismissSweetAlert();

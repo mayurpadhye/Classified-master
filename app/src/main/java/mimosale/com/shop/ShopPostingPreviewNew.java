@@ -153,8 +153,6 @@ RelativeLayout rl_discount,rl_view_more;
         coupon_title=getIntent().getStringExtra("coupon_title");
         coupon_desc=getIntent().getStringExtra("coupon_desc");
         no_of_coupon=getIntent().getStringExtra("no_of_coupon");
-
-
         // image_thumbnail1=(List<File>) getIntent().getSerializableExtra("image_thumbnail");
         p_bar = findViewById(R.id.p_bar);
         iv_product_image = findViewById(R.id.iv_product_image);
@@ -252,7 +250,7 @@ RelativeLayout rl_discount,rl_view_more;
         if (type.equals("save"))
         {
             iv_product_image.setImageBitmap(image_thumbnails_shop.get(0).getBitmap());
-
+mPager.setVisibility(View.VISIBLE);
             ShopSlidingImagesAdapter bannerAdapter = new ShopSlidingImagesAdapter(image_thumbnails_shop, layoutInflater, ShopPostingPreviewNew.this);
             mPager.setAdapter(bannerAdapter);
             CirclePageIndicator indicator = (CirclePageIndicator)
@@ -335,10 +333,6 @@ RelativeLayout rl_discount,rl_view_more;
                 multipartTypedOutput.addPart("coupon_description", new TypedString(coupon_desc));
                 multipartTypedOutput.addPart("no_of_claims", new TypedString(no_of_coupon));
             }
-
-
-            Toast.makeText(this, discount, Toast.LENGTH_SHORT).show();
-
             if (image_thumbnails.size() > 0) {
                 for (int i = 0; i < image_thumbnails.size(); i++) {
                     multipartTypedOutput.addPart("shop_photos[]", new TypedFile("application/octet-stream", new File(imageFiles.get(i).getAbsolutePath())));
@@ -346,8 +340,6 @@ RelativeLayout rl_discount,rl_view_more;
             } else {
                 multipartTypedOutput.addPart("shop_photos", new TypedString(""));
             }
-
-
             RetrofitClient retrofitClient = new RetrofitClient();
             RestInterface service = retrofitClient.getAPIClient(WebServiceURLs.DOMAIN_NAME);
             service.update_shop("Bearer " + PrefManager.getInstance(ShopPostingPreviewNew.this).getApiToken(),
@@ -360,9 +352,6 @@ RelativeLayout rl_discount,rl_view_more;
                                 String status = jsonObject.getString("status");
 
                                 if (status.equals("1")) {
-
-                                //    Toast.makeText(ShopPostingPreviewNew.this, "Shop Successfully Updated", Toast.LENGTH_SHORT).show();
-
                                     new SweetAlertDialog(ShopPostingPreviewNew.this, SweetAlertDialog.SUCCESS_TYPE)
                                             .setTitleText(getResources().getString(R.string.success))
                                             .setContentText(getResources().getString(R.string.shop_posting_success))
@@ -379,10 +368,8 @@ RelativeLayout rl_discount,rl_view_more;
 
                                 } else {
                                     Toast.makeText(ShopPostingPreviewNew.this, "Unable to update Shop", Toast.LENGTH_SHORT).show();
-
-                                }
-
-                                p_bar.setVisibility(View.GONE);
+                                    }
+                                    p_bar.setVisibility(View.GONE);
                             } catch (JSONException | NullPointerException e) {
                                 e.printStackTrace();
 
@@ -408,7 +395,6 @@ RelativeLayout rl_discount,rl_view_more;
         try {
             PrefManager.getInstance(ShopPostingPreviewNew.this).getUserId();
             p_bar.setVisibility(View.VISIBLE);
-
             MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
             multipartTypedOutput.addPart("name", new TypedString(shop_name));
             multipartTypedOutput.addPart("preference_id", new TypedString(pref_id));

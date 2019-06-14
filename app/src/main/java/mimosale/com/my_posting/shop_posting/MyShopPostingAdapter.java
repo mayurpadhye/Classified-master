@@ -96,7 +96,17 @@ ProgressBar p_bar;
         shimmer.start(holder.shimmer_premium);
         Picasso.with(mctx).load(WebServiceURLs.SHOP_IMAGE + items.getImage()).into(holder.iv_product_image1);
         Picasso.with(mctx).load(WebServiceURLs.SHOP_IMAGE + items.getImage2()).into(holder.iv_product_image2);
-        holder.tv_price_range.setText("" + items.getLow_price() + "-" + items.getHigh_price());
+        if(items.getLow_price().equals("null")||items.getHigh_price().equals("null"))
+        {
+            holder.tv_price_range.setText("0"  + "-" + "0");
+        }
+        else
+        {
+            holder.tv_price_range.setText("" + items.getLow_price() + "-" + items.getHigh_price());
+        }
+
+
+
         holder.tv_desc.setText(items.getDescription());
         holder.tv_discount.setText(items.getDiscount()+"%");
         if (position == 0) {
@@ -105,7 +115,7 @@ ProgressBar p_bar;
         holder.cv_shop_main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mctx.startActivity(new Intent(mctx, ShopDetailsActivityNew.class).putExtra("shop_id",items.getId()));
+                mctx.startActivity(new Intent(mctx, ShopDetailsActivityNew.class).putExtra("shop_id",items.getId()).putExtra("from","myposting"));
             }
         });
         holder.iv_pop_up.setOnClickListener(new View.OnClickListener() {
@@ -121,7 +131,6 @@ ProgressBar p_bar;
     {
 
         PopupMenu popup = new PopupMenu(mctx, iv_pop_up);
-        //Inflating the Popup using xml file
         popup.getMenuInflater().inflate(R.menu.poupup_menu_posting, popup.getMenu());
 
         //registering popup with OnMenuItemClickListener
@@ -153,17 +162,12 @@ ProgressBar p_bar;
                 }
                 if (item.getItemId()==R.id.edit)
                 {
-
                     Intent i=new Intent(mctx,EditShopActivity.class);
                     i.putExtra("shop_name",allProductPojoList.get(position).getName());
-
                     i.putExtra("shop_desc",allProductPojoList.get(position).getDescription());
                     i.putExtra("shop_category","");
-
                     i.putExtra("discount",allProductPojoList.get(position).getDiscount());
                     i.putExtra("start_date",allProductPojoList.get(position).getStart_date());
-                    Toast.makeText(mctx, ""+allProductPojoList.get(position).getStart_date(), Toast.LENGTH_SHORT).show();
-
                     i.putExtra("end_date",allProductPojoList.get(position).getEnd_date());
                     i.putExtra("min_price",allProductPojoList.get(position).getLow_price());
                     i.putExtra("max_price",allProductPojoList.get(position).getHigh_price());
@@ -181,9 +185,6 @@ ProgressBar p_bar;
                     i.putExtra("lan",allProductPojoList.get(position).getLon());
                     i.putExtra("isUpdate","update_shop");
                     i.putExtra("shop_id",allProductPojoList.get(position).getId());
-
-
-
                     mctx.startActivity(i);
                 }
                 return true;
@@ -212,13 +213,14 @@ ProgressBar p_bar;
                         if (status.equals("1")) {
                             allProductPojoList.remove(position);
                             notifyDataSetChanged();
-                            Toast.makeText(mctx, ""+jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mctx, ""+mctx.getResources().getString(R.string.delete_success), Toast.LENGTH_SHORT).show();
 
                         }
                         else
                         {
-                            Toast.makeText(mctx, ""+jsonObject.getString("data"), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mctx, ""+mctx.getResources().getString(R.string.unable_to_delete), Toast.LENGTH_SHORT).show();
                         }
+
 
 
                     } catch (JSONException | NullPointerException e) {
@@ -276,7 +278,6 @@ ProgressBar p_bar;
             shimmer_view_container1 = view.findViewById(R.id.shimmer_view_container1);
             cv_shop_main = view.findViewById(R.id.cv_shop_main);
 
-            //   shimmer.start(shimmer_premium);
         }
     }
 

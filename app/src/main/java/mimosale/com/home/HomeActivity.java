@@ -29,6 +29,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import mimosale.com.GooglePlayStoreAppVersionNameLoader;
 import mimosale.com.R;
@@ -71,7 +72,6 @@ RelativeLayout rl_posting;
     @Override
     protected void onResume() {
         super.onResume();
-
 
       /*  String lang=PrefManager.getInstance(HomeActivity.this).getAppLanguageCode();
 

@@ -179,6 +179,39 @@
                             android:textSize="16dp"/>
                     </RelativeLayout>
                     <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/tl_min_price"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5">
+                            <EditText
+                                android:id="@+id/et_min_price"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/min_price"
+                                android:importantForAutofill="noExcludeDescendants"
+                                android:inputType="number"
+                                android:textSize="14dp" />
+                        </android.support.design.widget.TextInputLayout>
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/tl_max_price"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5">
+                            <EditText
+                                android:id="@+id/et_max_price"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/max_price"
+                                android:inputType="number"
+                                android:importantForAutofill="noExcludeDescendants"
+                                android:textSize="14dp"/>
+                        </android.support.design.widget.TextInputLayout>
+                    </LinearLayout>
+                    <LinearLayout
                         android:id="@+id/ll_pricing"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -346,39 +379,7 @@
                                 </android.support.design.widget.TextInputLayout>
                             </LinearLayout>
                         </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <android.support.design.widget.TextInputLayout
-                                android:id="@+id/tl_min_price"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.5">
-                                <EditText
-                                    android:id="@+id/et_min_price"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:hint="@string/min_price"
-                                    android:importantForAutofill="noExcludeDescendants"
-                                    android:inputType="number"
-                                    android:textSize="14dp" />
-                            </android.support.design.widget.TextInputLayout>
-                            <android.support.design.widget.TextInputLayout
-                                android:id="@+id/tl_max_price"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.5">
-                                <EditText
-                                    android:id="@+id/et_max_price"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:hint="@string/max_price"
-                                    android:inputType="number"
-                                    android:importantForAutofill="noExcludeDescendants"
-                                    android:textSize="14dp"/>
-                            </android.support.design.widget.TextInputLayout>
-                        </LinearLayout>
+
                     </LinearLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
@@ -444,7 +445,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:minHeight="35dp"
-                        android:text="@string/add_addess"
+                        android:text="@string/search_address"
                         android:textAllCaps="false"
                         android:layout_margin="@dimen/padding_10"
                         android:drawablePadding="@dimen/padding_10"
@@ -739,6 +740,7 @@
                                 android:gravity="center"
                                 android:layout_gravity="center_vertical"
                                 android:padding="@dimen/padding_10"
+                                android:visibility="gone"
                                 android:text="http://" />
 
                             <android.support.design.widget.TextInputLayout
@@ -794,7 +796,7 @@
                     android:layout_marginBottom="20dp"
                     android:layout_weight="0.5"
                     android:background="@drawable/button_shape_black"
-                    android:text="@string/save"
+                    android:text="@string/submit"
                     android:textColor="@color/white" />
             </LinearLayout>
         </LinearLayout>

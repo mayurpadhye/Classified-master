@@ -92,7 +92,7 @@ View v;
                                 String no_of_claims = j1.getString("no_of_claims");
                                 String status1 = j1.getString("status");
 
-                                String totalClaimedCoupons = j1.getString("totalClaimedCoupons");
+                          //      String totalClaimedCoupons = j1.getString("totalClaimedCoupons");
                                 String type = j1.getString("type");
                                 String coupon_image = j1.getString("coupon_image");
                                 String shop_id="";
@@ -106,7 +106,7 @@ View v;
                                 }
 
 
-                                claimedCouponPojoList.add(new ClaimedCouponPojo(id, coupon_id, user_id, shop_id, title, description, discount, start_date, end_date, no_of_claims, status1, "", totalClaimedCoupons, type, coupon_image));
+                                claimedCouponPojoList.add(new ClaimedCouponPojo(id, coupon_id, user_id, shop_id, title, description, discount, start_date, end_date, no_of_claims, status1, "", "", type, coupon_image));
 
                             }
                             ClaimedCouponsAdapter adapter=new ClaimedCouponsAdapter(claimedCouponPojoList, getActivity(), new onRecyclerViewItemClick() {

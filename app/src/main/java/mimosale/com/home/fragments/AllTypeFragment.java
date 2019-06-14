@@ -2,6 +2,7 @@ package mimosale.com.home.fragments;
 
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -48,12 +49,14 @@ import retrofit.client.Response;
 public class AllTypeFragment extends Fragment implements ItemClickListener {
   View v;
   ProgressBar p_bar;
+    private Parcelable recyclerViewState,recyclerViewState1;
 RecyclerView rv_shop_sale,rv_products,rv_furniture;
 List<ShopSaleModel> allShopSaleList=new ArrayList<>();
     List<AllProductPojo> allProductPojoList=new ArrayList<>();
     ShopSaleAdapter shopSaleAdapter;
     RecyclerView rv_prefwise_product;
     SectionedExpandableLayoutHelper sectionedExpandableLayoutHelper;
+    ProductsAdapter productsAdapter;
     public AllTypeFragment() {
         // Required empty public constructor
     }
@@ -75,6 +78,19 @@ List<ShopSaleModel> allShopSaleList=new ArrayList<>();
     @Override
     public void onResume() {
         super.onResume();
+        rv_shop_sale.getLayoutManager().onRestoreInstanceState(recyclerViewState);//restore
+        rv_products.getLayoutManager().onRestoreInstanceState(recyclerViewState1);//restore
+rv_products.getAdapter().notifyDataSetChanged();
+        shopSaleAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        recyclerViewState = rv_shop_sale.getLayoutManager().onSaveInstanceState();//save
+        recyclerViewState1 = rv_products.getLayoutManager().onSaveInstanceState();//save
+
 
     }
 
@@ -88,6 +104,8 @@ List<ShopSaleModel> allShopSaleList=new ArrayList<>();
     }
 
     private void initView(View v) {
+        productsAdapter = new ProductsAdapter(allProductPojoList, getActivity());
+        shopSaleAdapter = new ShopSaleAdapter(allShopSaleList, getActivity());
         rv_prefwise_product=v.findViewById(R.id.rv_prefwise_product);
         p_bar=v.findViewById(R.id.p_bar);
         rv_shop_sale = (RecyclerView) v.findViewById(R.id.rv_shop_sale);
@@ -105,7 +123,8 @@ List<ShopSaleModel> allShopSaleList=new ArrayList<>();
         GridLayoutManager gridLayoutManager1 = new GridLayoutManager(getActivity(), 1);
         gridLayoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
         rv_shop_sale.setLayoutManager(gridLayoutManager1);
-
+        rv_products.setAdapter(productsAdapter);
+        rv_shop_sale.setAdapter(shopSaleAdapter);
     }
 
     public void getAllShopAndSale() {
@@ -169,8 +188,8 @@ List<ShopSaleModel> allShopSaleList=new ArrayList<>();
                                 allShopSaleList.add(new ShopSaleModel(id,name,user_id,preference_id,address_line1,address_line2,city,state,country,pincode,lat,lon,low_price,high_price,discount,"","",phone,hash_tags,description,web_url,image1,image2,"shop",fav_status,like_status,like_count));
 
                             }
-                            ShopSaleAdapter shopSaleAdapter = new ShopSaleAdapter(allShopSaleList, getActivity());
-                            rv_shop_sale.setAdapter(shopSaleAdapter);
+                            //ShopSaleAdapter shopSaleAdapter = new ShopSaleAdapter(allShopSaleList, getActivity());
+
                             shopSaleAdapter.notifyDataSetChanged();
 
 
@@ -233,6 +252,7 @@ List<ShopSaleModel> allShopSaleList=new ArrayList<>();
                                 String like_count = j1.getString("like_count");
                                 String like_status = j1.getString("like_status");
                                 String fav_status = j1.getString("fav_status");
+                                String discount = j1.getString("discount");
                                 String image= "";
                               /*  JSONArray product_images=j1.getJSONArray("product_images");
                                 for (int k=0;k<product_images.length();k++)
@@ -240,11 +260,11 @@ List<ShopSaleModel> allShopSaleList=new ArrayList<>();
                                     JSONObject j2=product_images.getJSONObject(k);
                                     image=j2.getString("image");
                                 }*/
-                                allProductPojoList.add(new AllProductPojo(id,name,shop_id,user_id,description,price,hash_tag,status1,image1,image2,like_count,like_status,fav_status));
+                                allProductPojoList.add(new AllProductPojo(id,name,shop_id,user_id,description,price,hash_tag,status1,image1,image2,like_count,like_status,fav_status,discount));
                             }
+rv_products.getAdapter().notifyDataSetChanged();
 
-                            ProductsAdapter shopSaleAdapter = new ProductsAdapter(allProductPojoList, getActivity());
-                            rv_products.setAdapter(shopSaleAdapter);
+
 
 
                         }

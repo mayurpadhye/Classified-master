@@ -84,7 +84,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
         holder.cv_shop_main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mctx.startActivity(new Intent(mctx, ProductDetailsActivityNew.class).putExtra("product_id", items.getId()));}
+                mctx.startActivity(new Intent(mctx, ProductDetailsActivityNew.class).putExtra("product_id", items.getId()).putExtra("from","home"));}
         });
         if (items.getFav_status().equals("1"))
         {
@@ -94,6 +94,9 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
         {
             holder.spark_button.setChecked(false);
         }
+
+
+        holder.tv_discount.setText(items.getDiscount()+" %");
 
 
         Picasso.with(mctx).load(WebServiceURLs.SHOP_IMAGE + items.getProduct_images()).into(holder.iv_product_image1);
@@ -106,7 +109,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
 
         if (items.getLike_status().equals("1"))
         {
-            holder.iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_hand_red));
+            holder.iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_hand_black));
         }
         else
         {
@@ -122,7 +125,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
                 }
                 else
                 {
-                    dialogLoginWarning("shop_fav",holder.spark_button);
+                    ShowDialog("shop_fav",holder.spark_button);
 
                 }
             }
@@ -142,7 +145,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
                     }
                     else
                     {
-                        dialogLoginWarning("shop_fav",holder.spark_button);
+                        ShowDialog("shop_fav",holder.spark_button);
 
                     }
 
@@ -154,7 +157,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
                     }
                     else
                     {
-                        dialogLoginWarning("shop_fav",holder.spark_button);
+                        ShowDialog("shop_fav",holder.spark_button);
 
                     }
                     // Button is inactive
@@ -244,7 +247,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
                         if (message.equals("Liked")) {
                            allProductPojoList.get(position).setLike_status("1");
                            notifyItemChanged(position);
-                            iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_hand_red));
+                            iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_hand_black));
 
                         } else {
                             allProductPojoList.get(position).setLike_status("0");
@@ -294,7 +297,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
                         String status = jsonObject.getString("status");
                         String message = jsonObject.getString("message");
                         if (status.equals("1")) {
-                            Toast.makeText(mctx, ""+message, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mctx, "" + mctx.getString(R.string.added_to_fav), Toast.LENGTH_SHORT).show();
 
                                     sparkButton.setChecked(true);
                                     allProductPojoList.get(position).setFav_status("1");
@@ -347,7 +350,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
                         if (status.equals("1")) {
                             allProductPojoList.get(position).setFav_status("0");
                             notifyItemChanged(position);
-                            Toast.makeText(mctx, ""+message, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mctx, "" + mctx.getString(R.string.remove_from_fav), Toast.LENGTH_SHORT).show();
 
                         } else {
                             allProductPojoList.get(position).setFav_status("1");
@@ -376,13 +379,15 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
 
     }
 
-    public void dialogLoginWarning(final String intent_from, final SparkButton sparkButton) {
+    public  void ShowDialog(final String intent_from, final SparkButton spark_button)
+    {
 
-        new SweetAlertDialog(mctx, SweetAlertDialog.WARNING_TYPE)
-                .setTitleText(mctx.getResources().getString(R.string.login_waning))
+        SweetAlertDialog   dialog=new SweetAlertDialog(mctx);
+        dialog.setTitleText(mctx.getResources().getString(R.string.login_waning))
                 .setContentText(mctx.getResources().getString(R.string.please_login))
                 .setConfirmText(mctx.getResources().getString(R.string.login))
                 .setCancelText(mctx.getResources().getString(R.string.cancel))
+
 
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
@@ -397,10 +402,14 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismissWithAnimation();
-                        sparkButton.setChecked(false);
+                        spark_button.setChecked(false);
                     }
-                })
-                .show();
+                });
+        dialog.show();
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+
+
 
     }
 

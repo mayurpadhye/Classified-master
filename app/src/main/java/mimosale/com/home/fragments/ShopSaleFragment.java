@@ -43,7 +43,7 @@ public class ShopSaleFragment extends Fragment {
     View v;
     RecyclerView rv_shop_sale;
     List<ShopSaleModel> allShopSaleList = new ArrayList<>();
-
+    ShopSaleAdapter shopSaleAdapter;
     public ShopSaleFragment() {
         // Required empty public constructor
     }
@@ -61,7 +61,7 @@ public class ShopSaleFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
+        rv_shop_sale.getAdapter().notifyDataSetChanged();
 
     }
     @Override
@@ -77,6 +77,8 @@ public class ShopSaleFragment extends Fragment {
         GridLayoutManager gridLayoutManager1 = new GridLayoutManager(getActivity(), 1);
         gridLayoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
         rv_shop_sale.setLayoutManager(gridLayoutManager1);
+        shopSaleAdapter = new ShopSaleAdapter(allShopSaleList, getActivity());
+        rv_shop_sale.setAdapter(shopSaleAdapter);
 
     }//initViewClsoe
 
@@ -84,7 +86,6 @@ public class ShopSaleFragment extends Fragment {
     public void getAllShopAndSale() {
 
         try {
-
             RetrofitClient retrofitClient = new RetrofitClient();
             RestInterface service = retrofitClient.getAPIClient(WebServiceURLs.DOMAIN_NAME);
             service.getAllShopAndSale(PrefManager.getInstance(getActivity()).getUserId(),new Callback<JsonElement>() {
@@ -115,9 +116,6 @@ public class ShopSaleFragment extends Fragment {
                                 String low_price = j1.getString("low_price");
                                 String high_price = j1.getString("high_price");
                                 String discount = j1.getString("discount");
-
-                                String start_date = j1.getString("start_date");
-                                String end_date = j1.getString("end_date");
                                 String phone = j1.getString("phone");
                                 String hash_tags = j1.getString("hash_tags");
                                 String description = j1.getString("description");
@@ -144,12 +142,11 @@ public class ShopSaleFragment extends Fragment {
                                     JSONObject j2=shop_images.getJSONObject(k);
                                     image = j2.getString("image");
                                 }*/
-                                allShopSaleList.add(new ShopSaleModel(id,name,user_id,preference_id,address_line1,address_line2,city,state,country,pincode,lat,lon,low_price,high_price,discount,start_date,end_date,phone,hash_tags,description,web_url,image1,image2,"shop",fav_status,like_status,like_count));
+                                allShopSaleList.add(new ShopSaleModel(id,name,user_id,preference_id,address_line1,address_line2,city,state,country,pincode,lat,lon,low_price,high_price,discount,"","",phone,hash_tags,description,web_url,image1,image2,"shop",fav_status,like_status,like_count));
 
                             }
 
-                            ShopSaleAdapter shopSaleAdapter = new ShopSaleAdapter(allShopSaleList, getActivity());
-                            rv_shop_sale.setAdapter(shopSaleAdapter);
+                            rv_shop_sale.getAdapter().notifyDataSetChanged();
 
 
                         }

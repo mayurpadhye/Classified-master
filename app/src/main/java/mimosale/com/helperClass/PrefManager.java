@@ -145,7 +145,7 @@ public class PrefManager {
 
     public String getLanguage()
     {
-        return mSharedPref.getString(LANGUAGE, "1");
+        return mSharedPref.getString(LANGUAGE, "2");
     }
 
     public void setLanguage(String value)

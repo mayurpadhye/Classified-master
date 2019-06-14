@@ -128,16 +128,16 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
                 public void onClick(View v) {
 
                     if (items.getType().equals("shop"))
-                        mctx.startActivity(new Intent(mctx, ShopDetailsActivityNew.class).putExtra("shop_id", items.getId()).putExtra("shop_name", items.getName()));
+                        mctx.startActivity(new Intent(mctx, ShopDetailsActivityNew.class).putExtra("shop_id", items.getId()).putExtra("shop_name", items.getName()).putExtra("from","home"));
 
                     else
-                        mctx.startActivity(new Intent(mctx, ProductDetailsActivityNew.class).putExtra("product_id", items.getId()));
+                        mctx.startActivity(new Intent(mctx, ProductDetailsActivityNew.class).putExtra("product_id", items.getId()).putExtra("from","home"));
                 }
             });
 
             if (items.getLike_status().equals("1"))
             {
-                holder.iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_hand_red));
+                holder.iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_hand_black));
             }
             else
             {
@@ -153,7 +153,7 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
                     }
                     else
                     {
-                        dialogLoginWarning("shop_fav",holder.spark_button);
+                        ShowDialog("shop_fav",holder.spark_button);
 
                     }
                 }
@@ -167,7 +167,7 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
                         if (PrefManager.getInstance(mctx).IS_LOGIN()) {
                             addToFavorite(items.getId(), position, holder.spark_button);
                         } else {
-                            dialogLoginWarning("shop_fav", holder.spark_button);
+                            ShowDialog("shop_fav", holder.spark_button);
 
                         }
 
@@ -176,7 +176,7 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
                         if (PrefManager.getInstance(mctx).IS_LOGIN()) {
                             removeFromFavorite(items.getId(), position, holder.spark_button);
                         } else {
-                            dialogLoginWarning("shop_fav", holder.spark_button);
+                            ShowDialog("shop_fav", holder.spark_button);
 
                         }
                         // Button is inactive
@@ -318,7 +318,7 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
                             spark_button.setChecked(true);
                             allProductPojoList.get(position).setFav_status("1");
                             notifyItemChanged(position);
-                            Toast.makeText(mctx, "" + message, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mctx, "" + mctx.getString(R.string.added_to_fav), Toast.LENGTH_SHORT).show();
 
                         } else {
                             spark_button.setChecked(true);
@@ -359,7 +359,7 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
                         String status = jsonObject.getString("status");
                         String message = jsonObject.getString("message");
                         if (status.equals("1")) {
-                            Toast.makeText(mctx, "" + message, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mctx, "" + mctx.getString(R.string.remove_from_fav), Toast.LENGTH_SHORT).show();
                             sparkButton.setChecked(false);
                             allProductPojoList.get(position).setFav_status("0");
                             notifyItemChanged(position);
@@ -391,31 +391,38 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
 
     }
 
-    public void dialogLoginWarning(final String intent_from, final SparkButton spark_button) {
 
-        new SweetAlertDialog(mctx, SweetAlertDialog.WARNING_TYPE)
-                .setTitleText(mctx.getResources().getString(R.string.login_waning))
-                .setContentText(mctx.getResources().getString(R.string.please_login))
-                .setConfirmText(mctx.getResources().getString(R.string.login))
-                .setCancelText(mctx.getResources().getString(R.string.cancel))
+    public  void ShowDialog(final String intent_from, final SparkButton spark_button)
+    {
 
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sDialog) {
-                        Intent i = new Intent(mctx, LoginActivity.class);
-                        i.putExtra("intent_from", intent_from);
-                        ((Activity) mctx).startActivityForResult(i, 1);
-                        sDialog.dismissWithAnimation();
-                    }
-                })
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismissWithAnimation();
-                        spark_button.setChecked(false);
-                    }
-                })
-                .show();
+        SweetAlertDialog   dialog=new SweetAlertDialog(mctx);
+       dialog.setTitleText(mctx.getResources().getString(R.string.login_waning))
+            .setContentText(mctx.getResources().getString(R.string.please_login))
+            .setConfirmText(mctx.getResources().getString(R.string.login))
+            .setCancelText(mctx.getResources().getString(R.string.cancel))
+
+
+            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                @Override
+                public void onClick(SweetAlertDialog sDialog) {
+                    Intent i = new Intent(mctx, LoginActivity.class);
+                    i.putExtra("intent_from", intent_from);
+                    ((Activity) mctx).startActivityForResult(i, 1);
+                    sDialog.dismissWithAnimation();
+                }
+            })
+            .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                @Override
+                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                    sweetAlertDialog.dismissWithAnimation();
+                    spark_button.setChecked(false);
+                }
+            });
+       dialog.show();
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+
+
 
     }
 

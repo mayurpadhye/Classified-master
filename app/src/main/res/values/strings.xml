@@ -324,7 +324,7 @@
     <string name="maximum_char_limit">Maximum character limit is 120</string>
     <string-array name="discount_array">
         <item>Select Discount</item>
-        <item>Upto 5%</item>
+        <item>Upto 05%</item>
         <item>Upto 10%</item>
         <item>Upto 15%</item>
         <item>Upto 20%</item>
@@ -339,7 +339,6 @@
         <item>Upto 80%</item>
         <item>Upto 90%</item>
     </string-array>
-
     <string name="msg_error_unable_select_profile_pic">Unable to set profile image. Please try again!</string>
     <string name="lbl_set_profile_photo">Set profile image</string>
     <string name="lbl_take_camera_picture">Take a picture</string>
@@ -366,6 +365,14 @@
     <string name="goto_product">Goto Product</string>
     <string name="min_two_image">Product Images(Min. Two)</string>
     <string name="shop_images_min_two">Shop Images (Min Two)</string>
-    <string name="please_select_discount">Please Enter Discount Discount and Coupon Details</string>
+    <string name="please_select_discount">Please Enter Discount and Coupon Details</string>
     <string name="shop_updated">Shop Updated Successfully</string>
+    <string name="no_records">No Records Found</string>
+    <string name="login_details_are_no_correct">Login details are not correct</string>
+    <string name="added_to_fav">Added to favourite</string>
+    <string name="remove_from_fav">Removed from favourite</string>
+    <string name="unable_to_delete">Unable to delete</string>
+    <string name="delete_success">Successfully deleted.</string>
+
+
 </resources>

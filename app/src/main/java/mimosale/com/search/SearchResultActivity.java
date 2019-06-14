@@ -47,6 +47,15 @@ LinearLayout ll_search;
 EditText et_search;
     List<AllProductPojo> allProductPojoList=new ArrayList<>();
     List<ShopSaleModel> allShopSaleList=new ArrayList<>();
+    SearchAdapter shopSaleAdapter;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        rv_shop.getAdapter().notifyDataSetChanged();
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -200,8 +209,7 @@ EditText et_search;
                             }
 
 
-                            SearchAdapter shopSaleAdapter = new SearchAdapter(allShopSaleList, SearchResultActivity.this);
-                            rv_shop.setAdapter(shopSaleAdapter);
+
                             shopSaleAdapter.notifyDataSetChanged();
 
                         }
@@ -259,7 +267,8 @@ EditText et_search;
         GridLayoutManager gridLayoutManager1 = new GridLayoutManager(SearchResultActivity.this, 1);
         gridLayoutManager1.setOrientation(LinearLayoutManager.VERTICAL);
         rv_shop.setLayoutManager(gridLayoutManager1);
-
+         shopSaleAdapter = new SearchAdapter(allShopSaleList, SearchResultActivity.this);
+        rv_shop.setAdapter(shopSaleAdapter);
 
     }
 

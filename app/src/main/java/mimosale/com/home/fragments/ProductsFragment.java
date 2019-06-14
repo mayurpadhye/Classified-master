@@ -42,7 +42,7 @@ public class ProductsFragment extends Fragment {
 View v;
 ProgressBar p_bar;
 
-
+    ProductsAdapter productsAdapter;
     RecyclerView rv_products;
     List<AllProductPojo> allProductPojoList=new ArrayList<>();
 
@@ -63,7 +63,7 @@ ProgressBar p_bar;
     @Override
     public void onResume() {
         super.onResume();
-
+        rv_products.getAdapter().notifyDataSetChanged();
 
     }
     @Override
@@ -81,7 +81,9 @@ ProgressBar p_bar;
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         rv_products.setLayoutManager(llm);
         rv_products.setHasFixedSize(false);
-
+        productsAdapter = new ProductsAdapter(allProductPojoList, getActivity());
+        rv_products.setAdapter(productsAdapter);
+        p_bar.setVisibility(View.GONE);
         }//initViewClsoe
 
     @Override public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -89,7 +91,7 @@ ProgressBar p_bar;
     }
     public void getAllProducts() {
         try {
-            p_bar.setVisibility(View.VISIBLE);
+           // p_bar.setVisibility(View.VISIBLE);
             RetrofitClient retrofitClient = new RetrofitClient();
             RestInterface service = retrofitClient.getAPIClient(WebServiceURLs.DOMAIN_NAME);
             service.getAllProducts(PrefManager.getInstance(getActivity()).getUserId(),new Callback<JsonElement>() {
@@ -118,11 +120,11 @@ ProgressBar p_bar;
                                 String like_count = j1.getString("like_count");
                                 String like_status = j1.getString("like_status");
                                 String fav_status = j1.getString("fav_status");
+                                String discount = j1.getString("discount");
                                 String image= "";
-                                allProductPojoList.add(new AllProductPojo(id,name,shop_id,user_id,description,price,hash_tag,status1,image1,image2,like_count,like_status,fav_status));
+                                allProductPojoList.add(new AllProductPojo(id,name,shop_id,user_id,description,price,hash_tag,status1,image1,image2,like_count,like_status,fav_status,discount));
                            }
-                           ProductsAdapter shopSaleAdapter = new ProductsAdapter(allProductPojoList, getActivity());
-                            rv_products.setAdapter(shopSaleAdapter);
+                           rv_products.getAdapter().notifyDataSetChanged();
                             p_bar.setVisibility(View.GONE);
 
                         }
@@ -144,8 +146,9 @@ ProgressBar p_bar;
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
 
+            e.printStackTrace();
+            p_bar.setVisibility(View.GONE);
         }
 
 

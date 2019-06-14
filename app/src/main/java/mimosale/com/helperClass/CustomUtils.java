@@ -2,6 +2,7 @@ package mimosale.com.helperClass;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,12 +37,33 @@ public class CustomUtils {
     public static final int IMAGE_LIMIT = 5 ;
     public static final int VIDEO_LIMIT = 2 ;
 public static  SweetAlertDialog sweetAlert;
+public static ProgressDialog progressDialog;
+
     public static void showToast(String msg, Context context){
 
         Toast toast= Toast.makeText(context,msg, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER,0,0);
         toast.show();
     }//showToastClose
+
+
+    public static void showProgressDialog(Context context)
+    {
+        if (progressDialog==null)
+        {
+            progressDialog=new ProgressDialog(context);
+            progressDialog.setMessage(context.getResources().getString(R.string.loading));
+            progressDialog.show();
+        }
+    }
+
+    public static void dismissProgressDialog()
+    {
+        if (progressDialog.isShowing())
+        {
+            progressDialog.dismiss();
+        }
+    }
 
     public static boolean isNetworkAvailable(Context context) {
         if(context != null) {

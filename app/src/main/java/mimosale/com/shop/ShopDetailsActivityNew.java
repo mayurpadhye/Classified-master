@@ -111,12 +111,29 @@ public class ShopDetailsActivityNew extends AppCompatActivity implements View.On
     ProgressBar progress_bar;
     RelativeLayout rl_write_review, rl_claim_now;
     TextView tv_claim;
-
+String intent_from="";
+LinearLayout ll_main;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop_details_new);
         initView();
+
+        try {
+            if (intent_from.equals("home"))
+            {
+                intent_from=getIntent().getStringExtra("from");
+                rl_claim_now.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                rl_claim_now.setVisibility(View.GONE);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
 
         //  getAllProducts();
@@ -296,6 +313,7 @@ public class ShopDetailsActivityNew extends AppCompatActivity implements View.On
                         JSONObject jsonObject = new JSONObject(jsonElement.toString());
                         String status = jsonObject.getString("status");
                         if (status.equals("1")) {
+
                             JSONArray data = jsonObject.getJSONArray("data");
                             for (int i = 0; i < data.length(); i++) {
                                 JSONObject j1 = data.getJSONObject(i);
@@ -443,12 +461,15 @@ public class ShopDetailsActivityNew extends AppCompatActivity implements View.On
 
 
                             }
+
+                            ll_main.setVisibility(View.VISIBLE);
                         }
 
 
                     } catch (JSONException | NullPointerException e) {
                         e.printStackTrace();
                         pDialog.dismiss();
+                        ll_main.setVisibility(View.GONE);
                         Log.i("detailsException", "" + e.toString());
                     }
                 }
@@ -456,6 +477,7 @@ public class ShopDetailsActivityNew extends AppCompatActivity implements View.On
                 @Override
                 public void failure(RetrofitError error) {
                     pDialog.dismiss();
+                    ll_main.setVisibility(View.GONE);
                     Toast.makeText(ShopDetailsActivityNew.this, getResources().getString(R.string.check_internet), Toast.LENGTH_LONG).show();
                     Log.i("fdfdfdfdfdf", "" + error.getMessage());
 
@@ -464,6 +486,7 @@ public class ShopDetailsActivityNew extends AppCompatActivity implements View.On
         } catch (Exception e) {
             e.printStackTrace();
             pDialog.dismiss();
+            ll_main.setVisibility(View.GONE);
             Log.i("detailsException", "" + e.toString());
         }
 
@@ -472,6 +495,7 @@ public class ShopDetailsActivityNew extends AppCompatActivity implements View.On
     public void initView() {
 
         rl_claim_now = findViewById(R.id.rl_claim_now);
+        ll_main = findViewById(R.id.ll_main);
         tv_claim = findViewById(R.id.tv_claim);
         iv_product_image = findViewById(R.id.iv_product_image);
         rl_write_review = findViewById(R.id.rl_write_review);
@@ -509,7 +533,7 @@ public class ShopDetailsActivityNew extends AppCompatActivity implements View.On
         rl_view_more.setOnClickListener(this);
         tv_like = findViewById(R.id.tv_like);
         pDialog = new ProgressDialog(this);
-        pDialog.setMessage("Loading...");
+        pDialog.setMessage(getResources().getString(R.string.loading));
         dialog_view_more = new Dialog(this);
         dialog_view_more.setContentView(R.layout.dialog_shop_info);
         tv_price_range_dialog = dialog_view_more.findViewById(R.id.tv_price_range);

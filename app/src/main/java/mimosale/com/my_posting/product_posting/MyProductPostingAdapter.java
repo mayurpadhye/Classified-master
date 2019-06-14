@@ -81,7 +81,7 @@ public class MyProductPostingAdapter  extends RecyclerView.Adapter<MyProductPost
         holder.cv_shop_main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mctx.startActivity(new Intent(mctx, ProductDetailsActivityNew.class).putExtra("product_id", items.getId()));
+                mctx.startActivity(new Intent(mctx, ProductDetailsActivityNew.class).putExtra("product_id", items.getId()).putExtra("from","myposting"));
             }
         });
 
@@ -176,12 +176,12 @@ public class MyProductPostingAdapter  extends RecyclerView.Adapter<MyProductPost
                         if (status.equals("1")) {
                             allProductPojoList.remove(postition);
                             notifyDataSetChanged();
-                            Toast.makeText(mctx, ""+jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mctx, ""+mctx.getResources().getString(R.string.delete_success), Toast.LENGTH_SHORT).show();
 
                         }
                         else
                         {
-                            Toast.makeText(mctx, ""+jsonObject.getString("data"), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mctx, ""+mctx.getResources().getString(R.string.unable_to_delete), Toast.LENGTH_SHORT).show();
                         }
 
 

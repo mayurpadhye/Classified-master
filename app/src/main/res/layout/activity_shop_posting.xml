@@ -826,6 +826,7 @@
                                 android:gravity="center"
                                 android:layout_gravity="center_vertical"
                                 android:padding="@dimen/padding_10"
+                                android:visibility="gone"
                                 android:text="http://" />
 
                             <android.support.design.widget.TextInputLayout

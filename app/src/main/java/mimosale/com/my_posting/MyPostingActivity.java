@@ -162,15 +162,15 @@ List<MyPreferencePojo>myPreferencePojoList=new ArrayList<>();
             String title = null;
             if (position == 0)
             {
-                title = "Shop";
+                title = getResources().getString(R.string.shop);
             }
             else if (position == 1)
             {
-                title = "Sale";
+                title = getResources().getString(R.string.sale);
             }
             else if (position == 2)
             {
-                title = "Products";
+                title = getResources().getString(R.string.product);
             }
             return title;
         }

@@ -10,6 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:id="@+id/ll_main"
+        android:visibility="gone"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="39dp">
 
@@ -64,6 +66,7 @@
                         android:layout_alignParentBottom="true"
                         android:layout_marginStart="20dp"
                         android:layout_marginLeft="20dp"
+                        android:visibility="gone"
                         android:layout_marginTop="20dp"
                         android:layout_marginEnd="20dp"
                         android:layout_marginRight="50dp"

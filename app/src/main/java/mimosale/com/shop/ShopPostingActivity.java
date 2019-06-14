@@ -471,7 +471,7 @@ TextInputLayout tl_coupon_title,tl_no_claims;
                     String[] dis = sp_discount.getSelectedItem().toString().split(" ", 2);
 
                     discount = dis[1].substring(0, 2);
-                    Toast.makeText(context, "" + discount, Toast.LENGTH_SHORT).show();
+
 
 
                 }
@@ -1178,100 +1178,7 @@ TextInputLayout tl_coupon_title,tl_no_claims;
         }
     }
 
-    public void updateShopDetails() {
-        try {
 
-
-            PrefManager.getInstance(context).getUserId();
-            p_bar.setVisibility(View.VISIBLE);
-
-            MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
-            multipartTypedOutput.addPart("name", new TypedString(et_shop_name.getText().toString().trim()));
-            multipartTypedOutput.addPart("preference_id", new TypedString(pref_id));
-            multipartTypedOutput.addPart("address_line1", new TypedString(et_address_line1.getText().toString().trim()));
-            multipartTypedOutput.addPart("address_line2", new TypedString(et_address_line2.getText().toString().trim()));
-            multipartTypedOutput.addPart("city", new TypedString(et_city.getText().toString()));
-            multipartTypedOutput.addPart("state", new TypedString("AM"));
-            multipartTypedOutput.addPart("country", new TypedString("AM"));
-            multipartTypedOutput.addPart("pincode", new TypedString(et_pincode.getText().toString()));
-            multipartTypedOutput.addPart("lat", new TypedString("22.22"));
-            multipartTypedOutput.addPart("lon", new TypedString("20.22"));
-            multipartTypedOutput.addPart("low_price", new TypedString(et_min_price.getText().toString()));
-            multipartTypedOutput.addPart("high_price", new TypedString(et_max_price.getText().toString()));
-            multipartTypedOutput.addPart("min_discount", new TypedString(""));
-            multipartTypedOutput.addPart("max_discount", new TypedString(""));
-            multipartTypedOutput.addPart("discount", new TypedString(discount));
-            multipartTypedOutput.addPart("phone", new TypedString(et_phone.getText().toString()));
-            multipartTypedOutput.addPart("hash_tags", new TypedString(et_hash_tag.getText().toString()));
-            multipartTypedOutput.addPart("description", new TypedString(et_shop_desc.getText().toString()));
-            multipartTypedOutput.addPart("web_url", new TypedString(tv_url.getText().toString() + "" + et_url.getText().toString()));
-            multipartTypedOutput.addPart("status", new TypedString("1"));
-            multipartTypedOutput.addPart("user_id", new TypedString(PrefManager.getInstance(context).getUserId()));
-            multipartTypedOutput.addPart("shop_id", new TypedString(shop_id));
-
-
-            if (imageFiles_shop.size() > 0) {
-                for (int i = 0; i < imageFiles_shop.size(); i++) {
-                    multipartTypedOutput.addPart("shop_photos[]", new TypedFile("application/octet-stream", new File(imageFiles_shop.get(i).getAbsolutePath())));
-                }
-            } else {
-                multipartTypedOutput.addPart("shop_photos", new TypedString(""));
-            }
-
-
-            RetrofitClient retrofitClient = new RetrofitClient();
-            RestInterface service = retrofitClient.getAPIClient(WebServiceURLs.DOMAIN_NAME);
-            service.update_shop("Bearer " + PrefManager.getInstance(context).getApiToken(),
-                    multipartTypedOutput, new Callback<JsonElement>() {
-                        @Override
-                        public void success(JsonElement jsonElement, Response response) {
-                            //this method call if webservice success
-                            try {
-                                JSONObject jsonObject = new JSONObject(jsonElement.toString());
-                                String status = jsonObject.getString("status");
-
-                                if (status.equals("1")) {
-
-                                    Toast.makeText(context, "Shop Successfully Updated", Toast.LENGTH_SHORT).show();
-
-                                    new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
-                                            .setTitleText(getResources().getString(R.string.success))
-                                            .setContentText(getResources().getString(R.string.shop_posting_success))
-                                            .setConfirmText(getResources().getString(R.string.ok))
-                                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                                @Override
-                                                public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                                    finish();
-                                                }
-                                            })
-                                            .show();
-
-                                } else {
-                                    Toast.makeText(context, "Unable to update Shop", Toast.LENGTH_SHORT).show();
-
-                                }
-
-                                p_bar.setVisibility(View.GONE);
-                            } catch (JSONException | NullPointerException e) {
-                                e.printStackTrace();
-
-                            }
-                        }
-
-                        @Override
-                        public void failure(RetrofitError error) {
-                            p_bar.setVisibility(View.GONE);
-                            Toast.makeText(context, getString(R.string.check_internet), Toast.LENGTH_LONG).show();
-                            Log.i("fdfdfdfdfdf", "" + error.getMessage());
-
-                        }
-                    });
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-
-    }
 
     public void addShopDetails() {
         try {

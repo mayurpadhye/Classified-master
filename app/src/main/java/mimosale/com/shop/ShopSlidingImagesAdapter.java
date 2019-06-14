@@ -47,14 +47,9 @@ public class ShopSlidingImagesAdapter  extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup view, int position) {
         View imageLayout = inflater.inflate(R.layout.sliding_shop_images, view, false);
-
         assert imageLayout != null;
         final ImageView imageView = (ImageView) imageLayout
                 .findViewById(R.id.image);
-
-
-
-
         ImageVideoData imageVideoData=IMAGES.get(position);
         if(IMAGES.get(position).getBitmap()!=null){
             //  holder.iv_activity.setImageBitmap(result_list.get(position).getBitmap());
@@ -67,13 +62,13 @@ public class ShopSlidingImagesAdapter  extends PagerAdapter {
             imageView.setImageBitmap(IMAGES.get(position).getBitmap());
             Log.i("imagePathhhhhBitmap",IMAGES.get(position).getPath());
         }
+        else
+        {
+            imageView.setImageBitmap(IMAGES.get(position).getBitmap());
+            Picasso.with(context).load(IMAGES.get(position).getPath()).into(imageView);
+        }
 
 
-
-
-
-
-      //  imageView.setImageResource(IMAGES.get(position));
 
         view.addView(imageLayout, 0);
 

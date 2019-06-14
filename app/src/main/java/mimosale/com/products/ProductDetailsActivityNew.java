@@ -115,9 +115,13 @@ String coupon_id="";
     RatingBar ratingBar;
     EditText et_review;
     Button btn_submit_review;
-
+String intent_from="";
+@BindView(R.id.ll_main)
+LinearLayout ll_main;
     @BindView(R.id.tv_claim_now)
     TextView tv_claim_now;
+
+
 
     @BindView(R.id.rl_claim_now)
             RelativeLayout rl_claim_now;
@@ -150,6 +154,22 @@ String coupon_id="";
         rl_write_review.setOnClickListener(this);
         btn_submit_review.setOnClickListener(this);
         rl_claim_now.setOnClickListener(this);
+        try {
+            intent_from=getIntent().getStringExtra("from");
+            if (intent_from.equals("home"))
+            {
+                rl_claim_now.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                rl_claim_now.setVisibility(View.GONE);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
         getProductDetails();
 
     }
@@ -208,7 +228,7 @@ String coupon_id="";
     }
     public void getProductDetails() {
         try {
-
+CustomUtils.showProgressDialog(ProductDetailsActivityNew.this);
             RetrofitClient retrofitClient = new RetrofitClient();
             RestInterface service = retrofitClient.getAPIClient(WebServiceURLs.DOMAIN_NAME);
             service.getProductDetails(product_id, new Callback<JsonElement>() {
@@ -222,6 +242,7 @@ String coupon_id="";
                         String status = jsonObject.getString("status");
 
                         if (status.equals("1")) {
+                            ll_main.setVisibility(View.VISIBLE);
                             JSONObject j1 = jsonObject.getJSONObject("data");
 
 
@@ -380,12 +401,24 @@ String coupon_id="";
                                 indicator.setViewPager(pager);
                                 final float density = getResources().getDisplayMetrics().density;
                                 indicator.setRadius(5 * density);
+                                CustomUtils.dismissProgressDialog();
                                 }
+                                else
+                        {
+                            CustomUtils.dismissProgressDialog();
+                            CustomUtils.showSweetAlert(ProductDetailsActivityNew.this, getResources().getString(R.string.no_records), new onItemClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog v) {
+                                    finish();
+                                }
+                            });
+                        }
 
                                 }
                                 catch (JSONException | NullPointerException e) {
                         e.printStackTrace();
                         Log.i("fdfdfdfdfdf", "" + e.getMessage());
+                                    CustomUtils.dismissProgressDialog();
                     }
                 }
 
@@ -393,6 +426,7 @@ String coupon_id="";
                 public void failure(RetrofitError error) {
                     Toast.makeText(ProductDetailsActivityNew.this, getResources().getString(R.string.check_internet), Toast.LENGTH_LONG).show();
                     Log.i("fdfdfdfdfdf", "" + error.getMessage());
+                    CustomUtils.dismissProgressDialog();
 
                 }
             });
