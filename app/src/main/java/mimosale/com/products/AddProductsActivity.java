@@ -70,6 +70,7 @@ import mimosale.com.my_posting.product_posting.PostingImagesAdapter;
 import mimosale.com.network.RestInterface;
 import mimosale.com.network.RetrofitClient;
 import mimosale.com.network.WebServiceURLs;
+import mimosale.com.onItemClickListener;
 import mimosale.com.post.SalePostingActivity;
 import mimosale.com.shop.EventImagesAdapter;
 import mimosale.com.shop.ImageVideoData;
@@ -876,8 +877,13 @@ public class AddProductsActivity extends AppCompatActivity implements View.OnCli
 
         }
         if (imageFiles_products.size() <= 1) {
-
-            Toast.makeText(AddProductsActivity.this, "" + getResources().getString(R.string.please_select_atleast_two_images), Toast.LENGTH_SHORT).show();
+            CustomUtils.showSweetAlert(AddProductsActivity.this, getResources().getString(R.string.please_select_atleast_two_images), new onItemClickListener() {
+                @Override
+                public void onClick(SweetAlertDialog v) {
+                    v.dismissWithAnimation();
+                }
+            });
+          //  Toast.makeText(AddProductsActivity.this, "" + getResources().getString(R.string.please_select_atleast_two_images), Toast.LENGTH_SHORT).show();
             return;
         }
 

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">MimoSale</string>
-    <string name="ok">OK</string>
+    <string name="app_name">ミモセール</string>
+    <string name="ok">はい</string>
     <string name="success">成功</string>
     <string name="home">ホーム</string>
-    <string name="favourite">フォロー</string>  //change to "follow"
+    <string name="favourite">フォロー</string>
+    //change to "follow"
     <string name="add_post">投稿</string>
     <string name="notification">お知らせ</string>
     <string name="account">アカウント</string>
     <string name="search">検索</string>
     <string name="preferences">お気に入り</string>
-
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="furniture">家具</string>
@@ -39,7 +39,6 @@
     <string name="passsword">パスワード</string>
     <string name="register">登録</string>
     <string name="profile">プロフィール</string>
-
     <string name="go_premium">プレミアムへアップグレード</string>
     <string name="messages">メッセージ</string>
     <string name="transaction_history">購入履歴</string>
@@ -51,7 +50,6 @@
     <string name="submit">投稿</string>
     <string name="shop_name">店名</string>
     <string name="shop_images">店舗写真</string>
-
     <string name="upload">アップロード</string>
     <string name="can_not_share_more_than_five_images">５枚以上の写真はシェアできません</string>
     <string name="camera">カメラ</string>
@@ -68,7 +66,7 @@
     <string name="min_price">最安値</string>
     <string name="max_price">最高値</string>
     <string name="address_line1">住所１</string>
-    <string name="address_line2">住所２</string>
+    <string name="address_line2">建物名または家/フラット</string>
     <string name="city">市区町村</string>
     <string name="postal_code">郵便番号</string>
     <string name="phone_number">電話番号</string>
@@ -88,7 +86,6 @@
     <string name="old_password">古いパスワード</string>
     <string name="new_password">新しいパスワード</string>
     <string name="add_preferences">お気に入りを追加</string>
-
     <string name="edit_preferences">お気に入りを変更</string>
     <string name="my_preferences">お気に入り</string>
     <string name="view_all">全てを見る</string>
@@ -98,7 +95,7 @@
     <string name="my_post">私の投稿（ショップ＆セール、商品）</string>
     <string name="search_by_pincode">郵便番号で検索</string>
     <string name="short_description">説明</string>
-    <string name="add_discount">ディスカウントを追加</string>
+    <string name="add_discount">割引クーポンを追加</string>
     <string name="min_discount">最小割引</string>
     <string name="max_discount">最大割引</string>
     <string name="end_date">終了日</string>
@@ -184,10 +181,8 @@
     <string name="address_details">住所</string>
     <string name="other_details">その他</string>
     <string name="discount">ディスカウント</string>
-
-    <string name="lorem_epsum">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum</string>
-<string name="highlight">ハイライト</string>
-<string name="info">情報</string>
+    <string name="highlight">ハイライト</string>
+    <string name="info">情報</string>
     <string name="change_language">言語を変えてください</string>
     <string name="please_select_atleast_two_images">少なくとも2つの画像を選択してください</string>
     <string name="min_discount_error">最小割引は最大割引より大きくてはいけません</string>
@@ -263,25 +258,113 @@
     <string name="toolbar_title">利用規約</string>
     <string name="title_activity_shops_on_map">地図</string>
     <string name="unfollowing">フォローを解除</string>
-    <string name="maximum_char_limit">
-最大文字数は120です</string>
+
     <string name="login_details_are_no_correct" tools:ignore="ExtraTranslation">ログイン情報が正しくありません</string>
-    <string name="email_or_mobile_number" tools:ignore="ExtraTranslation">電子メール/携帯電話番号</string>
+
+
+    <string name="no_product_posting">登録された商品はありません。</string>
+    <string name="edit">編集する</string>
+    <string name="delete_text">削除する</string>
+    <string name="want_to_delete_product">削除してもいいですか？</string>
+    <string name="want_to_delete_shop">削除してもいいですか?</string>
+    <string name="product_updated">更新されました</string>
+    <string name="want_to_delete_sale">削除してもいいですか?</string>
+    <string name="sale_updated">更新されました</string>
+    <string name="unable_to_update">更新が失敗しました</string>
+    <string name="like">いいね！</string>
+    <string name="follow">フォローする</string>
+    <string name="contact_informaction">連絡先</string>
+    <string name="telephone">電話番号</string>
+    <string name="comment">コメントする</string>
+    <string name="reach_us_on">連絡先</string>
+    <string name="login_msg">ログインして下さい</string>
+    <string name="want_logout">ログアウトしますか？</string>
+    <string name="enter_login_id">ID を入れてください</string>
+    <string name="email_or_mobile_number">メールアドレス/電話番号</string>
+    <string name="view_more">詳細を見る</string>
+    <string name="write_a_review">レビューを書く</string>
+    <string name="address">住所:</string>
+    <string name="title_activity_maps">地図</string>
+    <string name="your_location">現在地</string>
+    <string name="search_address">住所から探す</string>
+    <string name="use_this_address">この住所を使う</string>
+    <string name="use_current_location">現在地を使う</string>
+    <string name="add_address">住所を追加する</string>
+    <string name="discount_text">割引</string>
+    <string name="mimo_discount">ミモ 割引クーポン</string>
+    <string name="shop_now">今すぐ購入する</string>
+    <string name="claim_now">今すぐ申し込む</string>
+    <string name="upto">最大</string>
+    <string name="update">更新する</string>
+    <string name="view_more_data">もっと見る</string>
+    <string name="brand">ブランド</string>
+    <string name="model_no">商品番号／型番</string>
+    <string name="quantity">数量</string>
+    <string name="color">色</string>
+    <string name="size">サイズ</string>
+    <string name="specification">商品の説明</string>
+    <string name="more_info">詳細</string>
+    <string name="not_avail">在庫なし</string>
+    <string name="unlike">いいねを取り消す</string>
+    <string name="liked">いいね！済み</string>
+    <string name="unliked">Unliked</string>
+    <string name="update_product">商品を更新する</string>
+    <string name="back">戻る</string>
+    <string name="no_internet">インターネットの接続がありません</string>
+    <string name="not_valid_mail">メールアドレスを確かめて下さい</string>
+    <string name="login_first">ログインして下さい</string>
+    <string name="price_range">値段の範囲</string>
+    <string name="sale_duration">セール期間</string>
+    <string name="we_love_feedback">フィードバックを頂けるとうれしいです！</string>
+    <string name="app_upto_date">アプリを更新する</string>
+    <string name="update_now">今すぐ更新する</string>
+    <string name="update_message">新しいバージョンに更新して下さい</string>
+    <string name="maximum_char_limit">１２０字まで</string>
     <string-array name="discount_array">
-        <item>Select Discount</item>
-        <item>Upto 05%</item>
-        <item>Upto 10%</item>
-        <item>Upto 15%</item>
-        <item>Upto 20%</item>
-        <item>Upto 25%</item>
-        <item>Upto 30%</item>
-        <item>Upto 35%</item>
-        <item>Upto 40%</item>
-        <item>Upto 45%</item>
-        <item>Upto 50%</item>
-        <item>Upto 60%</item>
-        <item>Upto 70%</item>
-        <item>Upto 80%</item>
-        <item>Upto 90%</item>
+        <item>割引額</item>
+        <item>最大 05%</item>
+        <item>最大 10%</item>
+        <item>最大 20%</item>
+        <item>最大 30%</item>
+        <item>最大 40%</item>
+        <item>最大 50%</item>
+        <item>最大 60%</item>
+        <item>最大 70%</item>
+        <item>最大 80%</item>
+        <item>最大 90%</item>
     </string-array>
+    <string name="msg_error_unable_select_profile_pic">プロフィール画像を設定出来ませんでした</string>
+    <string name="lbl_set_profile_photo">プロフィール画像を設定する</string>
+    <string name="lbl_take_camera_picture">写真を撮る</string>
+    <string name="lbl_choose_from_gallery">ギャラリーから選ぶ</string>
+    <string name="toast_image_intent_null">選択方法が設定されていません</string>
+    <string name="coupon_title">クーポン名</string>
+    <string name="no_of_claims">獲得可能クーポン数</string>
+    <string name="coupon_desc">クーポンの説明</string>
+    <string name="please_enter_coupon_title">クーポン名を入力して下さい</string>
+    <string name="please_enter_coupon_desc">クーポンの説明を入力して下さい</string>
+    <string name="please_enter_nno_claims">クーポンの発行数を入力して下さい</string>
+    <string name="claimed">獲得済み</string>
+    <string name="please_rate">評価する</string>
+    <string name="please_write_review">レビューを書く</string>
+    <string name="wallet">ウォレット</string>
+    <string name="valid_till">有効期限:</string>
+    <string name="my_coupons">マイクーポン</string>
+    <string name="claimed_coupons">獲得済みクーポン</string>
+    <string name="coupon_number">クーポン番号</string>
+    <string name="shop_description">店舗の説明</string>
+    <string name="claimer_list">クーポンを獲得した人</string>
+    <string name="coupon_details">クーポンの詳細</string>
+    <string name="goto_shop">店舗</string>
+    <string name="goto_product">商品</string>
+    <string name="min_two_image">商品画像（最低２枚）</string>
+    <string name="shop_images_min_two">店舗画像（最低２枚）</string>
+    <string name="please_select_discount">割引とクーポンの詳細を入力して下さい</string>
+    <string name="shop_updated">店舗が更新されました</string>
+    <string name="no_records">記録はありません</string>
+    <string name="mimo">ミモ</string>
+    <string name="delete_success" tools:ignore="ExtraTranslation">削除しました</string>
+    <string name="unable_to_delete" tools:ignore="ExtraTranslation">削除できません</string>
+    <string name="remove_from_fav" tools:ignore="ExtraTranslation">お気に入りから削除</string>
+    <string name="unfollow">フォローを解除</string>
 </resources>

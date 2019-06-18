@@ -190,7 +190,7 @@ public class ImagePickerActivity extends AppCompatActivity {
         options.setToolbarColor(ContextCompat.getColor(this, R.color.colorAccent));
         options.setStatusBarColor(ContextCompat.getColor(this, R.color.colorAccent));
         options.setActiveWidgetColor(ContextCompat.getColor(this, R.color.colorAccent));
-
+options.setToolbarTitle(getResources().getString(R.string.edit));
         if (lockAspectRatio)
             options.withAspectRatio(ASPECT_RATIO_X, ASPECT_RATIO_Y);
 

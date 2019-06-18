@@ -70,7 +70,7 @@
     <string name="min_price">Min Price</string>
     <string name="max_price">Max Price</string>
     <string name="address_line1">Address Line1</string>
-    <string name="address_line2">Address Line2</string>
+    <string name="address_line2">Building name or House/flat No</string>
     <string name="city">City</string>
     <string name="postal_code">Postal Code</string>
     <string name="phone_number">Phone Number</string>
@@ -99,7 +99,7 @@
     <string name="my_post"><![CDATA[My Posts (Shop & Sale,Products)]]></string>
     <string name="search_by_pincode">Search By Pincode</string>
     <string name="short_description">Short Description (Max. 120 characters)</string>
-    <string name="add_discount">Add Discount</string>
+    <string name="add_discount">Add discount coupon</string>
     <string name="min_discount">Min Discount</string>
     <string name="max_discount">Max Discount</string>
     <string name="end_date">End Date</string>
@@ -373,6 +373,10 @@
     <string name="remove_from_fav">Removed from favourite</string>
     <string name="unable_to_delete">Unable to delete</string>
     <string name="delete_success">Successfully deleted.</string>
+
+    <string name="mimo">MIMO</string>
+    <string name="unfollow">Unfollow</string>
+
 
 
 </resources>

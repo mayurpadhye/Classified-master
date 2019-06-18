@@ -196,30 +196,43 @@
                         android:layout_marginLeft="5dp"
                         android:layout_marginTop="5dp">
 
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/cv_pricing_details"
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
-                            android:layout_centerVertical="true"
-                            android:src="@drawable/discount"
-                            app:civ_border_color="@color/gray"
-                            app:civ_border_width="1dp" />
-
-                        <TextView
-                            android:id="@+id/tv_pricing_details"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/padding_10"
-                            android:layout_toRightOf="@+id/cv_pricing_details"
-                            android:background="@color/white"
-
-                            android:fontFamily="sans-serif-condensed"
-                            android:padding="5dp"
-                            android:text="@string/pricing_details"
-                            android:textColor="@color/purple"
-                            android:textSize="16dp" />
+                            android:orientation="horizontal"
+                            >
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/cv_pricing_details"
+                                android:layout_width="match_parent"
+                                android:layout_height="25dp"
+                                android:layout_weight="0.55"
+                                android:layout_centerVertical="true"
+                                android:src="@drawable/discount"
+                                app:civ_border_color="@color/gray"
+                                app:civ_border_width="1dp" />
+                            <TextView
+                                android:id="@+id/tv_pricing_details"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/padding_10"
+                                android:layout_weight="0.33"
+                                android:layout_toRightOf="@+id/cv_pricing_details"
+                                android:background="@color/white"
+                                android:fontFamily="sans-serif-condensed"
+                                android:padding="5dp"
+                                android:text="@string/pricing_details"
+                                android:textColor="@color/purple"
+                                android:textSize="16dp"/>
+                            <Switch
+                                android:id="@+id/sw_price"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.33"/>
+                        </LinearLayout>
                     </RelativeLayout>
                     <LinearLayout
+                        android:id="@+id/ll_price"
+                        android:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">

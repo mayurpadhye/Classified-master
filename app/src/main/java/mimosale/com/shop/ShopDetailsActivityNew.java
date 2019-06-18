@@ -113,32 +113,31 @@ public class ShopDetailsActivityNew extends AppCompatActivity implements View.On
     TextView tv_claim;
 String intent_from="";
 LinearLayout ll_main;
+    TextView tv_follow_count,tv_like_count;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop_details_new);
         initView();
-
         try {
-            if (intent_from.equals("home"))
-            {
+            if (getIntent().hasExtra("from")) {
                 intent_from=getIntent().getStringExtra("from");
-                rl_claim_now.setVisibility(View.VISIBLE);
-            }
-            else
-            {
-                rl_claim_now.setVisibility(View.GONE);
+                if (intent_from.equals("home")) {
+
+                    rl_claim_now.setVisibility(View.VISIBLE);
+                } else {
+                    rl_claim_now.setVisibility(View.GONE);
+                    rl_follow.setEnabled(false);
+                    rl_write_review.setEnabled(false);
+                    rl_like.setEnabled(false);
+                }
             }
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-
-
-        //  getAllProducts();
         getShopDeatils();
-
         iv_phone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,10 +149,7 @@ LinearLayout ll_main;
                     } else {
                         phoneCallPermission();
                     }
-
-
                 }
-
             }
         });
         iv_navigate.setOnClickListener(new View.OnClickListener() {
@@ -213,13 +209,6 @@ LinearLayout ll_main;
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CALL_PHONE)
                 != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-
-
-            // Show an explanation to the user *asynchronously* -- don't block
-            // this thread waiting for the user's response! After the user
-            // sees the explanation, try again to request the permission.
             ActivityCompat.requestPermissions(ShopDetailsActivityNew.this,
                     new String[]{Manifest.permission.CALL_PHONE},
                     MY_PERMISSIONS_REQUEST_CALL_PHONE);
@@ -269,11 +258,11 @@ LinearLayout ll_main;
                         String message = jsonObject.getString("message");
                         if (message.equals("Shop followed")) {
                             status_follow = "unfollow";
-                            tv_follow_text.setText("Unfollow");
+                            tv_follow_text.setText(getResources().getString(R.string.unfollow));
                             //iv_follow.setImageDrawable(getResources().getDrawable(R.drawable.active_like));
                         } else {
                             status_follow = "follow";
-                            tv_follow_text.setText("Follow");
+                            tv_follow_text.setText(getResources().getString(R.string.follow));
                             //iv_follow.setImageDrawable(getResources().getDrawable(R.drawable.like_heart));
                         }
 
@@ -294,8 +283,6 @@ LinearLayout ll_main;
             e.printStackTrace();
             pDialog.dismiss();
             Log.i("detailsException", "" + e.toString());
-
-
         }
     }
 
@@ -343,9 +330,7 @@ LinearLayout ll_main;
                                 String hash_tags = j1.getString("hash_tags");
                                 String description = j1.getString("description");
                                 String claimed_status = j1.getString("claimed_status");
-
-
-
+                                tv_like_count.setText(like_count);
                                 if (claimed_status.equals("0")) {
                                     tv_claim.setText(getResources().getString(R.string.claim_now));
                                     rl_claim_now.setEnabled(true);
@@ -362,7 +347,7 @@ LinearLayout ll_main;
                                 } else {
                                     tv_like.setText(getResources().getString(R.string.unlike));
                                 }
-                                if (!discount.equals("null") || !discount.equals("0")) {
+                                if (!discount.equals("0")) {
                                     tv_discount.setText("" + discount + "%");
                                     rl_discount.setVisibility(View.VISIBLE);
                                     iv_product_image.setVisibility(View.GONE);
@@ -376,11 +361,11 @@ LinearLayout ll_main;
                                 tv_address_info.setText(address_line1);
                                 tv_website_dialog.setText(web_url);
                                 if (followStatus.equals("1")) {
-                                    tv_follow_text.setText("Unfollow");
+                                    tv_follow_text.setText(getResources().getString(R.string.unfollow));
                                     status_follow = "unfollow";
                                     iv_follow.setImageDrawable(getResources().getDrawable(R.drawable.active_like));
                                 } else {
-                                    tv_follow_text.setText("Follow");
+                                    tv_follow_text.setText(getResources().getString(R.string.follow));
                                     status_follow = "follow";
                                     iv_follow.setImageDrawable(getResources().getDrawable(R.drawable.like_heart));
                                 }
@@ -409,6 +394,16 @@ LinearLayout ll_main;
                                             tv_sale_duration.setText(start_date + " - " + end_date);}
                                         else {tv_sale_duration.setText(getResources().getString(R.string.not_avail));}
 
+                                        if (discount.equals("0"))
+                                        {
+                                            rl_discount.setVisibility(View.GONE);
+                                            iv_product_image.setVisibility(View.VISIBLE);
+                                        }
+                                        else
+                                        {
+                                            rl_discount.setVisibility(View.VISIBLE);
+                                            iv_product_image.setVisibility(View.GONE);
+                                        }
                                     }
                                     else{
                                         rl_discount.setVisibility(View.GONE);
@@ -495,6 +490,8 @@ LinearLayout ll_main;
     public void initView() {
 
         rl_claim_now = findViewById(R.id.rl_claim_now);
+        tv_follow_count = findViewById(R.id.tv_follow_count);
+        tv_like_count = findViewById(R.id.tv_like_count);
         ll_main = findViewById(R.id.ll_main);
         tv_claim = findViewById(R.id.tv_claim);
         iv_product_image = findViewById(R.id.iv_product_image);

@@ -87,6 +87,7 @@ import mimosale.com.map.MapsActivity;
 import mimosale.com.network.RestInterface;
 import mimosale.com.network.RetrofitClient;
 import mimosale.com.network.WebServiceURLs;
+import mimosale.com.onItemClickListener;
 import mimosale.com.post.SalePostingActivity;
 import mimosale.com.preferences.AddNewPrefAdapter;
 import mimosale.com.preferences.AllPrefPojo;
@@ -179,12 +180,12 @@ import static mimosale.com.helperClass.CustomUtils.showToast;
 public class ShopPostingActivity extends AppCompatActivity implements View.OnClickListener {
     public static ArrayList<File> imageFiles_shop;
     private static final String TAG = ShopPostingActivity.class.getSimpleName();
-    public static final int REQUEST_IMAGE = 100;
+    public static final int REQUEST_IMAGE = 101;
     Button btn_upload;
     String pref_id1 = "";
     RecyclerView rv_images;
     RadioGroup radioGroup;
-    Switch switchbutton_discount, switchbutton_pincode;
+    Switch switchbutton_discount, switchbutton_pincode,sw_price;
     LinearLayout ll_shop_details, ll_pricing, ll_address_details, ll_others;
     private static final String LOG_TAG = "MainActivity";
     private static final int GOOGLE_API_CLIENT_ID = 0;
@@ -224,6 +225,8 @@ public class ShopPostingActivity extends AppCompatActivity implements View.OnCli
     Spinner sp_discount;
     String discount = "";
     private String mLastUpdateTime;
+    LinearLayout ll_price;
+
     private static final int PERMISSION_REQUEST_CODE = 200;
 
     // location updates interval - 10sec
@@ -432,6 +435,21 @@ TextInputLayout tl_coupon_title,tl_no_claims;
                 }
             }
         });
+
+        sw_price.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked)
+                {
+                    ll_price.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    ll_price.setVisibility(View.GONE);
+                }
+            }
+        });
+
         switchbutton_pincode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean bChecked) {
@@ -870,6 +888,8 @@ TextInputLayout tl_coupon_title,tl_no_claims;
         tl_pincode = findViewById(R.id.tl_pincode);
         switchbutton_pincode = findViewById(R.id.switchbutton_pincode);
         switchbutton_discount = findViewById(R.id.switchbutton_discount);
+        sw_price = findViewById(R.id.sw_price);
+        ll_price = findViewById(R.id.ll_price);
         ll_discount = findViewById(R.id.ll_discount);
         toolbar_title.setText(getResources().getString(R.string.shop_posting));
         toolbar_title.setTextColor(getResources().getColor(R.color.black));
@@ -973,9 +993,8 @@ TextInputLayout tl_coupon_title,tl_no_claims;
             tl_shop_desc.setError(null);
         }
 
-        if (pref_id.equals(getResources().getString(R.string.select_category))) {
-            if (!ll_shop_visible)
-                slideDown(ll_shop_details);
+        if (sp_category.getSelectedItemPosition()==0) {
+
             Toast.makeText(context, getResources().getString(R.string.please_select_pref_category), Toast.LENGTH_SHORT).show();
             return;
         }
@@ -1096,7 +1115,15 @@ TextInputLayout tl_coupon_title,tl_no_claims;
         if (imageFiles_shop.size() <= 1) {
             if (!ll_shop_visible)
                 slideDown(ll_shop_details);
-            Toast.makeText(context, "" + getResources().getString(R.string.please_select_atleast_two_images), Toast.LENGTH_SHORT).show();
+
+            CustomUtils.showSweetAlert(ShopPostingActivity.this, getResources().getString(R.string.please_select_atleast_two_images), new onItemClickListener() {
+                @Override
+                public void onClick(SweetAlertDialog v) {
+                    v.dismissWithAnimation();
+                }
+            });
+
+            //     Toast.makeText(context, "" + getResources().getString(R.string.please_select_atleast_two_images), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -1591,16 +1618,12 @@ TextInputLayout tl_coupon_title,tl_no_claims;
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data)    {
-
-
-
         if (requestCode ==REQUEST_IMAGE) {
             if (resultCode == Activity.RESULT_OK) {
-                Uri uri = data.getParcelableExtra("path");
                 try {
+                    Uri uri = data.getParcelableExtra("path");
                     // You can update this bitmap to your server
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-
                     Uri tempUri = CustomUtils.getImageUri(getApplicationContext(), bitmap);
                     File finalFile = new File(CustomUtils.getRealPathFromURI(getApplicationContext(), tempUri));
                     CustomUtils.showLog("Camera File path ", finalFile.getAbsolutePath() + "");
@@ -1611,8 +1634,7 @@ TextInputLayout tl_coupon_title,tl_no_claims;
                     } else {
                         CustomUtils.showAlertDialog(ShopPostingActivity.this, getString(R.string.can_not_share_more_than_five_images));
                     }
-                    // loading profile image from local cache
-                    //   loadProfile(uri.toString());
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -1650,7 +1672,9 @@ TextInputLayout tl_coupon_title,tl_no_claims;
                         e.printStackTrace();
                     }
                     break;
-
+                case 100:
+                    init();
+                    break;
 
             }
         }

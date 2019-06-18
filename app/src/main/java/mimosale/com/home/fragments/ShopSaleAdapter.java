@@ -93,7 +93,6 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
 
         } else {
             final ShopSaleModel items = allProductPojoList.get(position);
-
             holder.tv_fragment.animate().alpha(0f).setDuration(2000);
             holder.tv_fragment.animate().alpha(1f).setDuration(2000);
             holder.tv_fragment.bringToFront();
@@ -107,6 +106,7 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
             Picasso.with(mctx).load(WebServiceURLs.SHOP_IMAGE + items.getImage2()).resize(120, 120).into(holder.iv_product_image2);
             holder.tv_price_range.setText("" + items.getLow_price() + "-" + items.getHigh_price());
             holder.tv_desc.setText(items.getDescription());
+            holder.tv_total_like.setText(items.getLike_count());
             if (!items.getDiscount().equals("null"))
                 holder.tv_discount.setText(items.getDiscount() + "%");
             else {
@@ -122,19 +122,15 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
             if (position == 0) {
                 holder.ratingBar.setRating(2.5f);
             }
-
             holder.cv_shop_main.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     if (items.getType().equals("shop"))
                         mctx.startActivity(new Intent(mctx, ShopDetailsActivityNew.class).putExtra("shop_id", items.getId()).putExtra("shop_name", items.getName()).putExtra("from","home"));
-
                     else
                         mctx.startActivity(new Intent(mctx, ProductDetailsActivityNew.class).putExtra("product_id", items.getId()).putExtra("from","home"));
                 }
             });
-
             if (items.getLike_status().equals("1"))
             {
                 holder.iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_hand_black));
@@ -149,7 +145,7 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
                 public void onClick(View v) {
                     if (PrefManager.getInstance(mctx).IS_LOGIN())
                     {
-                        likeProduct(items.getId(),position,holder.iv_like,items.getLike_status());
+                        likeProduct(items.getId(),position,holder.iv_like,items.getLike_status(),holder.tv_total_like,items.getLike_count());
                     }
                     else
                     {
@@ -168,18 +164,14 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
                             addToFavorite(items.getId(), position, holder.spark_button);
                         } else {
                             ShowDialog("shop_fav", holder.spark_button);
-
-                        }
+                            }
 
                     } else {
-
                         if (PrefManager.getInstance(mctx).IS_LOGIN()) {
                             removeFromFavorite(items.getId(), position, holder.spark_button);
                         } else {
                             ShowDialog("shop_fav", holder.spark_button);
-
-                        }
-                        // Button is inactive
+                            }
                     }
                 }
 
@@ -208,7 +200,7 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
     public class MyViewHolder extends RecyclerView.ViewHolder {
         RoundedImageView iv_product_image2, iv_product_image1;
         ImageView iv_like;
-        TextView tv_desc, tv_price_range, tv_product_name, tv_discount, tv_fragment;
+        TextView tv_desc, tv_price_range, tv_product_name, tv_discount, tv_fragment,tv_total_like;
         RatingBar ratingBar;
         SparkButton spark_button;
         ShimmerTextView shimmer_premium;
@@ -232,11 +224,11 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
             shimmer_premium = view.findViewById(R.id.shimmer_premium);
             shimmer_view_container1 = view.findViewById(R.id.shimmer_view_container1);
             cv_shop_main = view.findViewById(R.id.cv_shop_main);
+            tv_total_like = view.findViewById(R.id.tv_total_like);
 
             //   shimmer.start(shimmer_premium);
         }
     }
-
     public int getScreenWidth() {
 
         WindowManager wm = (WindowManager) mctx.getSystemService(Context.WINDOW_SERVICE);
@@ -246,16 +238,12 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
 
         return size.x;
     }
-
-
-    public void likeProduct(String product_id, final int position, final ImageView iv_like, final String like_status) {
+    public void likeProduct(String product_id, final int position, final ImageView iv_like, final String like_status, TextView tv_total_like, String like_count) {
         String like_flag = "";
         if (like_status.equals("0")) {
             like_flag = "like";
         } else
             like_flag = "unlike";
-
-
         try {
             pDialog.show();
             RetrofitClient retrofitClient = new RetrofitClient();
@@ -271,13 +259,26 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
                         String message = jsonObject.getString("message");
                         if (message.equals("Liked")) {
                             allProductPojoList.get(position).setLike_status("1");
-                            notifyItemChanged(position);
-                            iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_hand_black));
 
+                            iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_hand_black));
+                            try
+                            {
+                                tv_total_like.setText(""+(Integer.parseInt(like_count)+1));
+                                allProductPojoList.get(position).setLike_count(""+(Integer.parseInt(like_count)+1));
+                            }catch (NumberFormatException e)
+                            {
+                                e.printStackTrace();
+                            }
+                            notifyItemChanged(position);
                         } else {
                             allProductPojoList.get(position).setLike_status("0");
                             notifyItemChanged(position);
                             iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_black));
+                            if (!like_count.equals("0"))
+                            {
+                                tv_total_like.setText(""+(Integer.parseInt(like_count)-1));
+                                allProductPojoList.get(position).setLike_count(""+(Integer.parseInt(like_count)-1));
+                            }
                         }
 
                     } catch (JSONException e) {
@@ -299,7 +300,6 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
             Log.i("detailsException", "" + e.toString());
         }
     }
-
     public void addToFavorite(String shop_id, int position, final SparkButton spark_button) {
         try {
             pDialog.show();
@@ -344,7 +344,6 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
         }
 
     }
-
     public void removeFromFavorite(String shop_id, int position, final SparkButton sparkButton) {
         try {
             pDialog.show();
@@ -390,8 +389,6 @@ public class ShopSaleAdapter extends RecyclerView.Adapter<ShopSaleAdapter.MyView
         }
 
     }
-
-
     public  void ShowDialog(final String intent_from, final SparkButton spark_button)
     {
 

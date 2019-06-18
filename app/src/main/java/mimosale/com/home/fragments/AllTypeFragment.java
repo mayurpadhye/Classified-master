@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import mimosale.com.R;
@@ -57,6 +58,7 @@ List<ShopSaleModel> allShopSaleList=new ArrayList<>();
     RecyclerView rv_prefwise_product;
     SectionedExpandableLayoutHelper sectionedExpandableLayoutHelper;
     ProductsAdapter productsAdapter;
+
     public AllTypeFragment() {
         // Required empty public constructor
     }

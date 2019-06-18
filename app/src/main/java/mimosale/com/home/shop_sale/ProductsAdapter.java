@@ -76,7 +76,6 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         final AllProductPojo items = allProductPojoList.get(position);
-
         holder.tv_product_name.setText(items.getName());
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.placeholder_logo);
@@ -94,19 +93,12 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
         {
             holder.spark_button.setChecked(false);
         }
-
-
         holder.tv_discount.setText(items.getDiscount()+" %");
-
-
         Picasso.with(mctx).load(WebServiceURLs.SHOP_IMAGE + items.getProduct_images()).into(holder.iv_product_image1);
         Picasso.with(mctx).load(WebServiceURLs.SHOP_IMAGE + items.getImage2()).into(holder.iv_product_image2);
-
-       // Glide.with(mctx).setDefaultRequestOptions(requestOptions).load(WebServiceURLs.SHOP_IMAGE + items.getProduct_images()).into(holder.iv_product_image1);
-       // Glide.with(mctx).setDefaultRequestOptions(requestOptions).load(WebServiceURLs.SHOP_IMAGE + items.getImage2()).into(holder.iv_product_image2);
         holder.tv_price_range.setText(items.getPrice());
         holder.tv_desc.setText(items.getDescription());
-
+        holder.tv_total_like.setText(items.getLike_count());
         if (items.getLike_status().equals("1"))
         {
             holder.iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_hand_black));
@@ -120,9 +112,8 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
             public void onClick(View v) {
                 if (PrefManager.getInstance(mctx).IS_LOGIN())
                 {
-                    likeProduct(items.getId(),position,holder.iv_like,items.getLike_status());
-
-                }
+                    likeProduct(items.getId(),position,holder.iv_like,items.getLike_status(),holder.tv_total_like,items.getLike_count());
+                    }
                 else
                 {
                     ShowDialog("shop_fav",holder.spark_button);
@@ -186,7 +177,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
     public class MyViewHolder extends RecyclerView.ViewHolder {
         RoundedImageView iv_product_image2, iv_product_image1;
         ImageView iv_like;
-        TextView tv_desc, tv_price_range, tv_product_name,tv_discount,tv_dis;
+        TextView tv_desc, tv_price_range, tv_product_name,tv_discount,tv_dis,tv_total_like;
         RatingBar ratingBar;
         SparkButton spark_button;
         CardView cv_shop_main;
@@ -206,6 +197,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
             ratingBar = view.findViewById(R.id.ratingBar);
             cv_shop_main = view.findViewById(R.id.cv_shop_main);
             iv_pop_up = view.findViewById(R.id.iv_pop_up);
+            tv_total_like = view.findViewById(R.id.tv_total_like);
 
         }
     }
@@ -220,10 +212,10 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
         return size.x;
     }
 
-    public void likeProduct(String product_id, final int position, final ImageView iv_like, final String like_status)
+    public void likeProduct(String product_id, final int position, final ImageView iv_like, String likeStatus, TextView tv_total_like, final String like_count)
     {
         String like_flag="";
-        if (like_status.equals("0"))
+        if (likeStatus.equals("0"))
         {
             like_flag="like";
         }
@@ -246,28 +238,39 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
                         String message = jsonObject.getString("message");
                         if (message.equals("Liked")) {
                            allProductPojoList.get(position).setLike_status("1");
-                           notifyItemChanged(position);
-                            iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_hand_black));
+                           try
+                            {
+                                tv_total_like.setText(""+(Integer.parseInt(like_count)+1));
+                                allProductPojoList.get(position).setLike_count(""+(Integer.parseInt(like_count)+1));
+                            }catch (NumberFormatException e)
+                            {
+                                e.printStackTrace();
+                            }
+                            notifyItemChanged(position);
+                           iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_hand_black));
 
                         } else {
                             allProductPojoList.get(position).setLike_status("0");
                             notifyItemChanged(position);
                             iv_like.setImageDrawable(mctx.getResources().getDrawable(R.drawable.like_black));
+                          if (!like_count.equals("0"))
+                          {
+                              tv_total_like.setText(""+(Integer.parseInt(like_count)-1));
+                              allProductPojoList.get(position).setLike_count(""+(Integer.parseInt(like_count)-1));
+                          }
 
-                        }
+                            }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
-
                 @Override
                 public void failure(RetrofitError error) {
                     pDialog.dismiss();
                     Toast.makeText(mctx, mctx.getResources().getString(R.string.check_internet), Toast.LENGTH_LONG).show();
                     Log.i("fdfdfdfdfdf", "" + error.getMessage());
-
-                }
+                    }
             });
         } catch (Exception e) {
             e.printStackTrace();
@@ -275,14 +278,8 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
             Log.i("detailsException", "" + e.toString());
         }
     }
-
-
     public void addToFavorite(String shop_id, final int position, final SparkButton sparkButton)
     {
-
-
-
-
         try {
             pDialog.show();
             RetrofitClient retrofitClient = new RetrofitClient();
@@ -290,7 +287,6 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
             service.add_to_fav("product", PrefManager.getInstance(mctx).getUserId(), shop_id, "Bearer " + PrefManager.getInstance(mctx).getApiToken(), new Callback<JsonElement>() {
                 @Override
                 public void success(JsonElement jsonElement, Response response) {
-
                     try {
                         JSONObject jsonObject = new JSONObject(jsonElement.toString());
                         pDialog.dismiss();
@@ -298,7 +294,6 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
                         String message = jsonObject.getString("message");
                         if (status.equals("1")) {
                             Toast.makeText(mctx, "" + mctx.getString(R.string.added_to_fav), Toast.LENGTH_SHORT).show();
-
                                     sparkButton.setChecked(true);
                                     allProductPojoList.get(position).setFav_status("1");
                                     notifyItemChanged(position);

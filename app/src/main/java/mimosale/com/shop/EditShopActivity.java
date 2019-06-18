@@ -122,6 +122,7 @@ import mimosale.com.map.MapsActivity;
 import mimosale.com.network.RestInterface;
 import mimosale.com.network.RetrofitClient;
 import mimosale.com.network.WebServiceURLs;
+import mimosale.com.onItemClickListener;
 import mimosale.com.shop.adapter.ShopImageDetailsAdapter;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -141,8 +142,8 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
     String pref_id1 = "";
     RecyclerView rv_images;
     RadioGroup radioGroup;
-    Switch switchbutton_discount, switchbutton_pincode;
-    LinearLayout ll_shop_details, ll_pricing, ll_address_details, ll_others;
+    Switch switchbutton_discount,sw_price, switchbutton_pincode;
+    LinearLayout ll_shop_details, ll_pricing, ll_address_details, ll_others,ll_price;
     private static final String LOG_TAG = "MainActivity";
     private static final int GOOGLE_API_CLIENT_ID = 0;
     private AutoCompleteTextView mAutocompleteTextView;
@@ -184,7 +185,7 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
     String discount = "";
     private String mLastUpdateTime;
     List<File> shopImagesPojoList = new ArrayList<>();
-    public static final int REQUEST_IMAGE = 100;
+    public static final int REQUEST_IMAGE = 101;
     // location updates interval - 10sec
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
 
@@ -365,6 +366,23 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
         });
+
+
+
+        sw_price.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked)
+                {
+                    ll_price.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    ll_price.setVisibility(View.GONE);
+                }
+            }
+        });
+
         switchbutton_pincode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean bChecked) {
@@ -543,6 +561,8 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
         mAutocompleteTextView.setThreshold(3);
         tv_url = findViewById(R.id.tv_url);
         ll_shop_details = findViewById(R.id.ll_shop_details);
+        ll_price = findViewById(R.id.ll_price);
+        sw_price = findViewById(R.id.sw_price);
         sp_discount = findViewById(R.id.sp_discount);
         et_state = findViewById(R.id.et_state);
         et_country = findViewById(R.id.et_country);
@@ -718,6 +738,12 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
                 {
                     switchbutton_discount.setChecked(false);
                     ll_discount.setVisibility(View.GONE);
+                }
+
+                if (!et_min_price.equals("null"))
+                {
+                    ll_price.setVisibility(View.VISIBLE);
+                    sw_price.setChecked(true);
                 }
 
 
@@ -975,7 +1001,14 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
         if (imageFiles.size() <= 1) {
             if (!ll_shop_visible)
                 slideDown(ll_shop_details);
-            Toast.makeText(context, "" + getResources().getString(R.string.please_select_atleast_two_images), Toast.LENGTH_SHORT).show();
+
+            CustomUtils.showSweetAlert(EditShopActivity.this, getResources().getString(R.string.please_select_atleast_two_images), new onItemClickListener() {
+                @Override
+                public void onClick(SweetAlertDialog v) {
+                    v.dismissWithAnimation();
+                }
+            });
+          //  Toast.makeText(context, "" + getResources().getString(R.string.please_select_atleast_two_images), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -1835,51 +1868,58 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
 
                 break;
             case MY_PERMISSIONS_REQUEST_LOCATION:
-                boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                if (locationAccepted)
-                {
-                    mSettingsClient
-                            .checkLocationSettings(mLocationSettingsRequest)
-                            .addOnSuccessListener(EditShopActivity.this, new OnSuccessListener<LocationSettingsResponse>() {
-                                @SuppressLint("MissingPermission")
-                                @Override
-                                public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                                    Log.i("ShopPoastingMap", "All location settings are satisfied.");
-                                    //noinspection MissingPermission
-                                    startActivityForResult(new Intent(EditShopActivity.this, MapsActivity.class), 2);
-                                }
-                            })
-                            .addOnFailureListener(EditShopActivity.this, new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    int statusCode = ((ApiException) e).getStatusCode();
-                                    switch (statusCode) {
-                                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                                            Log.i("ShopPoastingMap", "Location settings are not satisfied. Attempting to upgrade " +
-                                                    "location settings ");
-                                            try {
-                                                // Show the dialog by calling startResolutionForResult(), and check the
-                                                // result in onActivityResult().
-                                                ResolvableApiException rae = (ResolvableApiException) e;
-                                                rae.startResolutionForResult(EditShopActivity.this, REQUEST_CHECK_SETTINGS);
-                                            } catch (IntentSender.SendIntentException sie) {
-                                                Log.i("ShopPoastingMap", "PendingIntent unable to execute request.");
-                                            }
-                                            break;
-                                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                                            String errorMessage = "Location settings are inadequate, and cannot be " +
-                                                    "fixed here. Fix in Settings.";
-                                            Log.e("ShopPoastingMap", errorMessage);
-
-                                            Toast.makeText(EditShopActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                try {
+                    boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    if (locationAccepted)
+                    {
+                        mSettingsClient
+                                .checkLocationSettings(mLocationSettingsRequest)
+                                .addOnSuccessListener(EditShopActivity.this, new OnSuccessListener<LocationSettingsResponse>() {
+                                    @SuppressLint("MissingPermission")
+                                    @Override
+                                    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                                        Log.i("ShopPoastingMap", "All location settings are satisfied.");
+                                        //noinspection MissingPermission
+                                        startActivityForResult(new Intent(EditShopActivity.this, MapsActivity.class), 2);
                                     }
+                                })
+                                .addOnFailureListener(EditShopActivity.this, new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        int statusCode = ((ApiException) e).getStatusCode();
+                                        switch (statusCode) {
+                                            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                                                Log.i("ShopPoastingMap", "Location settings are not satisfied. Attempting to upgrade " +
+                                                        "location settings ");
+                                                try {
+                                                    // Show the dialog by calling startResolutionForResult(), and check the
+                                                    // result in onActivityResult().
+                                                    ResolvableApiException rae = (ResolvableApiException) e;
+                                                    rae.startResolutionForResult(EditShopActivity.this, REQUEST_CHECK_SETTINGS);
+                                                } catch (IntentSender.SendIntentException sie) {
+                                                    Log.i("ShopPoastingMap", "PendingIntent unable to execute request.");
+                                                }
+                                                break;
+                                            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                                                String errorMessage = "Location settings are inadequate, and cannot be " +
+                                                        "fixed here. Fix in Settings.";
+                                                Log.e("ShopPoastingMap", errorMessage);
 
-                                    updateLocationUI();
-                                }
-                            });
+                                                Toast.makeText(EditShopActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                                        }
+
+                                        updateLocationUI();
+                                    }
+                                });
+
+                    }
+
 
                 }
-
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
                 break;
 
         }
@@ -1930,8 +1970,9 @@ public class EditShopActivity extends AppCompatActivity implements View.OnClickL
 
         if (requestCode ==REQUEST_IMAGE) {
             if (resultCode == Activity.RESULT_OK) {
-                Uri uri = data.getParcelableExtra("path");
+
                 try {
+                    Uri uri = data.getParcelableExtra("path");
                     // You can update this bitmap to your server
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
 
